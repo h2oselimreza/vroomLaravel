@@ -100,3 +100,17 @@ label{
 .main-content .alert-dismissible .btn-close{
     top: -8px;
 }
+#employeeTab .active{
+    background-color: #556665;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#617473), to(#556665));
+    border: 1px solid #495857;
+    font-weight: normal;
+    color:#fff;
+}
+#employeeTab > li {
+    margin-bottom: 0px;
+}
+#employeeTab li button{
+    padding: 8px 48px;
+    color: #6c757d;
+}

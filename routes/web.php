@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\RoadController;
@@ -52,6 +53,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     
     Route::post('/admin/masterData/setRoad', [BlockRoadController::class, 'setRoad'])
     ->name('admin.masterData.setRoad');
+
+    Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
+    Route::get('/employee-data', [EmployeeController::class, 'getEmployeeData'])->name('admin.employee.data.index');
                         
 });
 
