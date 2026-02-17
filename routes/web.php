@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\EmployeeEducationController;
+use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\RoadController;
@@ -56,6 +58,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
     Route::get('/employee-data', [EmployeeController::class, 'getEmployeeData'])->name('admin.employee.data.index');
+
+    Route::get('/employee-office-info/{id}', [EmployeeOfficeController::class, 'edit'])->name('admin.employee.office.edit');
+    Route::put('/employee-office-info/{employee}/office', [EmployeeOfficeController::class, 'update'])->name('admin.employee.office.update');
+
+    Route::get('/employee-education-info/{id}', [EmployeeEducationController::class, 'edit'])->name('admin.employee.education.edit');
+    Route::post('/employee-education-info/{id}', [EmployeeEducationController::class, 'update'])->name('admin.employee.education.update');
                         
 });
 

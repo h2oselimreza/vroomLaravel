@@ -1,0 +1,355 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="header dashboard_from">
+    <h1 class="page-title">
+        {{ isset($data->exists) ? 'Edit Employee' : 'Add Employee' }}
+    </h1>
+</div>
+@php
+    $path = request()->path(); // returns 'admin/employee-office-info'
+    $lastPart = collect(explode('/', $path))->last();
+@endphp
+<div class="container">
+  <div class="card shadow">
+    <div class="card-body">
+      <!-- Nav Tabs -->
+       <ul class="nav nav-tabs mb-4" id="employeeTab" role="tablist">
+            @if(isset($data->id))
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link 
+                                <?= $lastPart=='create' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.module.edit', $data->id) : '#' }}" id="personal-tab" role="tab"> Personal </a>
+                </li>
+            @else
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link 
+                                <?= $lastPart=='create' ? 'active' : ''?>" href="{{ route('admin.employee.module.create') }}" id="personal-tab" role="tab"> Personal </a>
+                </li>
+            @endif
+            <li class="nav-item" role="presentation">
+                <a class="nav-link 
+                            <?= $lastPart=='employee-office-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.office.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Official </a>
+            </li>
+            <li class="nav-item" role="presentation">
+            <a class="nav-link 
+                            <?= $lastPart=='employee-education-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.education.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Education </a>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab"> Working Experience </button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="photo-tab" data-bs-toggle="tab" data-bs-target="#photo" type="button" role="tab"> Photograph </button>
+            </li>
+        </ul>
+      {{-- Success Message --}} @if(session('success')) <div class="alert alert-success">
+        {{ session('success') }}
+      </div> @endif
+      <!-- Tab Content -->
+      <div class="tab-content" id="employeeTabContent">
+        <div class="tab-pane fade show active" id="official" role="tabpanel">
+          <form action="{{ route('admin.employee.education.update',$data->id) }}" method="POST">
+             @csrf 
+             <div class="panel-group">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <div class="row">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                      <h4 class="panel-title">
+                        <i class="fa fa-book"></i> Educational Information
+                      </h4>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12 text-right">
+                      <h4 class="panel-title">
+                        <i class="fa fa-user"></i> <?php /*echo $employeeId*/ ?>
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover custom-table" id="eduQualificationTable" style="width: 100%">
+                        <tr class="bg-info">
+                            <th style="width:136px">Level Of Education</th>
+                            <th style="width:125px">Exam/Degree</th>
+                            <th style="width:65px">Group</th>
+                            <th>Institute Name</th>
+                            <th style="width:100px">Board</th>
+                            <th style="width:100px">Result</th>
+                            <th style="width:60px">CGPA/Marks</th>
+                            <th style="width:60px">Scale</th>
+                            <th style="width:65px">Passing Year</th>
+                            <th style="width:40px;font-size: 10px;padding: 0px">Duration (years)</th>
+                            <th></th>
+                        </tr>
+
+                        @php $serial = 0; @endphp
+
+                        @if($empEduDetails->isEmpty())
+                            <tr id="noDataTd">
+                                <th colspan="11" class="text-center">No Data Found</th>
+                            </tr>
+                        @endif
+
+                        @foreach($empEduDetails as $empEduDetail)
+                            <tr id="eduQualificationRow{{ $serial }}">
+
+                                {{-- Level of Education --}}
+                                <td>
+                                    <select class="form-control" id="levelofEducation{{ $serial }}"
+                                            name="levelOfEducation{{ $serial }}"
+                                            onchange="setExamDegree(this.value, '{{ $serial }}')">
+                                        <option value="{{ $empEduDetail->level_of_education }}">
+                                            {{ $empEduDetail->education_level }}
+                                        </option>
+                                        <option value="">-- Select --</option>
+                                        @foreach($levelOfEducations as $levelOfEducation)
+                                            <option value="{{ $levelOfEducation->element_code }}">
+                                                {{ $levelOfEducation->element }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                {{-- Exam Degree --}}
+                                <td id="examDegreeTd{{ $serial }}">
+                                    @if(isset($examTitles) && count($examTitles) > 0)
+                                        <select class="form-control" id="examDegree{{ $serial }}"
+                                                name="examDegree{{ $serial }}">
+                                            <option value="">-- Select --</option>
+                                            @foreach($examTitles as $title)
+                                                <option value="{{ $title->element_code }}"
+                                                    {{ $empEduDetail->exam_degree == $title->element_code ? 'selected' : '' }}>
+                                                    {{ $title->element }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    @else
+                                        <input type="text" name="examDegree{{ $serial }}" class="form-control"
+                                            value="{{ $empEduDetail->exam_degree }}">
+                                    @endif
+                                </td>
+
+                                {{-- Major Group --}}
+                                <td id="majorGroupTd{{ $serial }}">
+                                    @if(in_array($empEduDetail->level_of_education, ['secondary','higher_secondary']))
+                                        <input type="text" name="majorGroup{{ $serial }}"
+                                            value="{{ $empEduDetail->major_group }}"
+                                            placeholder="eg.Science" class="form-control">
+                                    @else
+                                        <input type="text" name="majorGroup{{ $serial }}" class="form-control" readonly>
+                                    @endif
+                                </td>
+
+                                {{-- Institute --}}
+                                <td>
+                                    <input type="text" name="instituteName{{ $serial }}"
+                                        value="{{ $empEduDetail->institute_name }}" class="form-control">
+                                </td>
+
+                                {{-- Board --}}
+                                <td>
+                                    <select class="form-control" name="educationBoard{{ $serial }}">
+                                        <option value="{{ $empEduDetail->education_board }}">
+                                            {{ $empEduDetail->education_board_name }}
+                                        </option>
+                                        <option value="">-- Select --</option>
+                                        @foreach($educationBoards as $educationBoard)
+                                            <option value="{{ $educationBoard->element_code }}">
+                                                {{ $educationBoard->element }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                {{-- Result --}}
+                                <td>
+                                    <select class="form-control" name="qualificationResult{{ $serial }}"
+                                            onchange="setCgpaMarksTextBox(this.value, '{{ $serial }}')">
+                                        <option value="{{ $empEduDetail->qualification_result }}">
+                                            {{ $empEduDetail->quali_result_name }}
+                                        </option>
+                                        <option value="">-- Select --</option>
+                                        @foreach($qualificationResults as $qualificationResult)
+                                            <option value="{{ $qualificationResult->element_code }}">
+                                                {{ $qualificationResult->element }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+
+                                {{-- CGPA --}}
+                                <td id="cgpaMarksTd{{ $serial }}">
+                                    <input type="text" name="cgpaMarks{{ $serial }}" class="form-control"
+                                        value="{{ $empEduDetail->cgpa_marks }}">
+                                </td>
+
+                                {{-- Scale --}}
+                                <td id="scaleTd{{ $serial }}">
+                                    <input type="text" name="scale{{ $serial }}" class="form-control"
+                                        value="{{ $empEduDetail->scale }}">
+                                </td>
+
+                                {{-- Passing Year --}}
+                                <td>
+                                    <select class="form-control" name="passingYear{{ $serial }}">
+                                        <option value="{{ $empEduDetail->passing_year }}">{{ $empEduDetail->passing_year }}</option>
+                                        <option value="">--------</option>
+                                        @for($i = 1962; $i <= date('Y'); $i++)
+                                            <option value="{{ $i }}">{{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </td>
+
+                                {{-- Duration --}}
+                                <td>
+                                    <input type="text" name="duration{{ $serial }}" class="form-control"
+                                        value="{{ $empEduDetail->duration }}">
+                                </td>
+
+                                {{-- Remove --}}
+                                <td class="text-center">
+                                    <input type="checkbox" id="removeCheckBox{{ $serial }}">
+                                    <input type="hidden" id="hiddenEducationRow{{ $serial }}"
+                                        name="hiddenEducationRow{{ $serial }}"
+                                        value="{{ $empEduDetail->id }}">
+                                </td>
+                            </tr>
+
+                            @php $serial++; @endphp
+                        @endforeach
+                    </table>
+
+                    <input type="hidden" id="eduQualificationCount" name="eduQualificationCount" value="{{ $serial }}">
+                    <input type="hidden" id="deleteEduRow" name="deleteEduRow" value="">
+
+                    <input type='button' value='Add' id='addEduQualiButton' onclick="addEduQualificationRow()"
+                        class="btn btn-sm btn-primary">
+                    <input type='button' value='Remove' id='removeEduQualiButton' onclick="removeEduQualificationRow()"
+                        class="btn btn-sm btn-danger">
+
+                    <div class="checkbox">
+                        <input type="submit" class="btn btn-success btn-sm" id="updateEmployeeSubmit" value="Update and delete">
+                    </div>
+                </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@endsection
+@push('scripts')
+<script>
+    $(document).ready(function(){
+        $('.dateInput').datepicker({
+            format: 'yyyy-mm-dd',  // format compatible with Laravel date column
+            autoclose: true,       // close picker after selecting a date
+            todayHighlight: true,  // highlight today
+            clearBtn: true,        // optional clear button
+            orientation: 'bottom'  // show below the input
+        });
+    });
+
+    var counter = {{ $serial }};
+
+    function addEduQualificationRow() {
+        $("#noDataTd").remove();
+
+        var newRow = $(document.createElement('tr')).attr("id", 'eduQualificationRow' + counter);
+
+        var levelOptions = `@foreach ($levelOfEducations as $levelOfEducation)
+            <option value="{{ $levelOfEducation->element_code }}">{{ $levelOfEducation->element }}</option>
+        @endforeach`;
+
+        var examTitles = `@foreach ($examTitles as $examTitle)
+            <option value="{{ $examTitle->element_code }}">{{ $examTitle->element }}</option>
+        @endforeach`;
+
+        var boardOptions = `@foreach ($educationBoards as $educationBoard)
+            <option value="{{ $educationBoard->element_code }}">{{ $educationBoard->element }}</option>
+        @endforeach`;
+
+        var resultOptions = `@foreach ($qualificationResults as $qualificationResult)
+            <option value="{{ $qualificationResult->element_code }}">{{ $qualificationResult->element }}</option>
+        @endforeach`;
+
+        var yearOptions = '';
+        for (let i = 1962; i <= 2026; i++) {
+            yearOptions += `<option value="${i}">${i}</option>`;
+        }
+
+        newRow.html(`
+            <td>
+                <select class="form-control" name="levelOfEducation${counter}" id="levelOfEducation${counter}" onchange="setExamDegree(this.value, ${counter})">
+                    <option value="">-- Select --</option>
+                    ${levelOptions}
+                </select>
+            </td>
+            <td id="examDegreeTd${counter}">
+                <select class="form-control" name="examDegree${counter}">
+                    <option value="">-- Select --</option>
+                    ${examTitles}
+                </select>
+            </td>
+            <td id="majorGroupTd${counter}">
+                <input type="text" name="majorGroup${counter}" class="form-control" readonly>
+            </td>
+            <td>
+                <input type="text" name="instituteName${counter}" class="form-control">
+            </td>
+            <td>
+                <select class="form-control" name="educationBoard${counter}">
+                    <option value="">-- Select --</option>
+                    ${boardOptions}
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="qualificationResult${counter}" onchange="setCgpaMarksTextBox(this.value, ${counter})">
+                    <option value="">-- Select --</option>
+                    ${resultOptions}
+                </select>
+            </td>
+            <td id="cgpaMarksTd${counter}">
+                <input type="text" name="cgpaMarks${counter}" class="form-control" readonly>
+            </td>
+            <td id="scaleTd${counter}">
+                <input type="text" name="scale${counter}" class="form-control" readonly>
+            </td>
+            <td>
+                <select class="form-control" name="passingYear${counter}">
+                    <option value="">--------</option>
+                    ${yearOptions}
+                </select>
+            </td>
+            <td>
+                <input type="text" name="duration${counter}" class="form-control">
+            </td>
+            <td class="text-center">
+                <input type="checkbox" id="removeCheckBox${counter}">
+                <input type="hidden" name="hiddenEducationRow${counter}" id="hiddenEducationRow${counter}" value="0">
+            </td>
+        `);
+
+        newRow.appendTo("#eduQualificationTable");
+        $('#eduQualificationCount').val(counter + 1);
+        counter++;
+    }
+
+    function removeEduQualificationRow() {
+        var idArr = new Array();
+        for (var i = 1; i < counter; i++) {
+            if ($('#removeCheckBox' + i).is(':checked')) {
+                idArr.push($('#hiddenEducationRow' + i).val());
+                $("#eduQualificationRow" + i).remove();
+            }
+        }
+        if ($('#deleteEduRow').val() !== "") {
+            idArr.push($('#deleteEduRow').val());
+        }
+        $('#deleteEduRow').val(idArr.join());
+
+        console.log(idArr);
+    }
+</script>
+@endpush

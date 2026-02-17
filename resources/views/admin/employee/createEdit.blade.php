@@ -8,69 +8,42 @@
     </h1>
 </div>
 
+@php
+    $path = request()->path(); // returns 'admin/employee-office-info'
+    $lastPart = collect(explode('/', $path))->last();
+@endphp
+
 <div class="container">
     <div class="card shadow">
         <div class="card-body">
             <!-- Nav Tabs -->
             <ul class="nav nav-tabs mb-4" id="employeeTab" role="tablist">
-
+                @if(isset($data->id))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link 
+                                    <?= $lastPart=='create' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.module.edit', $data->id) : '#' }}" id="personal-tab" role="tab"> Personal </a>
+                    </li>
+                @else
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link 
+                                    <?= $lastPart=='create' ? 'active' : ''?>" href="{{ route('admin.employee.module.create') }}" id="personal-tab" role="tab"> Personal </a>
+                    </li>
+                @endif
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active"
-                            id="personal-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#personal"
-                            type="button"
-                            role="tab">
-                        Personal
-                    </button>
+                    <a class="nav-link 
+                                <?= $lastPart=='employee-office-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.office.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Official </a>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="official-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#official"
-                            type="button"
-                            role="tab">
-                        Official
-                    </button>
+                <a class="nav-link 
+                                <?= $lastPart=='employee-education-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.education.edit', $data->id) : '#' }} {{ route('admin.employee.education.edit',$data->id) }}" id="official-tab" role="tab"> Education </a>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="education-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#education"
-                            type="button"
-                            role="tab">
-                        Education
-                    </button>
+                <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button" role="tab"> Working Experience </button>
                 </li>
-
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="experience-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#experience"
-                            type="button"
-                            role="tab">
-                        Working Experience
-                    </button>
+                <button class="nav-link" id="photo-tab" data-bs-toggle="tab" data-bs-target="#photo" type="button" role="tab"> Photograph </button>
                 </li>
-
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="photo-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#photo"
-                            type="button"
-                            role="tab">
-                        Photograph
-                    </button>
-                </li>
-
             </ul>
-
             {{-- Success Message --}}
             @if(session('success'))
                 <div class="alert alert-success">
@@ -95,8 +68,19 @@
                 <div class="tab-pane fade show active"
                     id="personal"
                     role="tabpanel">
-                    <form action="{{ route('admin.employee.module.store') }}" method="POST">
-                        @csrf
+                    @php
+                        $isEdit = isset($data);
+                    @endphp
+                    <form action="{{ $isEdit 
+                        ? route('admin.employee.module.update', $data->id) 
+                        : route('admin.employee.module.store') }}"
+                        method="POST">
+
+                    @csrf
+
+                    @if($isEdit)
+                        @method('PUT')
+                    @endif
 
                         <div class="accordion" id="employeeAccordion">
 
@@ -123,7 +107,7 @@
                                                 <label class="form-label">Full Name</label>
                                                 <input type="text"
                                                     name="employee_name"
-                                                    value="{{ old('employee_name') }}"
+                                                    value="{{ old('employee_name', $data->employee_name ?? '') }}"
                                                     placeholder="Enter full name"
                                                     class="form-control @error('employee_name') is-invalid @enderror">
 
@@ -137,7 +121,7 @@
                                                 <label class="form-label">National ID</label>
                                                 <input type="text"
                                                     name="national_id"
-                                                    value="{{ old('national_id') }}"
+                                                    value="{{ old('national_id', $data->national_id ?? '') }}"
                                                     placeholder="Enter national ID number"
                                                     class="form-control @error('national_id') is-invalid @enderror">
 
@@ -154,8 +138,16 @@
                                                     <option value="">Select Gender</option>
                                                     <option value="male" {{ old('gender')=='male'?'selected':'' }}>Male</option>
                                                     <option value="female" {{ old('gender')=='female'?'selected':'' }}>Female</option>
-                                                </select>
 
+                                                    <option value="male"
+                                                        {{ old('gender', $data->gender ?? '') == 'male'?'selected':'' }}>
+                                                        Male
+                                                    </option>
+                                                    <option value="female"
+                                                        {{ old('gender', $data->gender ?? '')=='female'?'selected':'' }}>
+                                                        Female
+                                                    </option>
+                                                </select>
                                                 @error('gender')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -167,10 +159,12 @@
                                                 <select name="religion"
                                                     class="form-select @error('religion') is-invalid @enderror">
                                                     <option value="">Select Religion</option>
-                                                    <option value="Islam" {{ old('religion')=='Islam'?'selected':'' }}>Islam</option>
-                                                    <option value="Hindu" {{ old('religion')=='Hindu'?'selected':'' }}>Hindu</option>
-                                                    <option value="Christian" {{ old('religion')=='Christian'?'selected':'' }}>Christian</option>
-                                                    <option value="Buddhist" {{ old('religion')=='Buddhist'?'selected':'' }}>Buddhist</option>
+                                                    @foreach(['Islam','Hindu','Christian','Buddhist'] as $religion)
+                                                        <option value="{{ $religion }}"
+                                                            {{ old('religion', $data->religion ?? '')==$religion?'selected':'' }}>
+                                                            {{ $religion }}
+                                                        </option>
+                                                    @endforeach
                                                 </select>
 
                                                 @error('religion')
@@ -181,13 +175,18 @@
                                             {{-- Nationality --}}
                                             <div class="col-md-6">
                                                 <label class="form-label">Nationality</label>
-                                                <select class="form-control @error('nationality') is-invalid @enderror"
-                                                        name="nationality">
-                                                    <option value="">-- Select Nationality--</option>
-                                                    <option value="Bangladeshi" {{ old('nationality')=='Bangladeshi'?'selected':'' }}>Bangladeshi</option>
-                                                    <option value="Other" {{ old('nationality')=='Other'?'selected':'' }}>Other</option>
+                                                <select name="nationality"
+                                                        class="form-select @error('nationality') is-invalid @enderror">
+                                                    <option value="">-- Select Nationality --</option>
+                                                    <option value="Bangladeshi"
+                                                        {{ old('nationality', $data->nationality ?? '')=='Bangladeshi'?'selected':'' }}>
+                                                        Bangladeshi
+                                                    </option>
+                                                    <option value="Other"
+                                                        {{ old('nationality', $data->nationality ?? '')=='Other'?'selected':'' }}>
+                                                        Other
+                                                    </option>
                                                 </select>
-
                                                 @error('nationality')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -198,7 +197,7 @@
                                                 <label class="form-label">Date of Birth</label>
                                                 <input type="text"
                                                     name="dob"
-                                                    value="{{ old('dob') }}"
+                                                    value="{{ old('dob', $data->dob ?? '') }}"
                                                     placeholder="yyyy-mm-dd"
                                                     class="form-control dateInput @error('dob') is-invalid @enderror">
 
@@ -211,10 +210,11 @@
                                             <div class="col-md-6">
                                                 <label class="form-label">Blood Group</label>
                                                 <select name="blood_group"
-                                                    class="form-control @error('blood_group') is-invalid @enderror">
-                                                    <option value="">-- Select Group--</option>
+                                                        class="form-select @error('blood_group') is-invalid @enderror">
+                                                    <option value="">-- Select Group --</option>
                                                     @foreach(['O+','O-','A+','A-','B+','B-','AB+','AB-'] as $bg)
-                                                        <option value="{{ $bg }}" {{ old('blood_group')==$bg?'selected':'' }}>
+                                                        <option value="{{ $bg }}"
+                                                            {{ old('blood_group', $data->blood_group ?? '')==$bg?'selected':'' }}>
                                                             {{ $bg }}
                                                         </option>
                                                     @endforeach
@@ -229,13 +229,16 @@
                                             <div class="col-md-3">
                                                 <label class="form-label">Marital Status</label>
                                                 <select name="marital_status"
-                                                    id="marital_status"
-                                                    onchange="setAnniversaryDate()"
-                                                    class="form-control @error('marital_status') is-invalid @enderror">
-
+                                                        class="form-select @error('marital_status') is-invalid @enderror">
                                                     <option value="">-- Select Status --</option>
-                                                    <option value="Single" {{ old('marital_status')=='Single'?'selected':'' }}>Single</option>
-                                                    <option value="Married" {{ old('marital_status')=='Married'?'selected':'' }}>Married</option>
+                                                    <option value="Single"
+                                                        {{ old('marital_status', $data->marital_status ?? '')=='Single'?'selected':'' }}>
+                                                        Single
+                                                    </option>
+                                                    <option value="Married"
+                                                        {{ old('marital_status', $data->marital_status ?? '')=='Married'?'selected':'' }}>
+                                                        Married
+                                                    </option>
                                                 </select>
 
                                                 @error('marital_status')
@@ -248,7 +251,7 @@
                                                 <label class="form-label">Anniversary Date</label>
                                                 <input type="text"
                                                     name="anniversary"
-                                                    value="{{ old('anniversary') }}"
+                                                    value="{{ old('anniversary', $data->anniversary ?? '') }}"
                                                     placeholder="yyyy-mm-dd"
                                                     class="form-control dateInput @error('anniversary') is-invalid @enderror">
 
@@ -262,7 +265,7 @@
                                                 <label class="form-label">Passport No</label>
                                                 <input type="text"
                                                     name="passport_no"
-                                                    value="{{ old('passport_no') }}"
+                                                    value="{{ old('passport_no', $data->passport_no ?? '') }}"
                                                     placeholder="Enter passport number"
                                                     class="form-control @error('passport_no') is-invalid @enderror">
 
@@ -276,7 +279,7 @@
                                                 <label class="form-label">Passport Expiry Date</label>
                                                 <input type="text"
                                                     name="passport_expiry_date"
-                                                    value="{{ old('passport_expiry_date') }}"
+                                                    value="{{ old('passport_expiry_date', $data->passport_expiry_date ?? '') }}"
                                                     placeholder="yyyy-mm-dd"
                                                     class="form-control dateInput @error('passport_expiry_date') is-invalid @enderror">
 
@@ -290,7 +293,7 @@
                                                 <label class="form-label">Driving License No</label>
                                                 <input type="text"
                                                     name="driving_license_no"
-                                                    value="{{ old('driving_license_no') }}"
+                                                    value="{{ old('driving_license_no', $data->driving_license_no ?? '') }}"
                                                     placeholder="Enter driving license number"
                                                     class="form-control @error('driving_license_no') is-invalid @enderror">
 
@@ -304,7 +307,7 @@
                                                 <label class="form-label">Driving License Expiry Date</label>
                                                 <input type="text"
                                                     name="driving_license_expiry_date"
-                                                    value="{{ old('driving_license_expiry_date') }}"
+                                                    value="{{ old('driving_license_expiry_date', $data->driving_license_expiry_date ?? '') }}"
                                                     placeholder="yyyy-mm-dd"
                                                     class="form-control dateInput @error('driving_license_expiry_date') is-invalid @enderror">
 
@@ -342,7 +345,7 @@
                                                 <label class="form-label">Primary Mobile</label>
                                                 <input type="text"
                                                     name="primary_mobile"
-                                                    value="{{ old('primary_mobile') }}"
+                                                    value="{{ old('primary_mobile', $data->primary_mobile ?? '') }}"
                                                     placeholder="Enter primary mobile number"
                                                     class="form-control @error('primary_mobile') is-invalid @enderror">
 
@@ -356,7 +359,7 @@
                                                 <label class="form-label">Secondary Mobile</label>
                                                 <input type="text"
                                                     name="secendary_mobile"
-                                                    value="{{ old('secendary_mobile') }}"
+                                                    value="{{ old('secendary_mobile', $data->secendary_mobile ?? '') }}"
                                                     placeholder="Enter secondary mobile number"
                                                     class="form-control @error('secendary_mobile') is-invalid @enderror">
 
@@ -370,7 +373,7 @@
                                                 <label class="form-label">Land Phone</label>
                                                 <input type="text"
                                                     name="employee_tnt_phone"
-                                                    value="{{ old('employee_tnt_phone') }}"
+                                                    value="{{ old('employee_tnt_phone', $data->employee_tnt_phone ?? '') }}"
                                                     placeholder="Enter land phone number"
                                                     class="form-control @error('employee_tnt_phone') is-invalid @enderror">
 
@@ -384,7 +387,7 @@
                                                 <label class="form-label">Email</label>
                                                 <input type="email"
                                                     name="email"
-                                                    value="{{ old('email') }}"
+                                                    value="{{ old('email', $data->email ?? '') }}"
                                                     placeholder="Enter email address"
                                                     class="form-control @error('email') is-invalid @enderror">
 
@@ -398,7 +401,7 @@
                                                 <label class="form-label">Present Address</label>
                                                 <input type="text"
                                                     name="present_address"
-                                                    value="{{ old('present_address') }}"
+                                                    value="{{ old('present_address', $data->present_address ?? '') }}"
                                                     placeholder="Enter present address"
                                                     class="form-control @error('present_address') is-invalid @enderror">
 
@@ -412,7 +415,7 @@
                                                 <label class="form-label">Permanent Address</label>
                                                 <input type="text"
                                                     name="employee_permanent_address"
-                                                    value="{{ old('employee_permanent_address') }}"
+                                                    value="{{ old('employee_permanent_address', $data->employee_permanent_address ?? '') }}"
                                                     placeholder="Enter permanent address"
                                                     class="form-control @error('employee_permanent_address') is-invalid @enderror">
 
@@ -450,7 +453,7 @@
                                                 <label class="form-label">Father's Name</label>
                                                 <input type="text"
                                                     name="father_name"
-                                                    value="{{ old('father_name') }}"
+                                                    value="{{ old('father_name', $data->father_name ?? '') }}"
                                                     placeholder="Enter father's full name"
                                                     class="form-control @error('father_name') is-invalid @enderror">
 
@@ -475,7 +478,7 @@
                                                     ] as $occupation)
 
                                                         <option value="{{ $occupation }}"
-                                                            {{ old('father_occupation') == $occupation ? 'selected' : '' }}>
+                                                            {{ old('father_occupation') == $data->father_occupation ? 'selected' : '' }}>
                                                             {{ $occupation }}
                                                         </option>
 
@@ -492,7 +495,7 @@
                                                 <label class="form-label">Father's Office Address</label>
                                                 <input type="text"
                                                     name="father_office_address"
-                                                    value="{{ old('father_office_address') }}"
+                                                    value="{{ old('father_office_address', $data->father_office_address ?? '') }}"
                                                     placeholder="Enter father's office address"
                                                     class="form-control @error('father_office_address') is-invalid @enderror">
 
@@ -506,7 +509,7 @@
                                                 <label class="form-label">Father's Contact</label>
                                                 <input type="text"
                                                     name="father_contact"
-                                                    value="{{ old('father_contact') }}"
+                                                    value="{{ old('father_contact', $data->father_contact ?? '') }}"
                                                     placeholder="Enter father's mobile number"
                                                     class="form-control @error('father_contact') is-invalid @enderror">
 
@@ -520,7 +523,7 @@
                                                 <label class="form-label">Mother's Name</label>
                                                 <input type="text"
                                                     name="mother_name"
-                                                    value="{{ old('mother_name') }}"
+                                                    value="{{ old('mother_name', $data->mother_name ?? '') }}"
                                                     placeholder="Enter mother's full name"
                                                     class="form-control @error('mother_name') is-invalid @enderror">
 
@@ -545,7 +548,7 @@
                                                     ] as $occupation)
 
                                                         <option value="{{ $occupation }}"
-                                                            {{ old('mother_occupation') == $occupation ? 'selected' : '' }}>
+                                                            {{ old('mother_occupation') == $data->mother_occupation ? 'selected' : '' }}>
                                                             {{ $occupation }}
                                                         </option>
 
@@ -562,7 +565,7 @@
                                                 <label class="form-label">Mother's Office Address</label>
                                                 <input type="text"
                                                     name="mother_office_address"
-                                                    value="{{ old('mother_office_address') }}"
+                                                    value="{{ old('mother_office_address', $data->mother_office_address ?? '') }}"
                                                     placeholder="Enter mother's office address"
                                                     class="form-control @error('mother_office_address') is-invalid @enderror">
 
@@ -576,7 +579,7 @@
                                                 <label class="form-label">Mother's Contact</label>
                                                 <input type="text"
                                                     name="mother_contact"
-                                                    value="{{ old('mother_contact') }}"
+                                                    value="{{ old('mother_contact', $data->mother_contact ?? '') }}"
                                                     placeholder="Enter mother's mobile number"
                                                     class="form-control @error('mother_contact') is-invalid @enderror">
 
@@ -611,7 +614,7 @@
                                                 <label class="form-label">Guardian's Name</label>
                                                 <input type="text"
                                                     name="guardian_name"
-                                                    value="{{ old('guardian_name') }}"
+                                                    value="{{ old('guardian_name', $data->guardian_name ?? '') }}"
                                                     placeholder="Enter guardian's full name"
                                                     class="form-control @error('guardian_name') is-invalid @enderror">
 
@@ -624,7 +627,7 @@
                                                 <label class="form-label">Guardian's Relation</label>
                                                 <input type="text"
                                                     name="guardian_relation"
-                                                    value="{{ old('guardian_relation') }}"
+                                                    value="{{ old('guardian_relation', $data->guardian_relation ?? '') }}"
                                                     placeholder="Enter relationship with guardian"
                                                     class="form-control @error('guardian_relation') is-invalid @enderror">
 
@@ -637,7 +640,7 @@
                                                 <label class="form-label">Guardian's House Address</label>
                                                 <input type="text"
                                                     name="guardian_house_address"
-                                                    value="{{ old('guardian_house_address') }}"
+                                                    value="{{ old('guardian_house_address', $data->guardian_house_address ?? '') }}"
                                                     placeholder="Enter guardian's house address"
                                                     class="form-control @error('guardian_house_address') is-invalid @enderror">
 
@@ -651,7 +654,7 @@
                                                 <input type="text"
                                                     name="guardian_contact"
                                                     id="guardian_contact"
-                                                    value="{{ old('guardian_contact') }}"
+                                                    value="{{ old('guardian_contact', $data->guardian_contact ?? '') }}"
                                                     placeholder="Enter guardian's mobile number"
                                                     class="form-control @error('guardian_contact') is-invalid @enderror"
                                                     onchange="checkMobileNumber(this.value, 'guardian_contact')">
@@ -686,7 +689,7 @@
                                                 <label class="form-label">Spouse Name</label>
                                                 <input type="text"
                                                     name="spouse_name"
-                                                    value="{{ old('spouse_name') }}"
+                                                    value="{{ old('spouse_name', $data->spouse_name ?? '') }}"
                                                     placeholder="Enter spouse full name"
                                                     class="form-control @error('spouse_name') is-invalid @enderror">
 
@@ -710,7 +713,7 @@
                                                     ] as $occupation)
 
                                                         <option value="{{ $occupation }}"
-                                                            {{ old('spouse_occupation') == $occupation ? 'selected' : '' }}>
+                                                            {{ old('spouse_occupation') == $data->spouse_occupation ? 'selected' : '' }}>
                                                             {{ $occupation }}
                                                         </option>
 
@@ -726,7 +729,7 @@
                                                 <label class="form-label">Spouse Office Address</label>
                                                 <input type="text"
                                                     name="spouse_office_address"
-                                                    value="{{ old('spouse_office_address') }}"
+                                                    value="{{ old('spouse_name', $data->spouse_office_address ?? '') }}"
                                                     placeholder="Enter spouse office address"
                                                     class="form-control @error('spouse_office_address') is-invalid @enderror">
 
@@ -740,7 +743,7 @@
                                                 <input type="text"
                                                     name="spouse_contact"
                                                     id="spouse_contact"
-                                                    value="{{ old('spouse_contact') }}"
+                                                    value="{{ old('spouse_name', $data->spouse_contact ?? '') }}"
                                                     placeholder="Enter spouse mobile number"
                                                     class="form-control @error('spouse_contact') is-invalid @enderror"
                                                     onchange="checkMobileNumber(this.value, 'spouse_contact')">
@@ -777,7 +780,7 @@
                                                     <input type="text"
                                                         class="form-control @error('emer_contact_name') is-invalid @enderror"
                                                         name="emer_contact_name"
-                                                        value="{{ old('emer_contact_name') }}"
+                                                        value="{{ old('emer_contact_name', $data->emer_contact_name ?? '') }}"
                                                         placeholder="Enter emergency contact name">
 
                                                     @error('emer_contact_name')
@@ -793,7 +796,7 @@
                                                         class="form-control @error('emer_conatct_mobile') is-invalid @enderror"
                                                         name="emer_conatct_mobile"
                                                         id="emer_conatct_mobile"
-                                                        value="{{ old('emer_conatct_mobile') }}"
+                                                        value="{{ old('emer_conatct_mobile', $data->emer_conatct_mobile ?? '') }}"
                                                         placeholder="Enter emergency mobile number"
                                                         onchange="checkMobileNumber(this.value, 'emer_conatct_mobile')">
 
@@ -809,7 +812,7 @@
                                                     <input type="text"
                                                         class="form-control @error('emer_contact_relation') is-invalid @enderror"
                                                         name="emer_contact_relation"
-                                                        value="{{ old('emer_contact_relation') }}"
+                                                        value="{{ old('emer_contact_relation', $data->emer_contact_relation ?? '') }}"
                                                         placeholder="Enter relationship with emergency contact">
 
                                                     @error('emer_contact_relation')
@@ -824,7 +827,7 @@
                                                     <input type="text"
                                                         class="form-control @error('emer_contact_address') is-invalid @enderror"
                                                         name="emer_contact_address"
-                                                        value="{{ old('emer_contact_address') }}"
+                                                        value="{{ old('emer_contact_address', $data->emer_contact_address ?? '') }}"
                                                         placeholder="Enter emergency contact address">
 
                                                     @error('emer_contact_address')
@@ -841,13 +844,14 @@
 
                         <div class="mt-4 text-end">
                             <button type="submit" class="btn btn-success">
-                                Save Employee
+                                {{ $isEdit ? 'Update Employee' : 'Save Employee' }}
                             </button>
                         </div>
 
                     </form>                    
                 </div>
 
+                {{-- Office Information --}}
                 <div class="tab-pane fade"
                     id="official"
                     role="tabpanel">

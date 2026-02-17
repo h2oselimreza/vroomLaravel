@@ -100,15 +100,20 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = Employee::findOrFail($id);
+        return view('admin.employee.createEdit', compact('data'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EmployeeRequest $request, Employee $employee)
     {
-        //
+        $employee->update($request->validated());
+
+        return redirect()
+            ->route('admin.employee.module.edit', $employee->id)
+            ->with('success', 'Employee updated successfully.');
     }
 
     /**
