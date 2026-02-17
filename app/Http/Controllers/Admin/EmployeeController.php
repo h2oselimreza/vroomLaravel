@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\EmployeeRequest;
@@ -23,7 +24,7 @@ class EmployeeController extends Controller
     public function getEmployeeData(Request $request){
         if ($request->ajax()) {
 
-            $block = Employee::select([
+            $employee = Employee::select([
                 'id',
                 'employee_name',
                 'designation',
@@ -31,14 +32,14 @@ class EmployeeController extends Controller
                 'is_active',
             ]);
 
-            return DataTables::of($block)
+            return DataTables::of($employee)
 
                 ->addIndexColumn()
 
-                ->addColumn('action', content: function ($block) {
-                    $viewUrl   = route('admin.employee.module.show', $block->id);
-                    $editUrl   = route('admin.employee.module.edit', $block->id);
-                    $deleteUrl = route('admin.employee.module.destroy', $block->id);
+                ->addColumn('action', content: function ($employee) {
+                    $viewUrl   = route('admin.employee.module.show', $employee->id);
+                    $editUrl   = route('admin.employee.module.edit', $employee->id);
+                    $deleteUrl = route('admin.employee.module.destroy', $employee->id);
                     return '
                         <a href="'.$viewUrl.'" 
                         class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
@@ -75,16 +76,23 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(EmployeeRequest $request)
+    public function store(EmployeeRequest $request, TokenService $tokenService)
     {
-        //dd($request->all());
-        DB::transaction(function () use ($request) {
-        Employee::create($request->validated());
-    });
+        $prefix = "P-EMP-";
 
-    return redirect()
-        ->route('admin.employee.module.index')
-        ->with('success', 'Employee created successfully.');
+        DB::transaction(function () use ($request, $tokenService, $prefix) {
+            // Generate token inside the transaction
+            $employeeId = $prefix . $tokenService->getTokenByCode($prefix);
+
+            $data = $request->validated();
+            $data['employee_id'] = $employeeId;
+
+            Employee::create($data);
+        });
+
+        return redirect()
+            ->route('admin.employee.module.index')
+            ->with('success', 'Employee created successfully.');
     }
 
     /**

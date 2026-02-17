@@ -19,21 +19,28 @@ class TokenService
             throw new \InvalidArgumentException("Code is required");
         }
 
-        // Start a DB transaction to avoid race conditions
-        return \DB::transaction(callback: function () use ($code) {
+        return \DB::transaction(function () use ($code) {
 
+            // Lock the row for update to prevent race conditions
             $token = DB::table('token')->where('code', $code)->lockForUpdate()->first();
 
             if (!$token) {
-                // If token does not exist, create it with initial 1
-                $token = DB::table('token')->create([
+                // If token doesn't exist, create it starting at 1
+                DB::table('token')->insert([
                     'code' => $code,
                     'tokenNo' => 1
                 ]);
+                $tokenNo = 1;
+            } else {
+                // Increment tokenNo by 1
+                $tokenNo = $token->tokenNo + 1;
+                // DB::table('token')->where('code', $code)->update([
+                //     'tokenNo' => $tokenNo
+                // ]);
             }
 
-            // Return tokenNo with leading zeros (5 digits)
-            return str_pad($token->tokenNo, 5, '0', STR_PAD_LEFT);
+            // Return tokenNo with leading zeros
+            return str_pad($tokenNo, 5, '0', STR_PAD_LEFT);
         });
     }
 }
