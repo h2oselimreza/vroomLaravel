@@ -7,10 +7,6 @@
         {{ isset($data->exists) ? 'Edit Employee' : 'Add Employee' }}
     </h1>
 </div>
-@php
-    $path = request()->path(); // returns 'admin/employee-office-info'
-    $lastPart = collect(explode('/', $path))->last();
-@endphp
 <div class="container">
   <div class="card shadow">
     <div class="card-body">

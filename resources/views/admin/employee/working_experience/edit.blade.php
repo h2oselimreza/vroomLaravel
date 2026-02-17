@@ -8,11 +8,6 @@
     </h1>
 </div>
 
-@php
-    $path = request()->path(); // returns 'admin/employee-office-info'
-    $lastPart = collect(explode('/', $path))->last();
-@endphp
-
 <?php
     $day = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31');
     $month = array('01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12');
@@ -312,7 +307,7 @@
                                             @endforeach
                                             <input type="hidden" id="deleteWorkingRow" name="deleteWorkingRow">
                                         </div>
-                                        <div class="col-md-3 mt-0">
+                                        <div class="col-md-3 mt-1">
                                             <input type="button"
                                                 value="Add More Working Experience"
                                                 onclick="addEduQualificationDiv()"
