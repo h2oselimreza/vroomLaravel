@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeOfficeRequest;
 use App\Models\Employee;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeOfficeController extends Controller
 {
@@ -17,7 +18,60 @@ class EmployeeOfficeController extends Controller
 
     public function update(EmployeeOfficeRequest $request, Employee $employee)
     {
-        $employee->update($request->validated());
+        DB::transaction(function () use ($request, $employee) {
+
+            // Update employee office info first
+            $employee->update($request->validated());
+
+            $systemUserCheck = $request->system_user; // 0 or 1
+
+            if ($systemUserCheck) {
+
+                // Get employee personal info
+                $employeeDetails = $employee; // assuming data is already in $employee
+
+                // Check if user already exists
+                $user = User::where('user_id', $employee->employee_id)->first();
+
+                if ($user) {
+                    // If exists → activate
+                    $user->update([
+                        'is_active'   => 1,
+                        'updated_by'  => auth()->user()->user_id,
+                        'updated_dt_tm' => now(),
+                    ]);
+                } else {
+                    // If not exists → create
+                    User::create([
+                        'user_id'        => $employee->employee_id,
+                        'username'       => $employee->employee_id,
+                        'password'       => Hash::make('1234'), // 🔐 secure
+                        'email'          => $employeeDetails->email,
+                        'user_type_code' => 'P_ADMIN', // adjust if constant defined
+                        'full_name'      => $employeeDetails->employee_name,
+                        'contact_no'     => $employeeDetails->primary_mobile,
+                        'is_active'      => 1,
+                        'created_by'     => auth()->user()->user_id,
+                        'created_dt_tm'  => now(),
+                        'updated_by'     => auth()->user()->user_id,
+                        'updated_dt_tm'  => now(),
+                    ]);
+                }
+
+            } else {
+
+                // If unchecked → deactivate user
+                $user = User::where('user_id', $employee->employee_id)->first();
+
+                if ($user) {
+                    $user->update([
+                        'is_active'   => 0,
+                        'updated_by'  => auth()->user()->user_id,
+                        'updated_dt_tm' => now(),
+                    ]);
+                }
+            }
+        });
 
         return redirect()
             ->route('admin.employee.office.edit', $employee->id)

@@ -28,10 +28,12 @@ return new class extends Migration
             $table->boolean('is_reset')->default(true);
 
             $table->string('created_by', 70);
-            $table->dateTime('created_dt_tm');
-
             $table->string('updated_by', 70);
-            $table->dateTime('updated_dt_tm');
+
+            $table->timestamp('created_dt_tm')->useCurrent();
+            $table->timestamp('updated_dt_tm')
+                ->useCurrent()
+                ->useCurrentOnUpdate();
 
             $table->boolean('is_active')->default(true);
             

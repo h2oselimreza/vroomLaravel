@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\TracksUser;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
+    use HasFactory, TracksUser;
     protected $table = 'employee';
 
     public $timestamps = false; // because you use custom datetime fields
