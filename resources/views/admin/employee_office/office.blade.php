@@ -54,16 +54,17 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-check custom-check">
+                                                    <!-- Hidden field ensures '0' is sent if checkbox is unchecked -->
+                                                    <input type="hidden" name="system_user" value="0">
+
                                                     <input class="form-check-input"
                                                         type="checkbox"
                                                         id="system_user"
                                                         name="system_user"
                                                         value="1"
                                                         {{ old('system_user', $data->system_user ?? 0) ? 'checked' : '' }}>
-                                                        
 
-                                                    <label class="form-check-label ms-2 form-label mt-1"
-                                                        for="system_user">
+                                                    <label class="form-check-label ms-2 form-label mt-1" for="system_user">
                                                         Enable System User
                                                     </label>
                                                 </div>
