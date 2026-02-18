@@ -117,7 +117,7 @@ label {
     );
     border: 1px solid #495857;
     font-weight: normal;
-    color: #fff;
+    color: #fff !important;
 }
 #employeeTab > li {
     margin-bottom: 0px;
@@ -159,7 +159,8 @@ label {
     font-size: 12px;
 }
 
-#updateEmployeeSubmit {
+#updateEmployeeSubmit,
+.profile_photo {
     padding: 5px 18px;
     border-radius: 5px;
     margin-top: 14px;
@@ -169,9 +170,21 @@ label {
     padding: 0px 0px 15px 0px;
     margin-bottom: 20px;
 }
+#employeeTab .nav-link {
+    color: #000;
+}
+#employeeTab .nav_item {
+    color: #aba9a9;
+}
 
 .add_button {
     padding: 2px 18px;
     border-radius: 5px;
     font-size: 12px;
+}
+.profile-image {
+    width: 170px;
+    height: 181px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
