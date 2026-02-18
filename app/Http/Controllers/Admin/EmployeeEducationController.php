@@ -46,7 +46,7 @@ class EmployeeEducationController extends Controller
     $levelOfEducations = $this->getCommonTableElement($commonTableElementArr);
 
     $commonTableElementArr = array('type' => 'exam_degree_title');
-    $examTitles = $this->getCommonTableElement($commonTableElementArr);
+    $examTitles = json_encode(array('examTitleData' => $this->getCommonTableElement($commonTableElementArr)));
 
     $commonTableElementArr = array('type' => 'education_board');
     $educationBoards = $this->getCommonTableElement($commonTableElementArr);
@@ -56,7 +56,7 @@ class EmployeeEducationController extends Controller
     //dd($qualificationResults);
     // $this->data['employeeId'] = $employeeId;
 
-        return view("admin.employee_education.education",
+        return view("admin.employee.employee_education.education",
         compact("data","empEduDetails","levelOfEducations","examTitles","educationBoards","qualificationResults")
         );
     }

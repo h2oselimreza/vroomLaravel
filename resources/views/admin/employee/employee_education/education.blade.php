@@ -81,22 +81,22 @@
                                 </td>
 
                                 {{-- Exam Degree --}}
-                                <td id="examDegreeTd{{ $serial }}">
-                                    @if(isset($examTitles) && count($examTitles) > 0)
-                                        <select class="form-control" id="examDegree{{ $serial }}"
-                                                name="examDegree{{ $serial }}">
+                                <td id="examDegreeTd<?php echo $serial ?>">
+                                    <?php
+                                    if ($empEduDetail->level_of_education == 'psc_5_pass' || $empEduDetail->level_of_education == 'jsc_jdc_8_pass' || $empEduDetail->level_of_education == 'secondary' || $empEduDetail->level_of_education == 'higher_secondary') {
+                                        ?>
+                                        <select class="form-control" id="examDegree<?php echo $serial ?>" name="examDegree<?php echo $serial ?>">
+                                            <option value="<?php echo $empEduDetail->exam_degree ?>"><?php echo $empEduDetail->exam_title ?></option>
                                             <option value="">-- Select --</option>
-                                            @foreach($examTitles as $title)
-                                                <option value="{{ $title->element_code }}"
-                                                    {{ $empEduDetail->exam_degree == $title->element_code ? 'selected' : '' }}>
-                                                    {{ $title->element }}
-                                                </option>
-                                            @endforeach
                                         </select>
-                                    @else
-                                        <input type="text" name="examDegree{{ $serial }}" class="form-control"
-                                            value="{{ $empEduDetail->exam_degree }}">
-                                    @endif
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <input type="text" name="examDegree<?php echo $serial ?>" value="<?php echo $empEduDetail->exam_degree ?>" class="form-control">
+                                        <?php
+                                    }
+                                    ?>
+
                                 </td>
 
                                 {{-- Major Group --}}
@@ -220,7 +220,8 @@
             orientation: 'bottom'  // show below the input
         });
     });
-
+    
+    var examTitleObj = jQuery.parseJSON(JSON.stringify(<?php echo $examTitles ?>));
     var counter = {{ $serial }};
 
     function addEduQualificationRow() {
@@ -230,10 +231,6 @@
 
         var levelOptions = `@foreach ($levelOfEducations as $levelOfEducation)
             <option value="{{ $levelOfEducation->element_code }}">{{ $levelOfEducation->element }}</option>
-        @endforeach`;
-
-        var examTitles = `@foreach ($examTitles as $examTitle)
-            <option value="{{ $examTitle->element_code }}">{{ $examTitle->element }}</option>
         @endforeach`;
 
         var boardOptions = `@foreach ($educationBoards as $educationBoard)
@@ -258,8 +255,6 @@
             </td>
             <td id="examDegreeTd${counter}">
                 <select class="form-control" name="examDegree${counter}">
-                    <option value="">-- Select --</option>
-                    ${examTitles}
                 </select>
             </td>
             <td id="majorGroupTd${counter}">
@@ -320,6 +315,44 @@
         $('#deleteEduRow').val(idArr.join());
 
         console.log(idArr);
+    }
+
+    function setExamDegree(levelOfEducation, rowCount) {
+
+        if (levelOfEducation === 'psc_5_pass' || levelOfEducation === 'jsc_jdc_8_pass' || levelOfEducation === 'secondary' || levelOfEducation === 'higher_secondary') {
+            var optionStr = "<option value=''>-- Select --</option>";
+            for (var i = 0; i < examTitleObj.examTitleData.length; i++) {
+                if (examTitleObj.examTitleData[i].depend_on_element === levelOfEducation) {
+                    optionStr += "<option value='" + examTitleObj.examTitleData[i].element_code + "'>" + examTitleObj.examTitleData[i].element + "</option>";
+                }
+            }
+            $('#examDegreeTd' + rowCount).html('<select class="form-control" name="examDegree' + rowCount + '">' + optionStr + '</select>');
+        } else if (levelOfEducation === "") {
+            $('#examDegreeTd' + rowCount).html('<input type="text" name="examDegree' + rowCount + '" class="form-control" readonly>');
+        } else {
+            $('#examDegreeTd' + rowCount).html('<input type="text" name="examDegree' + rowCount + '" class="form-control">');
+        }
+
+        if (levelOfEducation === 'secondary' || levelOfEducation === 'higher_secondary') {
+            $('#majorGroupTd' + rowCount).html('<input type="text" name="majorGroup' + rowCount + '" placeholder="eg.Science" class="form-control" >');
+        } else {
+            $('#majorGroupTd' + rowCount).html('<input type="text" name="majorGroup' + rowCount + '"  class="form-control" readonly>');
+        }
+
+    }
+
+    function setCgpaMarksTextBox(qualificationResult, rowCount) {
+        $('#scaleTd' + rowCount).html('<input type="text" name="scale' + rowCount + '" class="form-control">');
+        if (qualificationResult === 'first_division_class' || qualificationResult === 'second_division_class' || qualificationResult === 'third_division_class') {
+            $('#cgpaMarksTd' + rowCount).html('<input type="text" placeholder="Marks" name="cgpaMarks' + rowCount + '" class="form-control">');
+        } else if (qualificationResult === 'grade') {
+            $('#cgpaMarksTd' + rowCount).html('<input type="text" placeholder="CGPA" name="cgpaMarks' + rowCount + '" class="form-control">');
+        } else if (qualificationResult === "") {
+            $('#cgpaMarksTd' + rowCount).html('<input type="text" name="cgpaMarks' + rowCount + '" class="form-control" readonly>');
+            $('#scaleTd' + rowCount).html('<input type="text" name="scale' + rowCount + '" class="form-control" readonly>');
+        } else {
+            $('#cgpaMarksTd' + rowCount).html('<input type="text"name="cgpaMarks' + rowCount + '" class="form-control">');
+        }
     }
 </script>
 @endpush
