@@ -34,6 +34,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users-data', [UserController::class, 'getUsers'])->name('users.data.index');
 
     Route::get('user-groups',[UserGroupController::class, 'index'])->name('admin.user-groups.index');
+    Route::get('user-group',[UserGroupController::class, 'create'])->name('admin.user-groups.create');
+    Route::post('user-group',[UserGroupController::class, 'storeOrUpdate'])->name('admin.user-groups.store');
+    Route::get('user-group/{id}',[UserGroupController::class, 'edit'])->name('admin.user-groups.edit');
+    Route::put('user-group/{id}', [UserGroupController::class, 'storeOrUpdate'])->name('admin.user-groups.update');
     Route::get('/user-groups-data', [UserGroupController::class, 'getUserGroups'])->name('user-groups.data.index');
 
     Route::get('/module-group',[ModuleGroupController::class, 'index'])->name('admin.module-group.index');

@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('group_name', 250)->nullable();
             $table->string('modules', 700);
-            $table->dateTime('created_dt_tm');
-            $table->dateTime('updated_dt_tm');
             $table->integer('is_active')->default(1);
-            $table->timestamps();
+            $table->string('created_by', 70);
+            $table->string('updated_by', 70);
+            $table->timestamp('created_dt_tm')->useCurrent();
+            $table->timestamp('updated_dt_tm')
+                ->useCurrent()
+                ->useCurrentOnUpdate();
         });
     }
 

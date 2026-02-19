@@ -9,7 +9,23 @@
         <li><a href="#"> User</a></li>
     </ul>
 </div>
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error!</strong> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
 <div class="main-content">
+    <div class="add-button">
+        <a href="{{ route('admin.user-groups.create') }}">Add Group</a>
+    </div>
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default"> 

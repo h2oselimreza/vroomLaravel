@@ -10,6 +10,10 @@ trait TracksUser
             $model->created_by = auth()->check()
                 ? auth()->user()->user_id
                 : 'system';
+
+                $model->updated_by = auth()->check()
+                ? auth()->user()->user_id
+                : 'system';
         });
 
         static::updating(function ($model) {
