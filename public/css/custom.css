@@ -188,3 +188,33 @@ label {
     border: 1px solid #ddd;
     border-radius: 8px;
 }
+#sideNavBar .nav-item {
+    line-height: 2.5em;
+}
+
+#sideNavBar .nav-link {
+    border-top: 1px solid #fcfcfc;
+    border-bottom: 1px solid #c8c8cb;
+    background: #efeff0;
+    background: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0, #efeff0),
+        color-stop(1, #fafafa)
+    );
+    background: -ms-linear-gradient(bottom, #efeff0, #fafafa);
+    background: -moz-linear-gradient(center bottom, #efeff0 0%, #fafafa 100%);
+    background: -o-linear-gradient(bottom, #efeff0, #fafafa);
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#efeff0')";
+    border-left: none;
+    color: #444;
+    display: block;
+    font-weight: normal;
+    font-size: 15px;
+    padding: 0.25em 0.25em 0.25em 1em;
+    margin-bottom: 0px;
+    text-shadow: none;
+    text-transform: none;
+}

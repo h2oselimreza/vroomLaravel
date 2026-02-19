@@ -37,4 +37,10 @@ class ModuleGroup extends Model
                 'M-GRP-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         });
     }
+
+    public function modules()
+    {
+        return $this->hasMany(Module::class, 'module_group', 'module_group_code')
+                    ->orderBy('module_order');
+    }
 }

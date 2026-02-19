@@ -1,301 +1,55 @@
-<?php /*
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-            </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-    </div>
-</nav>
-*/?>
-<?php /*
 <div class="sidebar-nav" id="sideNavBar">
-    <ul>
-        <?php /*
-        $userGroup = $this->session->userdata('user_group');
-        $moduleList = get_modules($userGroup);
-        $module = explode(",", $moduleList);
-        $rowDistincts = get_distinct_rows($module);
-        foreach ($rowDistincts as $rowDistinct) {
-            $modulegroupList[] = $rowDistinct['module_group'];
-        }
+    <ul class="nav flex-column">
 
-        for ($i = 0; $i < count($modulegroupList); $i++) {
-            $moduleGroupId = $modulegroupList[$i];
-            $modulegroupName = get_module_group_name($moduleGroupId);
-            ?>
+        @foreach($moduleGroups as $group)
 
-            <li><a href="#" data-target="<?php echo "." . $moduleGroupId; ?>" class="nav-header collapsed" data-toggle="collapse"><i class="fa fa-fw fa-dashboard"></i>  <?php echo $modulegroupName; ?><i class="fa fa-collapse"></i></a></li>
-            <li>
-                <?php
-                $moduleGroupIdForCollapse = "";
-                $moduleGroupIdForCollapse = get_module_group($breadcrumbModuleUrl);
-                ?>
-                <ul class="<?php echo $moduleGroupId; ?> nav nav-list collapse <?php if ($moduleGroupId == $moduleGroupIdForCollapse) echo "in"; ?> {
+            @php
+                $isActiveGroup = collect($group['modules'])
+                    ->pluck('module_url')
+                    ->contains(request()->path());
+            @endphp
 
-                    }?>">
-                    <?php
-                    for ($j = 0; $j < count($module); $j++) {
-                        $moduleId = $module[$j];
-                        $rowModules = get_row_modules($moduleId, $moduleGroupId);
-                        foreach ($rowModules as $rowModule) {
-                            $moduleName = $rowModule['modules_name'];
-                            $moduleUrl = $rowModule['module_url'];
-                            $moduleGroup = $rowModule['module_group'];
-                            if ($breadcrumbModuleUrl == $moduleUrl) {
-                                echo "<li class='active'>";
-                            } else {
-                                echo "<li>";
-                            }
-                            ?>
-                            <a href="<?php echo base_url(); ?><?php echo $moduleUrl; ?>"><span class="fa fa-caret-right"></span> <?php echo $moduleName; ?></a>
-                            <?php
-                            echo "</li>";
-                        }
-                    }
-                    ?>
-                </ul>
+            {{-- Group Header --}}
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center {{ $isActiveGroup ? '' : 'collapsed' }}"
+                   data-bs-toggle="collapse"
+                   href="#{{ $group['module_group_code'] }}"
+                   role="button"
+                   aria-expanded="{{ $isActiveGroup ? 'true' : 'false' }}"
+                   aria-controls="{{ $group['module_group_code'] }}">
+
+                    <span>
+                        <i class="fa fa-fw fa-dashboard me-2"></i>
+                        {{ $group['module_group_name'] }}
+                    </span>
+
+                    <i class="fa fa-chevron-down small"></i>
+                </a>
+
+                {{-- Modules --}}
+                <div class="collapse {{ $isActiveGroup ? 'show' : '' }}"
+                     id="{{ $group['module_group_code'] }}">
+
+                    <ul class="nav flex-column ms-3">
+
+                        @foreach($group['modules'] as $module)
+
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->path() == $module['module_url'] ? 'active fw-bold text-primary' : '' }}"
+                                   href="{{ url($module['module_url']) }}">
+
+                                    <i class="fa fa-caret-right me-2"></i>
+                                    {{ $module['modules_name'] }}
+                                </a>
+                            </li>
+
+                        @endforeach
+
+                    </ul>
+                </div>
             </li>
-            <?php
-        }
-        */ ?>
-        <?php /* modified code
-        <li>
-            <a href="#" data-target=".M-GRP-00001" class="nav-header collapsed" data-toggle="collapse">
-                <i class="fa fa-fw fa-dashboard"></i>  Users<i class="fa fa-collapse"></i>
-            </a>
-        </li>
-        <li>
-            <ul class="M-GRP-00001 nav nav-list collapse" style="height:auto;">
-                <li>
-                    <a href="{{ url('/admin/modules') }}">
-                        <span class="fa fa-caret-right"></span> Module Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/modules') }}">
-                        <span class="fa fa-caret-right"></span> Module
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/user-groups') }}">
-                        <span class="fa fa-caret-right"></span> User Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/users') }}">
-                        <span class="fa fa-caret-right"></span> Users
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>?>
-            <!-- <a href="#" data-target=".M-GRP-00001" class="nav-header collapsed" data-toggle="collapse">
-                <i class="fa fa-fw fa-dashboard"></i>  Users<i class="fa fa-collapse"></i>
-            </a>
-        </li>
-        <li>
-            <ul class="M-GRP-00001 nav nav-list collapse show" style="height:auto;">
-                <li>
-                    <a href="{{ url('/admin/users/module-group') }}">
-                        <span class="fa fa-caret-right"></span> Module Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/users/module') }}">
-                        <span class="fa fa-caret-right"></span> Module
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/users/user-group-list') }}">
-                        <span class="fa fa-caret-right"></span> User Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/users/user-list') }}">
-                        <span class="fa fa-caret-right"></span> Users
-                    </a>
-                </li>
-            </ul>
-        </li> -->
-    </ul>
-</div>
-*/?>
 
-<div class="sidebar-nav" id="sideNavBar">
-    <ul class="list-unstyled">
-        <!-- Parent -->
-        <li>
-            <a
-                href="#"
-                class="nav-header d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                data-bs-target="#M-GRP-00001"
-                aria-expanded="false"
-            >
-                <span>
-                    <i class="fa-solid fa-users me-2"></i> Users
-                </span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
-        </li>
-
-        <!-- Child -->
-        <li>
-            <ul id="M-GRP-00001" class="collapse list-unstyled ps-4">
-                <li>
-                    <a href="{{ url('/admin/module-group') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> Module Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/modules') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> Module
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/user-groups') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> User Group
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/users') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> Users
-                    </a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-    <ul class="list-unstyled">
-        <!-- Parent -->
-        <li>
-            <a
-                href="#"
-                class="nav-header d-flex justify-content-between align-items-center"
-                data-bs-toggle="collapse"
-                data-bs-target="#M-GRP-00001"
-                aria-expanded="false"
-            >
-                <span>
-                    <i class="fa-solid fa-users me-2"></i> MetaData
-                </span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
-        </li>
-
-        <!-- Child -->
-        <li>
-            <ul id="M-GRP-00001" class="collapse list-unstyled ps-4">
-                <li>
-                    <a href="{{ url('/admin/blocks') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> Block
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/roads') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i> Road
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/admin/block-road') }}">
-                        <i class="fa-solid fa-angle-right me-1"></i>
-                        Road According Block
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @endforeach
 
     </ul>
 </div>
