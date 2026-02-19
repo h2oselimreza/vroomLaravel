@@ -227,3 +227,8 @@ label {
     font-size: 15px;
     border-radius: 4px;
 }
+#datatable .dropdown button {
+    background: transparent;
+    color: #000;
+    border: 1px solid #ddd;
+}
