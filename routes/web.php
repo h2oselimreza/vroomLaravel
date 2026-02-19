@@ -34,20 +34,22 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/users-data', [UserController::class, 'getUsers'])->name('users.data.index');
 
     Route::get('user-groups',[UserGroupController::class, 'index'])->name('admin.user-groups.index');
+    Route::get('/user-groups-data', [UserGroupController::class, 'getUserGroups'])->name('user-groups.data.index');
     Route::get('user-group',[UserGroupController::class, 'create'])->name('admin.user-groups.create');
     Route::post('user-group',[UserGroupController::class, 'storeOrUpdate'])->name('admin.user-groups.store');
     Route::get('user-group/{id}',[UserGroupController::class, 'edit'])->name('admin.user-groups.edit');
     Route::put('user-group/{id}', [UserGroupController::class, 'storeOrUpdate'])->name('admin.user-groups.update');
-    Route::get('/user-groups-data', [UserGroupController::class, 'getUserGroups'])->name('user-groups.data.index');
+    Route::patch('user-groups/{id}/status', [UserGroupController::class, 'updateStatus'])->name('admin.user-groups.status');
+    Route::delete('user-groups/{id}', [UserGroupController::class, 'destroy'])->name('admin.user-groups.destroy');
 
     Route::get('/module-group',[ModuleGroupController::class, 'index'])->name('admin.module-group.index');
     Route::get('/module-group-data', [ModuleGroupController::class, 'getModuleGroupData'])->name('module-group.data.index');
     Route::get('/module-group-create',[ModuleGroupController::class, 'create'])->name('admin.module-group.create');
-    Route::post('/module-group-store',action: [ModuleGroupController::class, 'store'])->name('admin.module-group.store');
-    Route::get('/module-group-show',action: [ModuleGroupController::class, 'show'])->name('admin.module-group.show');
-    Route::get('/module-group-edit/{id}',action: [ModuleGroupController::class, 'edit'])->name('admin.module-group.edit');
-    Route::put('/module-group-update/{id}',action: [ModuleGroupController::class, 'update'])->name('admin.module-group.update');
-    Route::delete('/module-group-destroy/{id}',action: [ModuleGroupController::class, 'destroy'])->name(name: 'admin.module-group.destroy');
+    Route::post('/module-group-store',[ModuleGroupController::class, 'store'])->name('admin.module-group.store');
+    Route::get('/module-group-show', [ModuleGroupController::class, 'show'])->name('admin.module-group.show');
+    Route::get('/module-group-edit/{id}',[ModuleGroupController::class, 'edit'])->name('admin.module-group.edit');
+    Route::put('/module-group-update/{id}',[ModuleGroupController::class, 'update'])->name('admin.module-group.update');
+    Route::delete('/module-group-destroy/{id}', [ModuleGroupController::class, 'destroy'])->name(name: 'admin.module-group.destroy');
 
     Route::resource('modules', ModuleController::class)->names('admin.modules');
     Route::get('/modules-data', [ModuleController::class, 'getModulesData'])->name('modules.data.index');
