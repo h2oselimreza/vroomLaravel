@@ -56,14 +56,6 @@ class UserController extends Controller
                                         <span class="ui-button-text">&nbsp;Update</span>
                                     </a>
                                 </li>
-                                <li role="separator" class="divider"></li>
-                                <li>
-                                    <a href="' . $activeInactiveUrl . '" class="d-block ps-3 mb-2">
-                                        ' . ($users->is_active
-                                            ? '<span class="ui-button-text">Active</span>'
-                                            : '<span class="ui-button-text">Inactive</span>') . '
-                                    </a>
-                                </li>
                             </ul>
                         </div>';
 

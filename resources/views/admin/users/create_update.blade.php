@@ -37,7 +37,7 @@
                         <select class="form-select"
                             name="user_group"
                             id="user_group"
-                            data-selected="{{ $module->panel_type ?? '' }}" required>
+                            data-selected="{{ $module->user_group ?? '' }}" required>
 
                             <option value="">Select User Group</option>
                             @if (isset($userGroups))
@@ -51,6 +51,24 @@
                         </select>
 
                         @error('user_group')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            User Status :
+                        </label>
+
+                        <select class="form-select"
+                                name="is_active"
+                                id="is_active"
+                                required>
+                            <option value="">Select User Status</option>
+                            <option value="1" {{ old('is_active', $users->is_active ?? '') == 1 ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ old('is_active', $users->is_active ?? '') == 0 ? 'selected' : '' }}>Inactive</option>
+                        </select>
+
+                        @error('is_active')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
