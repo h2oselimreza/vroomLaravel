@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
@@ -41,13 +42,31 @@ class UserController extends Controller
                         : '<span class="badge bg-danger">Inactive</span>';
                 })
 
-                ->addColumn('action', function ($user) {
+                ->addColumn('action', function ($users) {
+                    $editUrl   = route('admin.users.edit', $users->id);
+                    $activeInactiveUrl = route('admin.modules.destroy', $users->id);
                     return '
-                        <a href="#"
-                           class="btn btn-sm btn-primary">
-                           Edit
-                        </a>
-                    ';
+                        <div class="dropdown">
+                            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                                Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="' . $editUrl . '" class="d-block ps-3 mb-2">
+                                        <span class="ui-button-text">&nbsp;Update</span>
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a href="' . $activeInactiveUrl . '" class="d-block ps-3 mb-2">
+                                        ' . ($users->is_active
+                                            ? '<span class="ui-button-text">Active</span>'
+                                            : '<span class="ui-button-text">Inactive</span>') . '
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>';
+
                 })
 
                 ->rawColumns(['status', 'action'])
@@ -58,5 +77,19 @@ class UserController extends Controller
                 //            Edit
                 //         </a>
         }
+    }
+
+    public function edit(Request $request, $id){
+        $users = User::findOrFail($id);
+        $userGroups = UserGroup::get();
+        return view('admin.users.create_update', compact('users','userGroups'));
+    }
+
+    public function update(Request $request, $id){
+        $users = User::findOrFail($id);
+        $users->update($request->all());
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'User group update successfuly.');
     }
 }

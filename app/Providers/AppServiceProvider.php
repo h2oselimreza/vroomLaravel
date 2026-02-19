@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\UserGroup;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Module; // assuming you have Module model
@@ -25,10 +26,15 @@ class AppServiceProvider extends ServiceProvider
         // Attach sidebar data to all views or a specific view
         View::composer('layouts.navigation', function ($view) {
             $userGroup = auth()->user()->user_group; // assuming 'user_group' on users table
+            $moduleList = UserGroup::findOrFail($userGroup)->modules;
+            $modules = explode(",", $moduleList);
 
             $module_groups = ModuleGroup::where('panel_type', 'admin')
                 ->orderBy('module_group_order')
-                ->with('modules')
+                ->with(['modules' => function ($query) use ($modules) {
+                    $query->whereIn('id', $modules)
+                        ->orderBy('module_order');
+                }])
                 ->get()
                 ->map(function ($group) {
                     return [

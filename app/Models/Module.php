@@ -17,4 +17,13 @@ class Module extends Model
         'module_order',
         'panel_type',
     ];
+
+    // public static function getModulesByUserGroup($userGroup)
+    // {
+    //     return self::select('id', 'modules_name', 'module_url', 'module_group')
+    //                 ->join('user_group_module', 'modules.id', '=', 'user_group_module.module_id')
+    //                 ->where('user_group_module.user_group', $userGroup)
+    //                 ->orderBy('module_group')
+    //                 ->get();
+    // }
 }

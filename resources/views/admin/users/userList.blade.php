@@ -21,6 +21,12 @@
     </ul>
 </div>
 <div class="main-content">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default"> 
@@ -66,14 +72,14 @@
     serverSide: true,
     ajax: "{{ route('users.data.index') }}",
     columns: [
-        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable:false, searchable:false},
+        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable:false, searchable:false,className: 'text-center'},
         {data: 'username', name: 'username'},
         {data: 'full_name', name: 'full_name'},
         {data: 'contact_no', name: 'contact_no'},
         {data: 'email', name: 'email'},
-        {data: 'user_group', name: 'user_group'},
-        {data: 'status', name: 'status', orderable:false, searchable:false},
-        {data: 'action', name: 'action', orderable:false, searchable:false},
+        {data: 'user_group', name: 'user_group', className: 'text-center'},
+        {data: 'status', name: 'status', orderable:false, searchable:false, className: 'text-center'},
+        {data: 'action', name: 'action', orderable:false, searchable:false, className: 'text-center'},
     ],
 
     // ✅ moved here (DO NOT create second DataTable)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Module;
 use App\Models\ModuleGroup;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 Use App\Http\Requests\ModuleRequest;
@@ -37,7 +38,6 @@ class ModuleController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('action', function ($modules) {
-                    $viewUrl   = route('admin.modules.show', $modules->id);
                     $editUrl   = route('admin.modules.edit', $modules->id);
                     $deleteUrl = route('admin.modules.destroy', $modules->id);
                 return '
@@ -66,17 +66,6 @@ class ModuleController extends Controller
 
                 ->rawColumns(['status', 'action'])
                 ->make(true);
-
-                // <div class="dropdown">
-                //     <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-                //         Dropdown button
-                //     </button>
-                //     <ul class="dropdown-menu">
-                //         <li><a class="dropdown-item" href="#">Link 1</a></li>
-                //         <li><a class="dropdown-item" href="#">Link 2</a></li>
-                //         <li><a class="dropdown-item" href="#">Link 3</a></li>
-                //     </ul>
-                // </div>
 
         }
     }
