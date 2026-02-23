@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BlockRoadController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
@@ -66,6 +67,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/admin/masterData/setRoad', [BlockRoadController::class, 'setRoad'])
     ->name('admin.masterData.setRoad');
 
+    /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
     Route::get('/employee-data', [EmployeeController::class, 'getEmployeeData'])->name('admin.employee.data.index');
 
@@ -80,7 +82,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/profile-photo-info/{id}', [ProfilePhotoController::class, 'edit'])->name('admin.profile.photo.edit');
     Route::post('/profile-photo-info/{id}', [ProfilePhotoController::class, 'update'])->name('admin.profile.photo.update');
-                        
+
+    /*===============Member Module Route==================*/
+    Route::resource('members', MemberController::class)->names('admin.member.module');
+    Route::get('/member-data', [MemberController::class, 'getMemberData'])->name('admin.member.data.index');
+    Route::get('members-create', [MemberController::class,'create'])->name('admin.member.module.create');
+
 });
 
 require __DIR__.'/auth.php';

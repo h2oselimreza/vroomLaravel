@@ -232,3 +232,6 @@ label {
     color: #000;
     border: 1px solid #ddd;
 }
+.dt-empty {
+    text-align: center !important;
+}

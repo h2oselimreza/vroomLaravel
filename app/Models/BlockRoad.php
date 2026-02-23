@@ -32,4 +32,11 @@ class BlockRoad extends Model
             $model->updated_by = auth()->user()->user_id ?? 'system';
         });
     }
+
+    public function getBlockRoads()
+    {
+        return Block::with(['roads' => function ($query) {
+            $query->where('block_roads.status', 1);
+        }])->where('is_active', 1)->get();
+    }
 }

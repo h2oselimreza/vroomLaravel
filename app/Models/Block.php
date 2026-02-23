@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Block extends Model
 {
@@ -49,5 +50,25 @@ class Block extends Model
 
             $group->saveQuietly();
         });
+    }
+
+    public static function getSocietyBlock()
+    {
+        return Block::where('is_active', 1)->get();
+    }
+
+    public static function getSocietyBlocksRoads()
+    {
+        return DB::table('block_roads')
+            ->select(
+                'block_roads.block',
+                'block_roads.road',
+                'blocks.block_name',
+                'roads.road_name'
+            )
+            ->join('blocks', 'blocks.block_code', '=', 'block_roads.block')
+            ->join('roads', 'roads.road_code', '=', 'block_roads.road')
+            ->where('block_roads.status', 1)
+            ->get();
     }
 }

@@ -44,4 +44,10 @@ class Road extends Model
             $group->saveQuietly(); // prevents loop
         });
     }
+
+    public static function getSocietyRoad()
+    {
+        return Road::where('is_active', 1)->get();
+    }
+
 }
