@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\MemberFamilyMemberController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+use Yajra\DataTables\Html\Columns\Index;
 
 Route::get('/', function () {
     return view('welcome');
@@ -87,6 +89,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('members', MemberController::class)->names('admin.member.module');
     Route::get('/member-data', [MemberController::class, 'getMemberData'])->name('admin.member.data.index');
     Route::get('members-create', [MemberController::class,'create'])->name('admin.member.module.create');
+    Route::get('member-other-family/{id}', [MemberFamilyMemberController::class,'index'])->name('admin.member.module.otherFamily.index');
+    Route::post('member-other-family/{id}', [MemberFamilyMemberController::class,'update'])->name('admin.member.module.otherFamily.update');
 
 });
 
