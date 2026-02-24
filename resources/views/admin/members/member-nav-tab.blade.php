@@ -22,6 +22,10 @@
                     <?= $secondLastSegment == 'employee-office-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.member.module.otherFamily.index', $data->id) : '#' }}"> Other Family Member </a>
     </li>
     <li class="nav-item" role="presentation">
+        <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
+                    <?= $secondLastSegment == 'employee-office-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.member.module.office.index', $data->id) : '#' }}"> Office </a>
+    </li>
+    <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
                     <?= $secondLastSegment == 'employee-education-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.employee.education.edit', $data->id) : '#' }}"> Education </a>
     </li>
