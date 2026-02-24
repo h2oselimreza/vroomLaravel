@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberEductionController;
 use App\Http\Controllers\Admin\MemberFamilyMemberController;
 use App\Http\Controllers\Admin\MemberOfficeController;
+use App\Http\Controllers\Admin\MemberPhotoController;
+use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
@@ -102,6 +104,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-education/{id}', [MemberEductionController::class,'edit'])->name('admin.member.module.education.index');
     Route::post('member-education/{member}/education',
     [MemberEductionController::class,'update'])->name('admin.member.module.education.update');
+
+    Route::get('member-working-experience/{id}', [MemberWorkingExperieanceController::class, 'edit'])->name('admin.member.working.experience.edit');
+    Route::post('member-working-experience/{id}', [MemberWorkingExperieanceController::class, 'update'])->name('admin.member.working.experience.update');
+
+    Route::get('member-profile-photo/{id}', [MemberPhotoController::class, 'edit'])->name('admin.member.photo.edit');
+    Route::post('member-profile-photo/{id}', [MemberPhotoController::class, 'update'])->name('admin.member.photo.update');
 
 });
 

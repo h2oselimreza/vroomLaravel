@@ -120,7 +120,6 @@ class MemberController extends Controller
      */
     public function update(MemberRequest $request, Member $member)
     {
-        dd($request->all(),'ppppp');
         $member->update($request->validated());
 
         return redirect()

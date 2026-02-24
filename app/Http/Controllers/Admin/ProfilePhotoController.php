@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfilePhotoRequest;
 use App\Models\Employee;
+use App\Models\Member;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilePhotoController extends Controller
