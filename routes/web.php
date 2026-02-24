@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\MemberEductionController;
 use App\Http\Controllers\Admin\MemberFamilyMemberController;
 use App\Http\Controllers\Admin\MemberOfficeController;
 use App\Http\Controllers\Admin\ModuleController;
@@ -97,6 +98,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-office/{id}', [MemberOfficeController::class,'index'])->name('admin.member.module.office.index');
     Route::put('member-office/{member}/office',
     [MemberOfficeController::class,'update'])->name('admin.member.module.office.update');
+
+    Route::get('member-education/{id}', [MemberEductionController::class,'edit'])->name('admin.member.module.education.index');
+    Route::post('member-education/{member}/education',
+    [MemberEductionController::class,'update'])->name('admin.member.module.education.update');
 
 });
 
