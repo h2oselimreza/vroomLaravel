@@ -32,7 +32,6 @@ class MemberController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('action', content: function ($members) {
-                    $viewUrl   = route('admin.member.module.show', $members->id);
                     $editUrl   = route('admin.member.module.edit', $members->id);
                     $activeInactiveUrl   = route('admin.member.status', $members->id);
                     $statusText = $members->status == 1 ? 'Inactive' : 'Active';

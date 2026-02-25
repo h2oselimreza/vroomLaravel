@@ -37,25 +37,37 @@ class EmployeeController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('action', content: function ($employee) {
-                    $viewUrl   = route('admin.employee.module.show', $employee->id);
                     $editUrl   = route('admin.employee.module.edit', $employee->id);
-                    $deleteUrl = route('admin.employee.module.destroy', $employee->id);
+                    $activeInactiveUrl   = route('admin.employee.status', $employee->id);
+                    $statusText = $employee->is_active == 1 ? 'Inactive' : 'Active';
                     return '
-                        <a href="'.$viewUrl.'" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;View</span>
-                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
 
-                        <a href="'.$editUrl.'" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;Edit</span>
-                        </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
 
-                        <a onclick="deleteRecord(\''.$deleteUrl.'\')" 
-                        href="javascript:void(0)" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;Delete</span>
-                        </a>
+                                <!-- Edit -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="' . $editUrl . '">
+                                        <i class="fa fa-edit me-2"></i> Edit
+                                    </a>
+                                </li>
+
+                                <!-- Active / Inactive -->
+                                <li>
+                                    <form action="' . $activeInactiveUrl . '" method="POST">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="PATCH">
+                                        <button type="submit" class="dropdown-item d-flex align-items-center">
+                                            <i class="fa fa-toggle-on me-2"></i> ' . $statusText . '
+                                        </button>
+                                    </form>
+                                </li>
+
+                            </ul>
+                        </div>
                     ';
                 })
 
@@ -130,5 +142,13 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function updateStatus($id)
+    {
+        $employee = Employee::findOrFail($id);
+        $employee->is_active = $employee->is_active == 1 ? 0 : 1;
+        $employee->save();
+        return redirect()->back()->with('success', 'Status Updated Successfully');
     }
 }
