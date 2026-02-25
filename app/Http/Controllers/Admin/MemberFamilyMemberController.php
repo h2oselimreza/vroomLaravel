@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Member;
 use App\Models\MemberFamily;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,8 +11,7 @@ use Illuminate\Support\Facades\DB;
 class MemberFamilyMemberController extends Controller
 {
     public function index($id){
-        $data = MemberFamily::where(['id'=>$id])->first();
-        $empWorkingDetails = [];
+        $data = Member::where(['id'=>$id])->first();
         $memberFamilyDetails = $this->getMemberFamilyDetails($id);
         $commonTableElementArr = array('type' => 'family_relation');
         $relations = $this->getCommonTableElement($commonTableElementArr);
@@ -27,8 +27,6 @@ class MemberFamilyMemberController extends Controller
     DB::beginTransaction();
 
     try {
-        // 1. Get the parent member
-        $member = MemberFamily::findOrFail($memberId); // <-- use Member, not MemberFamily
 
         // 2. Submitted family members
         $familyData = $request->input('family_members', []);
@@ -53,7 +51,7 @@ class MemberFamilyMemberController extends Controller
             } else {
                 // Insert new family member
                 $newMemberFamily = MemberFamily::create([
-                    'member_id'  => $member->id, // <-- correct parent ID
+                    'member_id'  => $memberId, // <-- correct parent ID
                     'name'       => $family['name'] ?? null,
                     'relation'   => $family['relation'] ?? null,
                     'dob'        => $family['dob'] ?? null,
@@ -74,7 +72,7 @@ class MemberFamilyMemberController extends Controller
         }
 
         // 4. Delete family members not submitted
-        MemberFamily::where('member_id', $member->id)
+        MemberFamily::where('member_id', $memberId)
                     ->whereNotIn('id', $existingIds)
                     ->delete();
 
