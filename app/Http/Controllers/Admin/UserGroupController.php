@@ -45,45 +45,45 @@ class UserGroupController extends Controller
 
                     $statusText = $userGroups->is_active == 1 ? 'Inactive' : 'Active';
                     return '
-<div class="dropdown">
-    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Actions
-    </button>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
 
-    <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end">
 
-        <!-- Edit -->
-        <li>
-            <a class="dropdown-item d-flex align-items-center" href="' . $editUrl . '">
-                <i class="fa fa-edit me-2"></i> Edit
-            </a>
-        </li>
+                                <!-- Edit -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="' . $editUrl . '">
+                                        <i class="fa fa-edit me-2"></i> Edit
+                                    </a>
+                                </li>
 
-        <!-- Active / Inactive -->
-        <li>
-            <form action="' . $activeInactiveUrl . '" method="POST">
-                ' . csrf_field() . '
-                <input type="hidden" name="_method" value="PATCH">
-                <button type="submit" class="dropdown-item d-flex align-items-center">
-                    <i class="fa fa-toggle-on me-2"></i> ' . $statusText . '
-                </button>
-            </form>
-        </li>
+                                <!-- Active / Inactive -->
+                                <li>
+                                    <form action="' . $activeInactiveUrl . '" method="POST">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="PATCH">
+                                        <button type="submit" class="dropdown-item d-flex align-items-center">
+                                            <i class="fa fa-toggle-on me-2"></i> ' . $statusText . '
+                                        </button>
+                                    </form>
+                                </li>
 
-        <!-- Delete -->
-        <li>
-            <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
-                ' . csrf_field() . '
-                <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
-                    <i class="fa fa-trash me-2"></i> Delete
-                </button>
-            </form>
-        </li>
+                                <!-- Delete -->
+                                <li>
+                                    <form action="' . $deleteUrl . '" method="POST" onsubmit="return confirm(\'Are you sure you want to delete this record?\')">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                                            <i class="fa fa-trash me-2"></i> Delete
+                                        </button>
+                                    </form>
+                                </li>
 
-    </ul>
-</div>
-';
+                            </ul>
+                        </div>
+                        ';
                 })
 
                 ->rawColumns(['status', 'action'])

@@ -34,23 +34,36 @@ class MemberController extends Controller
                 ->addColumn('action', content: function ($members) {
                     $viewUrl   = route('admin.member.module.show', $members->id);
                     $editUrl   = route('admin.member.module.edit', $members->id);
-                    $deleteUrl = route('admin.member.module.destroy', $members->id);
+                    $activeInactiveUrl   = route('admin.member.status', $members->id);
+                    $statusText = $members->status == 1 ? 'Inactive' : 'Active';
                     return '
-                        <a href="'.$viewUrl.'" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;View</span>
-                        </a>
+                            <div class="dropdown">
+                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
 
-                        <a href="'.$editUrl.'" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;Edit</span>
-                        </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
 
-                        <a onclick="deleteRecord(\''.$deleteUrl.'\')" 
-                        href="javascript:void(0)" 
-                        class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
-                            <span class="ui-button-text">&nbsp;Delete</span>
-                        </a>
+                                <!-- Edit -->
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="' . $editUrl . '">
+                                        <i class="fa fa-edit me-2"></i> Edit
+                                    </a>
+                                </li>
+
+                                <!-- Active / Inactive -->
+                                <li>
+                                    <form action="' . $activeInactiveUrl . '" method="POST">
+                                        ' . csrf_field() . '
+                                        <input type="hidden" name="_method" value="PATCH">
+                                        <button type="submit" class="dropdown-item d-flex align-items-center">
+                                            <i class="fa fa-toggle-on me-2"></i> ' . $statusText . '
+                                        </button>
+                                    </form>
+                                </li>
+
+                            </ul>
+                        </div>
                     ';
                 })
 
@@ -305,5 +318,13 @@ class MemberController extends Controller
         }
 
         return $query->get(); // Returns collection
+    }
+
+    public function updateStatus($id)
+    {
+        $member = Member::findOrFail($id);
+        $member->is_active = $member->is_active == 1 ? 0 : 1;
+        $member->save();
+        return redirect()->back()->with('success', 'Status Updated Successfully');
     }
 }

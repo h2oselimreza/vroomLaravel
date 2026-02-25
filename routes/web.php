@@ -93,6 +93,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('members', MemberController::class)->names('admin.member.module');
     Route::get('/member-data', [MemberController::class, 'getMemberData'])->name('admin.member.data.index');
     Route::get('members-create', [MemberController::class,'create'])->name('admin.member.module.create');
+    Route::patch('member/{id}/status', [MemberController::class, 'updateStatus'])->name('admin.member.status');
+
 
     Route::get('member-other-family/{id}', [MemberFamilyMemberController::class,'index'])->name('admin.member.module.otherFamily.index');
     Route::post('member-other-family/{id}', [MemberFamilyMemberController::class,'update'])->name('admin.member.module.otherFamily.update');
