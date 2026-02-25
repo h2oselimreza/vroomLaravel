@@ -111,6 +111,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-profile-photo/{id}', [MemberPhotoController::class, 'edit'])->name('admin.member.photo.edit');
     Route::post('member-profile-photo/{id}', [MemberPhotoController::class, 'update'])->name('admin.member.photo.update');
 
+    Route::post('show-member-info', [MemberController::class, 'showMemberInfo'])->name('admin.member.show');
+
 });
 
 require __DIR__.'/auth.php';

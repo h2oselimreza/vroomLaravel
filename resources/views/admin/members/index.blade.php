@@ -43,6 +43,7 @@
                                 <th>Block</th>
                                 <th>Road</th>
                                 <th>Action</th>
+                                <th><input type="checkbox" id="selectAll"></th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -55,10 +56,18 @@
                             <th></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                     </tfoot>
                     </table>
                 </div>
+                <form action="{{ route('admin.member.show') }}" method="post">
+                    @csrf
+                    <div style="text-align:right;padding-right:25px">
+                        <input type="hidden" name="member_ids" id="member_ids" value="LM01174">
+                        <input type="submit" class="btn btn-success" value="Print Member Profile">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -67,7 +76,7 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
-    $('#datatable').DataTable({
+    table = $('#datatable').DataTable({
         processing: true,
         serverSide: true,
         ajax: "{{ route('admin.member.data.index') }}",
@@ -81,6 +90,7 @@
             {data: 'block', name: 'block', orderable:false, searchable:false, className: 'text-center'},
             {data: 'road', name: 'road', orderable:false, searchable:false, className: 'text-center'},
             {data: 'action', name: 'action', orderable:false, searchable:false, className: 'text-center'},
+            {data: 'checkbox', name: 'checkbox', orderable:false, searchable:false, className: 'text-center'},
         ],
 
         // ✅ moved here (DO NOT create second DataTable)
@@ -89,7 +99,7 @@
                 var column = this;
 
                 // ❌ Skip Action column (last column index = 7)
-                if (column.index() === 8) return;
+                if (column.index() === 9) return;
 
                 var select = $('<select class="form-control" style="width:100%"><option value="">All</option></select>')
                     .appendTo($(column.footer()).empty())
@@ -114,7 +124,56 @@
         }
     });
 
+
+    var selected = [];
+
+    // Restore checked state on draw (pagination/search)
+    table.on('draw', function () {
+        $('.rowCheckbox').each(function () {
+            $(this).prop('checked', selected.includes($(this).val()));
+        });
+    });
+
+    // Handle individual row checkbox click
+    $(document).on('change', '.rowCheckbox', function () {
+        var value = $(this).val();
+        if (this.checked) {
+            if (!selected.includes(value)) {
+                selected.push(value);
+            }
+        } else {
+            selected = selected.filter(id => id !== value);
+        }
+
+        // Store in hidden field
+        $('#member_ids').val(selected.join(','));
+    });
+
+    // Handle "Select All" checkbox
+    $('#selectAll').on('change', function () {
+
+        console.log("fnaju");
+
+        var checked = this.checked;
+        $('.rowCheckbox').each(function () {
+            $(this).prop('checked', checked).trigger('change');
+        });
+    });
+
 });
+
+// $(document).on('click', '#selectAll', function () {
+//     let rows = table.rows({ 'search': 'applied' }).nodes();
+//     $('input[type="checkbox"]', rows).prop('checked', this.checked);
+// });
+
+// // If one unchecked → uncheck header
+// $(document).on('click', '.rowCheckbox', function () {
+//     if (!this.checked) {
+//         $('#selectAll').prop('checked', false);
+//     }
+// });
+
 
 </script>
 @endpush
