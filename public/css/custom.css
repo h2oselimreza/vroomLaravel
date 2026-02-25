@@ -235,3 +235,12 @@ label {
 .dt-empty {
     text-align: center !important;
 }
+.save_button {
+    padding: 5px 16px;
+    font-size: 15px;
+    border-radius: 4px;
+}
+input[type="checkbox"] {
+    border: 1px solid #b0a7a7;
+    border-radius: 4px;
+}

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\MemberEductionController;
 use App\Http\Controllers\Admin\MemberFamilyMemberController;
 use App\Http\Controllers\Admin\MemberOfficeController;
 use App\Http\Controllers\Admin\MemberPhotoController;
+use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
@@ -115,6 +116,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('member-profile-photo/{id}', [MemberPhotoController::class, 'update'])->name('admin.member.photo.update');
 
     Route::post('show-member-info', [MemberController::class, 'showMemberInfo'])->name('admin.member.show');
+    Route::get('member-search-list', [MemberSearchController::class, 'index'])->name('admin.member.search.list');
+    Route::post('member-search', [MemberSearchController::class, 'search'])->name('admin.member.search');
+    Route::post('member-print', [MemberSearchController::class, 'print'])->name('admin.member.search.print');
 
 });
 
