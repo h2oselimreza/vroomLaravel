@@ -26,7 +26,7 @@
             @endif
 
             {{-- Validation Errors --}}
-            <!-- @if($errors->any())
+            @if($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
                         @foreach($errors->all() as $error)
@@ -34,7 +34,7 @@
                         @endforeach
                     </ul>
                 </div>
-            @endif -->
+            @endif
 
             <!-- Tab Content -->
             <div class="tab-content" id="employeeTabContent">
@@ -379,12 +379,7 @@
                                                     class="form-control @error('society_block') is-invalid @enderror">
 
                                                     <option value="">-- Select Block --</option>
-                                                    <!-- @foreach ( $blocks as $block)
-                                                        <option value="{{ $block->block_code }}"
-                                                            {{ old('block', $data->society_block ?? '') == $block->block_code ? 'selected' : '' }}>
-                                                            {{ $block->block_code }}-{{ $data->society_block }} dddd
-                                                        </option>
-                                                    @endforeach -->
+                      
 
                                                 </select>
 
