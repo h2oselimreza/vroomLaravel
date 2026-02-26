@@ -198,7 +198,7 @@
                                 value="{{ isset($employeeWorkingDetails) ? count($employeeWorkingDetails) : 0 }}">
 
                             <input type="submit"
-                                class="btn btn-success btn-sm"
+                                class="btn btn-success btn-sm save_button mt-3"
                                 id="updateMemberSubmit"
                                 value="Update">
 

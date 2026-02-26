@@ -817,37 +817,12 @@
                         </div>
 
                         <div class="mt-4 text-end">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success save_button">
                                 {{ $isEdit ? 'Update Employee' : 'Save Employee' }}
                             </button>
                         </div>
 
                     </form>                    
-                </div>
-
-                {{-- Office Information --}}
-                <div class="tab-pane fade"
-                    id="official"
-                    role="tabpanel">
-                    <h5>Official Information</h5>
-                </div>
-
-                <div class="tab-pane fade"
-                    id="education"
-                    role="tabpanel">
-                    <h5>Education Information</h5>
-                </div>
-
-                <div class="tab-pane fade"
-                    id="experience"
-                    role="tabpanel">
-                    <h5>Working Experience</h5>
-                </div>
-
-                <div class="tab-pane fade"
-                    id="photo"
-                    role="tabpanel">
-                    <h5>Photograph Upload</h5>
                 </div>
 
             </div>

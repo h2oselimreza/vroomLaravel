@@ -203,7 +203,7 @@
                         class="btn btn-sm btn-danger">
 
                     <div class="checkbox text-end">
-                        <input type="submit" class="btn btn-success btn-sm" id="updateMemberSubmit" value="Update">
+                        <input type="submit" class="btn btn-success btn-sm save_button" id="updateMemberSubmit" value="Update">
                     </div>
                 </div>
             </form>

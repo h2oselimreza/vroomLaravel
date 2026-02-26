@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         <div class="mt-4 text-end">
-                            <button type="submit" class="btn btn-success profile_photo">
+                            <button type="submit" class="btn btn-success profile_photo save_button">
                                 Update Photo
                             </button>
                         </div>

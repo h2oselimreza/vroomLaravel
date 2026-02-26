@@ -316,7 +316,7 @@
                                             <input type="button"
                                                 value="Add More Working Experience"
                                                 onclick="addEduQualificationDiv()"
-                                                class="btn btn-sm btn-primary add_button">
+                                                class="btn btn-sm btn-primary add_button save_button">
                                         </div>
                                     </div>
                                 </div>

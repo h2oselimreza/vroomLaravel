@@ -153,7 +153,7 @@
                         </div>
 
                         <div class="mt-4 text-end">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success save_button">
                             Update Office Info
                             </button>
                         </div>
