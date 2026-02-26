@@ -4,8 +4,13 @@
 
 <div class="header dashboard_from">
     <h1 class="page-title">
-        {{ isset($data->exists) ? 'Edit Employee' : 'Add Employee' }}
+        Update Office information
     </h1>
+    <ul class="breadcrumb">
+        <li><a href="#"> Home</a></li>
+        <li><a href="#">/ Master Data</a></li>
+        <li><a href="#">/ Member</a></li>
+    </ul>
 </div>
 <div class="container">
     <div class="card shadow">
@@ -54,8 +59,12 @@
                                             {{-- ddd --}}
                                             <div class="col-md-6">
                                                 <label class="form-label">Member Type</label>
-                                                <select name="member_type"
+                                                <select name="member_type" id="memberType"
+                                                    onchange="showDonarMember()"
                                                     class="form-control @error('member_type') is-invalid @enderror">
+
+                                                    <option value="">--Select Member Type--</option>
+
                                                     @php
                                                         $designations = [
                                                             'life' => 'Life',
@@ -64,8 +73,8 @@
                                                     @endphp
 
                                                     @foreach($designations as $value => $label)
-                                                        <option value="{{ $value }}" 
-                                                            {{ old('designation', $data->designation ?? '') == $value ? 'selected' : '' }}>
+                                                        <option value="{{ $value }}"
+                                                            {{ old('member_type', $data->member_type ?? '') == $value ? 'selected' : '' }}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach
@@ -75,6 +84,19 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
+
+                                            <?php 
+                                                $donarMemberDiv = 'none';
+                                                if($data->member_type == \App\Enums\MemberType::DONATE->value){
+                                                    $donarMemberDiv = "block";
+                                                } ?>
+
+                                                <div class="col-md-6 col-sm-6 col-xs-12" id="donarMemberDiv" style="display: <?php echo $donarMemberDiv?>;">
+                                                    <div class="form-group" >
+                                                        <label class="form-label"> Donar Member ID </label>
+                                                        <input type="text" class="form-control" id="donarMemberId" name="donarMemberId" value="{{ $data->donar_member_id }}" placeholder="Donar Member ID">
+                                                    </div>
+                                                </div>
 
                                             <div class="col-md-6 col-sm-6 col-xs-12">
                                                 <div class="form-group">
@@ -154,5 +176,13 @@
             orientation: 'bottom'  // show below the input
         });
     });
+    function showDonarMember(){
+        var memberType = $('#memberType').val();
+        console.log(memberType);
+        $('#donarMemberDiv').hide();
+        if(memberType == 'donate') {
+            $('#donarMemberDiv').show();
+        }
+    }
 </script>
 @endpush

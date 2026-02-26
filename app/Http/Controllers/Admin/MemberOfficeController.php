@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\MemberType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeOfficeRequest;
 use App\Http\Requests\MemberOfficeRequest;
@@ -20,11 +21,14 @@ class MemberOfficeController extends Controller
 
     public function update(MemberOfficeRequest $request, Member $member)
     {
-        //dd($member);
         DB::transaction(function () use ($request, $member) {
-
-            // Update employee office info first
-            $member->update($request->validated());
+            $data = $request->validated();
+            // Set donar_member_id based on member_type
+            $data['donar_member_id'] = null;
+            if ($request->member_type === MemberType::DONATE->value) {
+                $data['donar_member_id'] = $request->donarMemberId;
+            }
+            $member->update($data);
         });
 
         return redirect()

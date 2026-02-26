@@ -4,8 +4,13 @@
 
 <div class="header dashboard_from">
     <h1 class="page-title">
-        {{ isset($data->exists) ? 'Edit Member' : 'Add Member' }}
+        {{ isset($data->exists) ? 'Update Personal Information' : 'Add Member' }}
     </h1>
+    <ul class="breadcrumb">
+        <li><a href="#"> Home</a></li>
+        <li><a href="#">/ Master Data</a></li>
+        <li><a href="#">/ Member</a></li>
+    </ul>
 </div>
 
 @php
