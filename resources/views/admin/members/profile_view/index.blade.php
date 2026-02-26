@@ -134,7 +134,7 @@
                                                     <tr> 
                                                         <td width="126" height="135" align="center" bgcolor="<?php /*echo $bgcolor2*/ ?>" valign="middle"> <!-- bgcolor variable e nite hbe-->
                                                             <?php if ($personalInformation->member_image) { ?>
-                                                                
+                                                                <img src="{{ asset('storage/member/' . $personalInformation->member_image) }}" width="124" height="135">
                                                             <?php } ?>
                                                         </td>
                                                     </tr>

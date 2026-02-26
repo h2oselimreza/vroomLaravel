@@ -65,7 +65,7 @@
                     @csrf
                     <div style="text-align:right;padding-right:25px">
                         <input type="hidden" name="member_ids" id="member_ids" value="LM01174">
-                        <input type="submit" class="btn btn-success" value="Print Member Profile">
+                        <input type="submit" class="btn btn-success save_button" value="Print Member Profile">
                     </div>
                 </form>
             </div>
