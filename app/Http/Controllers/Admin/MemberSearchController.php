@@ -117,12 +117,29 @@ class MemberSearchController extends Controller
 
     public function print(Request $request){
         $memberIdArr = $array = explode(',', $request->input('member_ids'));
-        $personalInformations = $this->getMemberPersonalInfoOrderBy('',$memberIdArr);
-        $educationQualifications = $this->getMemberEducationalDetails('',$memberIdArr);
-        $workingExperiences = $this->getMemberWorkingDetails('',$memberIdArr);
-        $otherFamilyMembers = $this->getMemberFamilyDetails('',$memberIdArr);
-        return view('admin.members.profile_view.index',
-        compact('personalInformations','educationQualifications','workingExperiences','otherFamilyMembers'));
+        $orderBy = $request->input('orderBy');
+        $printType = $request->input('printType');
+        $printId = $request->input('printId');
+        if ($memberIdArr) {
+            $personalInformations = $this->getMemberPersonalInfoOrderBy(null,$memberIdArr,1, null, $orderBy);
+            $educationQualifications = $this->getMemberEducationalDetails(null,$memberIdArr);
+            $workingExperiences = $this->getMemberWorkingDetails(null,$memberIdArr);
+            $otherFamilyMembers = $this->getMemberFamilyDetails(null,$memberIdArr);
+
+            if($printType == 'profile') {
+                return view('admin.members.profile_view.index',
+            compact('personalInformations','educationQualifications','workingExperiences','otherFamilyMembers'));
+            }elseif ($printType == 'voterlist'){
+                // $printType = $printType;
+                $printMemberId = $printId;
+                return view('admin.members.profile_view.voter-list',
+            compact('personalInformations','educationQualifications','workingExperiences','otherFamilyMembers','printMemberId'));
+            }
+
+        } else {
+            echo "<script>alert('Please select at least one member...!')</script>";
+            $this->memberList();
+        }
     }
 
     private function getMemberPersonalInfoOrderBy($memberId = null, $memberIdArr = [], $flag = null, $memberAutoIdArr = [], $orderBy = null)
