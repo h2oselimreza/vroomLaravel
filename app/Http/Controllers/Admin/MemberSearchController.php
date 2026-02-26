@@ -134,6 +134,10 @@ class MemberSearchController extends Controller
                 $printMemberId = $printId;
                 return view('admin.members.profile_view.voter-list',
             compact('personalInformations','educationQualifications','workingExperiences','otherFamilyMembers','printMemberId'));
+            }else{
+                $printMemberId = $printId;
+                return view('admin.members.profile_view.voter-english-bangla',
+            compact('personalInformations','educationQualifications','workingExperiences','otherFamilyMembers','printMemberId','printType'));
             }
 
         } else {
