@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberEductionController;
 use App\Http\Controllers\Admin\MemberFamilyMemberController;
+use App\Http\Controllers\Admin\MemberIdCardController;
 use App\Http\Controllers\Admin\MemberOfficeController;
 use App\Http\Controllers\Admin\MemberPhotoController;
 use App\Http\Controllers\Admin\MemberSearchController;
@@ -119,6 +120,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-search-list', [MemberSearchController::class, 'index'])->name('admin.member.search.list');
     Route::post('member-search', [MemberSearchController::class, 'search'])->name('admin.member.search');
     Route::post('member-print', [MemberSearchController::class, 'print'])->name('admin.member.search.print');
+
+    Route::get('member-id-card', [MemberIdCardController::class,'index'])->name('member.id.card.index');
+    Route::get('/member-id-card-data', [MemberIdCardController::class, 'getMemberIdCardData'])->name('admin.memberIdCard.data.index');
+    Route::post('print-member-id-card', [MemberIdCardController::class, 'PrintMemberIdCard'])->name('print.member.id.card');
 
 });
 

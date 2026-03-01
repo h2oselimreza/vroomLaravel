@@ -232,6 +232,7 @@ label {
     background: transparent;
     color: #000;
     border: 1px solid #ddd;
+    font-size: 13px;
 }
 .dt-empty {
     text-align: center !important;

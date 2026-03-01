@@ -34,9 +34,9 @@ class TokenService
             } else {
                 // Increment tokenNo by 1
                 $tokenNo = $token->tokenNo + 1;
-                // DB::table('token')->where('code', $code)->update([
-                //     'tokenNo' => $tokenNo
-                // ]);
+                DB::table('token')->where('code', $code)->update([
+                    'tokenNo' => $tokenNo
+                ]);
             }
 
             // Return tokenNo with leading zeros

@@ -98,7 +98,7 @@ class MemberController extends Controller
         DB::transaction(function () use ($request, $tokenService, $prefix) {
             // Generate token inside the transaction
             $memberId = $prefix . $tokenService->getTokenByCode($prefix);
-
+            //dd($memberId);
             $data = $request->validated();
             $data['member_id'] = $memberId;
 
