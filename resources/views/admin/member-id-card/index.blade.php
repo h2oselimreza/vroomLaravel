@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Member</h1>
+    <h1 class="page-title">Member Id Card</h1>
     <ul class="breadcrumb">
         <li><a href="#"> Home</a></li>
         <li><a href="#">/ Master Data</a></li>
@@ -24,9 +24,6 @@
         </div>
     @endif
 
-    <div class="add-button">
-        <a href="{{ route('admin.member.module.create') }}">Add Member</a>
-    </div>
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default"> 
