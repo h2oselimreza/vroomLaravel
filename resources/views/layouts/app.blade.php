@@ -32,6 +32,9 @@
         <!-- Bootstrap Datepicker -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.10.0/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
+        <!-- Ckeditor -->
+        <!-- <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/47.5.0/ckeditor5.css"> -->
+
         <!-- Your custom styles -->
         <link rel="stylesheet" href="{{ asset('assets/select_bo/css/theme.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/select_bo/css/myStyle.css') }}">
@@ -202,6 +205,10 @@
 
         <!-- Your scripts -->
         <script src="{{ asset('assets/select_bo/js/myScript.js') }}"></script>
+
+        <!-- <script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/6/tinymce.min.js"></script> -->
+        <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js"></script> -->
 
         <!-- Vite -->
         @vite(['resources/js/app.js'])

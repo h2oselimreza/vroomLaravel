@@ -23,9 +23,9 @@ class MemberPhotoController extends Controller
 
             // Delete old image if exists
             if ($employee->member_image &&
-                Storage::disk('public')->exists('member/' . $employee->member_image)) {
+                Storage::disk('public')->exists('images/member/' . $employee->member_image)) {
 
-                Storage::disk('public')->delete('member/' . $employee->member_image);
+                Storage::disk('public')->delete('images/member/' . $employee->member_image);
             }
 
             // Store new image

@@ -24,9 +24,9 @@ class ProfilePhotoController extends Controller
 
             // Delete old image if exists
             if ($employee->employee_image &&
-                Storage::disk('public')->exists('employee/' . $employee->employee_image)) {
+                Storage::disk('public')->exists('images/employee/' . $employee->employee_image)) {
 
-                Storage::disk('public')->delete('employee/' . $employee->employee_image);
+                Storage::disk('public')->delete('images/employee/' . $employee->employee_image);
             }
 
             // Store new image
