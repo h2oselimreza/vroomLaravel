@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\NewsController;
+use App\Http\Controllers\Admin\Web\WebsiteController;
 use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
@@ -129,10 +130,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*==================Web Controllers==============*/
     Route::resource('news', NewsController::class)->names('admin.news.module');
-    Route::get('/news-data', [NewsController::class, 'getNewsData'])->name('admin.news.data.index');
+    Route::get('news-data', [NewsController::class, 'getNewsData'])->name('admin.news.data.index');
 
     Route::resource('sliders', WebSliderController::class)->names('admin.slider.module');
-    Route::get('/slider-data', [WebSliderController::class, 'getTableData'])->name('admin.slider.data.index');
+    Route::get('slider-data', [WebSliderController::class, 'getTableData'])->name('admin.slider.data.index');
+
+    Route::resource('website-module', WebsiteController::class)->names('admin.website.module');
+    Route::get('website-module-data', [WebsiteController::class, 'getTableData'])->name('admin.website.data.index');
 
 
 });
