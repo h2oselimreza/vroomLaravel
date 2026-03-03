@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\NewsController;
 use App\Http\Controllers\Admin\Web\WebAchievementsController;
 use App\Http\Controllers\Admin\Web\WebModuleDescriptionController;
+use App\Http\Controllers\Admin\Web\WebNoticeController;
 use App\Http\Controllers\Admin\Web\WebsiteController;
 use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
@@ -145,6 +146,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('achievements', WebAchievementsController::class)->names('admin.achievements.module');
     Route::get('module-achievements-data', [WebAchievementsController::class, 'getTableData'])->name('admin.achievements.data.index');
+
+    Route::resource('notices', WebNoticeController::class)->names('admin.notices.module');
+    Route::get('module-notices-data', [WebNoticeController::class, 'getTableData'])->name('admin.notices.data.index');
 
 
 });

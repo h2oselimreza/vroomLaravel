@@ -85,7 +85,6 @@ class WebModuleDescriptionController extends Controller
      */
     public function store(ModuleDescriptionRequest $request)
     {
-        dd($request->all());
         $data = $request->validated();
         if ($request->hasFile('image')) {
             $image = $request->file('image');
