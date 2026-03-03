@@ -3,34 +3,33 @@
 namespace App\Http\Controllers\Admin\Web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Web\ModuleDescriptionRequest;
-use App\Models\Web\ModuleDetail;
-use App\Models\Web\Slider;
-use App\Models\Web\WebsiteModule;
+use App\Http\Requests\Web\AchievementsRequest;
+use App\Models\Web\WebAchievement;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
-class WebModuleDescriptionController extends Controller
+class WebAchievementsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view("admin.web.web-module-description.index");
+        return view("admin.web.achievements.index");
     }
 
     public function getTableData(Request $request){
         if ($request->ajax()) {
 
-            $data = ModuleDetail::select([
+            $data = WebAchievement::select([
                 'id',
-                'module_code',
                 'heading',
                 'short_description',
+                'details',
+                'is_active',
                 'image',
-                'description',
+                'date',
             ]);
 
             return DataTables::of($data)
@@ -39,17 +38,17 @@ class WebModuleDescriptionController extends Controller
             // Show image
             ->addColumn('image', function ($data) {
                 if ($data->image) {
-                    $url = asset('images/module-description/' . $data->image);
-                    return '<img src="' . $url . '" alt="module-description Image" width="200" height="150">';
+                    $url = asset('images/achievements/' . $data->image);
+                    return '<img src="' . $url . '" alt="module-description Image" width="150" height="100">';
                 }
                 return 'No Image';
             })
 
             // Action buttons
             ->addColumn('action', function ($data) {
-                $viewUrl   = route('admin.module-description.module.show', $data->id);
-                $editUrl   = route('admin.module-description.module.edit', $data->id);
-                $deleteUrl = route('admin.module-description.module.destroy', $data->id);
+                $viewUrl   = route('admin.achievements.module.show', $data->id);
+                $editUrl   = route('admin.achievements.module.edit', $data->id);
+                $deleteUrl = route('admin.achievements.module.destroy', $data->id);
                 return '
                     <a href="'.$editUrl.'" 
                     class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
@@ -70,35 +69,32 @@ class WebModuleDescriptionController extends Controller
         }
     }
 
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $webSiteModule = WebsiteModule::get();
-        return view('admin.web.web-module-description.create-update',compact('webSiteModule'));
+        return view('admin.web.achievements.create-update');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ModuleDescriptionRequest $request)
+    public function store(AchievementsRequest $request)
     {
-        dd($request->all());
         $data = $request->validated();
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/module-description'), $filename);
+            $image->move(public_path('images/achievements'), $filename);
 
             $data['image'] = $filename;
         }
+        WebAchievement::create($data);;
 
-        ModuleDetail::create($data);;
         return redirect()
-        ->route('admin.module-description.module.index')
-        ->with('success', 'Module description created successfully.');
+        ->route('admin.achievements.module.index')
+        ->with('success', 'Achievements created successfully.');
     }
 
     /**
@@ -112,53 +108,49 @@ class WebModuleDescriptionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(string $id)
     {
-        $data = ModuleDetail::findOrFail($id);
-        $webSiteModule = WebsiteModule::get();
-        return view('admin.web.web-module-description.create-update', compact('data','webSiteModule'));
+        $data = WebAchievement::findOrFail($id);
+        return view('admin.web.achievements.create-update',compact('data'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ModuleDescriptionRequest $request, $id)
+    public function update(AchievementsRequest $request, $id)
     {
-        $moduleDetail = ModuleDetail::findOrFail($id);
+        $achievement = WebAchievement::findOrFail($id);
 
-        $validatedData = $request->validated();
+        $data = $request->validated();
 
-        // Handle image upload
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
-            // Optional: delete old image
-            if ($moduleDetail->image && file_exists(public_path('images/module-description/' . $moduleDetail->image))) {
-                unlink(public_path('images/module-description/' . $moduleDetail->image));
+            if ($achievement->image && file_exists(public_path('images/achievements/' . $achievement->image))) {
+                unlink(public_path('images/achievements/' . $achievement->image));
             }
 
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/module-description'), $filename);
+            $image->move(public_path('images/achievements'), $filename);
 
-            $validatedData['image'] = $filename;
+            $data['image'] = $filename;
         }
 
-        $moduleDetail->update($validatedData);
+        $achievement->update($data);
 
         return redirect()
-            ->route('admin.module-description.module.index')
-            ->with('success', 'Module description updated successfully.');
+            ->route('admin.achievements.module.index')
+            ->with('success', 'Achievement updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(WebAchievement $achievement)
     {
-        $data = ModuleDetail::findOrFail($id);
-        $data->delete();
+        $achievement->delete();
         return redirect()
-            ->route('admin.module-description.module.index')
-            ->with('success', 'Module description deleted successfully.');
+            ->route('admin.achievements.module.index')
+            ->with('success', 'Achievement deleted successfully.');
     }
 }
