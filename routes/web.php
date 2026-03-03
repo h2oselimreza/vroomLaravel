@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\UserGroupController;
+use App\Http\Controllers\Admin\Web\EventController;
 use App\Http\Controllers\Admin\Web\NewsController;
 use App\Http\Controllers\Admin\Web\WebAchievementsController;
 use App\Http\Controllers\Admin\Web\WebModuleDescriptionController;
@@ -149,6 +150,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('notices', WebNoticeController::class)->names('admin.notices.module');
     Route::get('module-notices-data', [WebNoticeController::class, 'getTableData'])->name('admin.notices.data.index');
+
+    Route::resource('events', EventController::class)->names('admin.events.module');
+    Route::get('module-events-data', [EventController::class, 'getTableData'])->name('admin.events.data.index');
 
 
 });
