@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\NewsController;
+use App\Http\Controllers\Admin\Web\WebModuleDescriptionController;
 use App\Http\Controllers\Admin\Web\WebsiteController;
 use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
@@ -137,6 +138,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('website-module', WebsiteController::class)->names('admin.website.module');
     Route::get('website-module-data', [WebsiteController::class, 'getTableData'])->name('admin.website.data.index');
+
+    Route::resource('module-description', WebModuleDescriptionController::class)->names('admin.module-description.module');
+    Route::get('module-description-data', [WebModuleDescriptionController::class, 'getTableData'])->name('admin.module-description.data.index');
 
 
 });

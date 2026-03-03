@@ -4,7 +4,7 @@ namespace App\Http\Requests\Web;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SliderRequest extends FormRequest
+class ModuleDescriptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,15 +22,13 @@ class SliderRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'image_order' => 'required|integer',
+            'module_code' => 'required',
+            'heading' => 'nullable',
+            'short_description' => 'nullable',
+            'description' => 'required',
         ];
 
-        // If creating (POST), image is required; if updating (PUT), it's optional
-        if ($this->isMethod('post')) {
-            $rules['image'] = 'required|image|mimes:jpg,jpeg,png|dimensions:width=1500,height=600|max:2048';
-        } elseif ($this->isMethod('put')) {
-            $rules['image'] = 'nullable|image|mimes:jpg,jpeg,png|dimensions:width=1500,height=600|max:2048';
-        }
+        $rules['image'] = 'nullable|image|mimes:jpg,jpeg,png|dimensions:width=1500,height=600|max:2048';
 
         return $rules;
     }
@@ -38,6 +36,7 @@ class SliderRequest extends FormRequest
     public function messages()
     {
         return [
+            'module_code.required' => 'Module name is required',
             'image.required' => 'Please select an image.',
             'image.image' => 'The file must be an image.',
             'image.mimes' => 'Only JPG and PNG images are allowed.',
