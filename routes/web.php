@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\EventController;
+use App\Http\Controllers\Admin\Web\GalleryImageController;
+use App\Http\Controllers\Admin\Web\ImageAlbumsController;
 use App\Http\Controllers\Admin\Web\NewsController;
 use App\Http\Controllers\Admin\Web\WebAchievementsController;
 use App\Http\Controllers\Admin\Web\WebModuleDescriptionController;
@@ -154,6 +156,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('events', EventController::class)->names('admin.events.module');
     Route::get('module-events-data', [EventController::class, 'getTableData'])->name('admin.events.data.index');
 
+    Route::resource('gallery-image', ImageAlbumsController::class)->names('admin.gallery-image.module');
+    Route::get('module-gallery-image-data', [ImageAlbumsController::class, 'getTableData'])->name('admin.gallery-image.data.index');
+    Route::post('gallery-image/update-home', [GalleryImageController::class, 'updateHomeGallery'])->name('gallery-image.module.update');
+    Route::get('gallery-image/{album_id}/{gallery_id}', [GalleryImageController::class, 'destroy'])->name('gallery-image.destroy');
 
 });
 
