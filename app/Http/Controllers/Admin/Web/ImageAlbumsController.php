@@ -188,10 +188,6 @@ class ImageAlbumsController extends Controller
                         'image' => $filename,
                         'is_active' => 1,
                         'home_flag' => 0,
-                        'created_by' => auth()->id(),
-                        'created_dt_tm' => now(),
-                        'updated_by' => auth()->id(),
-                        'updated_dt_tm' => now(),
                     ]);
                 }
             }

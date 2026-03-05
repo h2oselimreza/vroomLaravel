@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\UserGroupController;
+use App\Http\Controllers\Admin\Web\AlbumController;
 use App\Http\Controllers\Admin\Web\EventController;
 use App\Http\Controllers\Admin\Web\GalleryImageController;
 use App\Http\Controllers\Admin\Web\ImageAlbumsController;
@@ -160,6 +161,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('module-gallery-image-data', [ImageAlbumsController::class, 'getTableData'])->name('admin.gallery-image.data.index');
     Route::post('gallery-image/update-home', [GalleryImageController::class, 'updateHomeGallery'])->name('gallery-image.module.update');
     Route::get('gallery-image/{album_id}/{gallery_id}', [GalleryImageController::class, 'destroy'])->name('gallery-image.destroy');
+
+    Route::get('album', [AlbumController::class, 'index'])->name('admin.album.index');
+    Route::post('album', [AlbumController::class, 'store'])->name('admin.album.store');
+    Route::post('album/delete', [AlbumController::class, 'deleteImages'])->name('admin.album.delete');
+    Route::get('/admin/album-details', [AlbumController::class, 'albumDetails'])->name('admin.album.details');
+
 
 });
 

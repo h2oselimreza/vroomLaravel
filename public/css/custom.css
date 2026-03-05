@@ -238,8 +238,8 @@ label {
     text-align: center !important;
 }
 .save_button {
-    padding: 5px 16px;
-    font-size: 14px;
+    padding: 4px 13px;
+    font-size: 13px;
     border-radius: 4px;
 }
 input[type="checkbox"] {
@@ -260,4 +260,18 @@ table.dataTable thead th {
 
 table.dataTable .dt-column-header {
     color: white;
+}
+.image_block {
+    width: auto !important;
+}
+.image_block_inner .checkbox {
+    left: -21px !important;
+    top: -3px !important;
+    box-shadow: none;
+}
+.image_block_inner img {
+    border-radius: 5px;
+}
+.gallery_image_reload {
+    color: #0d6efd;
 }
