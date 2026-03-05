@@ -63,7 +63,7 @@ class WebAchievementsController extends Controller
                 ';
             })
 
-            ->rawColumns(['action', 'image']) // Important: allow HTML
+            ->rawColumns(['action', 'image', 'details']) // Important: allow HTML
             ->make(true);
 
         }

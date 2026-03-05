@@ -43,21 +43,22 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="col-md-6 mb-3">
+                </div>    
+                <div class="row">
+                    <div class="col-md-8 mb-3">
                         <label class="form-label">
                             Body :
                         </label>
 
-                        <textarea name="body" id="editor" class="form-control">
-                            {{ old('body', $data->body ?? '') }}
-                        </textarea>
+                        <div id="editor" style="height:200px;"></div>
+                        <input type="hidden" name="body" id="description" value="{{ old('body', $data->body ?? '') }}">
 
                         @error('body')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Active Status :</label>
 
@@ -87,7 +88,8 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Publish Date :</label>
                         <input type="text" name="publish_date" placeholder="Select Date" class="form-control dateInput" value="{{ old('publish_date', $data->publish_date ?? '') }}">
@@ -126,10 +128,5 @@
             orientation: 'bottom'  // show below the input
         });
     });
-    // tinymce.init({
-    //     selector: '#editor',
-    //     height: 300
-    // });
-    ClassicEditor.create(document.querySelector('#editor'));
 </script>
 @endpush

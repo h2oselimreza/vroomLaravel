@@ -58,7 +58,7 @@
                         <label class="form-label">
                             Body :
                         </label>
-                        <div id="editor" style="height:250px;"></div>
+                        <div id="editor" style="height:200px;"></div>
                         <input type="hidden" name="body" id="description" value="{{ old('body', $data->body ?? '') }}">
 
                         @error('body')

@@ -95,14 +95,13 @@
                 </div>
 
                  <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-8 mb-3">
                         <label class="form-label">
                             Description :
                         </label>
 
-                        <textarea name="description" id="editor" class="form-control">
-                            {{ old('description', $data->description ?? '') }}
-                        </textarea>
+                        <div id="editor" style="height:200px;"></div>
+                        <input type="hidden" name="description" id="description" value="{{ old('description', $data->description ?? '') }}">
 
                         @error('description')
                             <div class="text-danger">{{ $message }}</div>
@@ -138,10 +137,5 @@
             orientation: 'bottom'  // show below the input
         });
     });
-    // tinymce.init({
-    //     selector: '#editor',
-    //     height: 300
-    // });
-    ClassicEditor.create(document.querySelector('#editor'));
 </script>
 @endpush

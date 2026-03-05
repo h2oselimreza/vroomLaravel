@@ -69,7 +69,7 @@ class WebNoticeController extends Controller
                 ';
             })
 
-            ->rawColumns(['action', 'is_active']) // Important: allow HTML
+            ->rawColumns(['action', 'is_active','body']) // Important: allow HTML
             ->make(true);
 
         }

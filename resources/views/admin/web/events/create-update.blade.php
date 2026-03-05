@@ -43,7 +43,8 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Short Description :</label>
                         <input type="text" name="short_description" placeholder="Short description" class="form-control" value="{{ old('short_description', $data->short_description ?? '') }}">
@@ -52,21 +53,22 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <div class="col-md-6 mb-3">
+                </div>
+                <div class="row">
+                    <div class="col-md-8 mb-3">
                         <label class="form-label">
                             Detais :
                         </label>
 
-                        <textarea name="details" id="editor" class="form-control">
-                            {{ old('details', $data->details ?? '') }}
-                        </textarea>
+                        <div id="editor" style="height:200px;"></div>
+                        <input type="hidden" name="details" id="description" value="{{ old('details', $data->details ?? '') }}">
 
                         @error('details')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Active Status :</label>
 
@@ -95,7 +97,8 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Image :</label>
                         
@@ -111,7 +114,8 @@
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Date :</label>
                         <input type="text" name="date" placeholder="Select Date" class="form-control dateInput" value="{{ old('date', $data->date ?? '') }}">
@@ -150,10 +154,5 @@
             orientation: 'bottom'  // show below the input
         });
     });
-    // tinymce.init({
-    //     selector: '#editor',
-    //     height: 300
-    // });
-    ClassicEditor.create(document.querySelector('#editor'));
 </script>
 @endpush
