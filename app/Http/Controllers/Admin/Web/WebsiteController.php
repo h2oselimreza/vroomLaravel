@@ -40,7 +40,7 @@ class WebsiteController extends Controller
                 ';
             })
 
-            ->rawColumns(['action', 'image']) // Important: allow HTML
+            ->rawColumns(['action', 'image','description']) // Important: allow HTML
             ->make(true);
 
         }

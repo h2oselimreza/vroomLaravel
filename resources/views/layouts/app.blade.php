@@ -34,6 +34,7 @@
 
         <!-- Ckeditor -->
         <!-- <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/47.5.0/ckeditor5.css"> -->
+         <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
 
         <!-- Your custom styles -->
         <link rel="stylesheet" href="{{ asset('assets/select_bo/css/theme.css') }}">
@@ -207,12 +208,61 @@
         <script src="{{ asset('assets/select_bo/js/myScript.js') }}"></script>
 
         <!-- <script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/6/tinymce.min.js"></script> -->
-        <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+        <!-- <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script> -->
+        <!-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> -->
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js"></script> -->
+         <!-- Quill JS -->
+        <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
 
         <!-- Vite -->
         @vite(['resources/js/app.js'])
         {{-- PAGE-SPECIFIC SCRIPTS --}}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            var quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Write something...',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                    ['bold', 'italic', 'underline', 'strike'],
+
+                    [{ 'color': [] }, { 'background': [] }],
+
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+
+                    [{ 'header': 1 }, { 'header': 2 }, 'blockquote', 'code-block'],
+
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+
+                    [{ 'direction': 'rtl' }],
+
+                    [{ 'align': [] }],
+
+                    ['link', 'image', 'video'],
+
+                    ['clean']
+                ]
+            }
+        });
+
+        // ✅ Load existing content
+        var oldData = document.getElementById('description').value;
+        if(oldData){
+            quill.root.innerHTML = oldData;
+        }
+
+        // Save editor data to hidden input
+        quill.on('text-change', function() {
+            document.getElementById('description').value = quill.root.innerHTML;
+        });
+            })
+        </script>
         @stack('scripts')
     </body>
 </html>

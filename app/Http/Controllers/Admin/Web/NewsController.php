@@ -63,7 +63,7 @@ class NewsController extends Controller
                     ';
                 })
 
-                ->rawColumns(['action'])
+                ->rawColumns(['body','action'])
                 ->make(true);
 
         }
