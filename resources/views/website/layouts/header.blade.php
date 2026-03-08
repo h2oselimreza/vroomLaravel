@@ -16,7 +16,7 @@
           <div class="navbar-collapse collapse" style="padding-left:0px;padding-right:0px;box-shadow:1px 0px 9px 0px rgba(53,50,50,0.85);">
             <ul class="nav navbar-nav">
               <li>
-                <a href="{{ url('Home') }}">Home</a>
+                <a href="{{ url('/') }}">Home</a>
               </li>
               <li>
                 <a href="#">About Us</a>
@@ -25,28 +25,28 @@
                     <a href="{{ url('about-society') }}">About Society</a>
                   </li>
                   <li>
-                    <a href="{{ url('historyOfSociety') }}">History of Society</a>
+                    <a href="{{ url('history-of-society') }}">History of Society</a>
                   </li>
                   <li>
-                    <a href="{{ url('messageFromPresident') }}">Message from President</a>
+                    <a href="{{ url('message-from-president') }}">Message from President</a>
                   </li>
                   <li>
-                    <a href="{{ url('messageFromGeneralSecretary') }}">Message from General Secretary</a>
+                    <a href="{{ url('message-from-general-secretary') }}">Message from General Secretary</a>
                   </li>
                   <li>
-                    <a href="{{ url('messageFromOfficeSecretary') }}">Message from Office Secretary</a>
+                    <a href="{{ url('message-from-office-secretary') }}">Message from Office Secretary</a>
                   </li>
                   <li>
-                    <a href="{{ url('messageFromPNPSecretary') }}">Message From P&P Secretary</a>
+                    <a href="{{ url('message-from-pnp-secretary') }}">Message From P&P Secretary</a>
                   </li>
                   <li>
-                    <a href="{{ url('missionVision') }}">Mission & Vision</a>
+                    <a href="{{ url('mission-vision') }}">Mission & Vision</a>
                   </li>
                   <li>
                     <a href="{{ url('campaign') }}">Campaign</a>
                   </li>
                   <li>
-                    <a href="{{ url('AboutUs/showAchievements') }}">Achievements</a>
+                    <a href="{{ url('about/achievements') }}">Achievements</a>
                   </li>
                 </ul>
               </li>

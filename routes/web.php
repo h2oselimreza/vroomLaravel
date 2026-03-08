@@ -36,9 +36,9 @@ use App\Http\Controllers\WebSite\HomeController;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Html\Columns\Index;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -171,8 +171,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 });
 
 
-Route::get('home', [HomeController::class, 'index'])->name('website.home');
+Route::get('/', [HomeController::class, 'index'])->name('website.home');
 Route::get('about-society', [AboutUsController::class, 'aboutSociety'])->name('website.about.society');
+Route::get('history-of-society', [AboutUsController::class, 'aboutSociety'])->name('website.history-of-society');
+Route::get('message-from-president', [AboutUsController::class, 'aboutSociety'])->name('website.message-from-president');
+Route::get('message-from-general-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-general-secretary');
+Route::get('message-from-office-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-office-secretary');
+Route::get('message-from-pnp-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-pnp-secretary');
+Route::get('campaign', action: [AboutUsController::class, 'aboutSociety'])->name('website.campaign');
+Route::get('about/achievements', action: [AboutUsController::class, 'achievements'])->name('website.about.achievements');
+
 
 
 require __DIR__.'/auth.php';
