@@ -22,7 +22,7 @@
                 <a href="#">About Us</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('aboutSociety') }}">About Society</a>
+                    <a href="{{ url('about-society') }}">About Society</a>
                   </li>
                   <li>
                     <a href="{{ url('historyOfSociety') }}">History of Society</a>

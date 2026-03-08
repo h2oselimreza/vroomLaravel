@@ -4,11 +4,7 @@
     <div class="container">
 
         <div class="row">
-            <div class="col-md-9">
-            <main>
-                @yield('main-content')
-            </main>
-            </div><!-- left Side------------>
+            @yield('main-content')
             <div class="col-md-3">
                  @include('website.layouts.sidebar')
             </div><!-----Right Side------>
