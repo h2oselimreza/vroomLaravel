@@ -15,14 +15,11 @@ class HomeController extends Controller
         $data['presidentSecretary'] = $this->getPresidentSecretaryValue();
         $data['aboutSociety'] = $this->getAboutUs("A001");
         $data['newsLists'] = $this->getNews();
-        $data['noticeLists'] = $this->getNotices();
         $data['achievements'] = $this->getAchievements();
         $data['events'] = $this->getEvents();
         $data['dashboardCount'] = $this->dashboardCount();
         $data['birthDayMembers'] = $this->getBirthdayMember(0);
         $data['anniversaryMembers'] = $this->getAnniversaryMember(0);
-        $data['prayerTime'] = $this->getPrayerTime();
-        $data['footerSliderImage']   = $this->getFooterSliderImages();
 
         return view('website.home', $data);
     }
@@ -49,13 +46,6 @@ class HomeController extends Controller
     public function getNews()
     {
         return DB::table('web_news')
-            ->where('is_active', 1)
-            ->orderBy('updated_dt_tm', 'DESC')
-            ->get();
-    }
-    public function getNotices()
-    {
-        return DB::table('web_notices')
             ->where('is_active', 1)
             ->orderBy('updated_dt_tm', 'DESC')
             ->get();
@@ -135,72 +125,5 @@ class HomeController extends Controller
             ->orderBy('blocks.block_name')
             ->orderBy('roads.road_name')
             ->get();
-    }
-    function getPrayerTime()
-    {
-        $crrDate = Carbon::now()->format('Y-m-d');
-
-        // Get the prayer time record
-        $row = DB::table('web_prayer_time')->first();
-
-        if (!$row) {
-            return null; // or handle empty case
-        }
-
-        // Initialize prayer array
-        $prayerArr = [
-            'fajr'       => $row->fajr,
-            'zuhor'      => $row->zuhor,
-            'asor'       => $row->asor,
-            'maghrib'    => $row->maghrib,
-            'isha'       => $row->isha,
-            'jumma'      => $row->jumma,
-            'sunrise'    => $row->sunrise,
-            'sunset'     => $row->sunset,
-            'prayer_date'=> $crrDate,
-        ];
-
-        // If stored prayer_date is today, return the array
-        if ($row->prayer_date == $crrDate) {
-            return $prayerArr;
-        }
-
-        // If not, fetch new data from external source
-        $prayerLibrary = app()->make('App\Libraries\PrayerLibrary'); // assuming you've made a Laravel service class
-        $responsePrayerTime = $prayerLibrary->getDateWisePrayerTime([
-            'prayerDate' => Carbon::now()->format('d-m-Y'),
-            'dataSource' => $row->data_source,
-        ]);
-
-        $prayerTimeObj = json_decode($responsePrayerTime);
-
-        if ($prayerTimeObj && $prayerTimeObj->code == 200) {
-            $prayerArr['sunrise'] = Carbon::parse($prayerTimeObj->data->timings->Sunrise)->format('h:i A');
-            $prayerArr['sunset']  = Carbon::parse($prayerTimeObj->data->timings->Sunset)->format('h:i A');
-
-            if ($row->data_source != 1) {  // custom source
-                $prayerArr['fajr']    = Carbon::parse($prayerTimeObj->data->timings->Fajr)->format('h:i A');
-                $prayerArr['zuhor']   = Carbon::parse($prayerTimeObj->data->timings->Dhuhr)->format('h:i A');
-                $prayerArr['asor']    = Carbon::parse($prayerTimeObj->data->timings->Asr)->format('h:i A');
-                $prayerArr['maghrib'] = Carbon::parse($prayerTimeObj->data->timings->Maghrib)->format('h:i A');
-                $prayerArr['isha']    = Carbon::parse($prayerTimeObj->data->timings->Isha)->format('h:i A');
-            }
-        }
-
-        // Update record
-        $prayerArr['updated_by'] = 'system';
-        $prayerArr['updated_dt_tm'] = Carbon::now()->toDateTimeString();
-
-        DB::table('web_prayer_time')->where('id', 1)->update($prayerArr);
-
-        return $prayerArr;
-    }
-    function getFooterSliderImages()
-    {
-        return DB::table('web_footer_image')
-            ->select('image')
-            ->orderBy('image_order', 'ASC')
-            ->get()
-            ->toArray(); // returns an array of objects
     }
 }

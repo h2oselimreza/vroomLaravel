@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\WebSite\AboutUsController;
 use App\Http\Controllers\WebSite\HomeController;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Html\Columns\Index;
@@ -171,6 +172,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 
 Route::get('home', [HomeController::class, 'index'])->name('website.home');
+Route::get('about-society', [AboutUsController::class, 'aboutSociety'])->name('website.about.society');
 
 
 require __DIR__.'/auth.php';
