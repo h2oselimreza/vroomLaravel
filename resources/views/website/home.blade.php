@@ -302,10 +302,10 @@
             @foreach($presidentSecretary as $index => $person)
                 @php
                     $links = [
-                        0 => 'messageFromPresident',
-                        1 => 'messageFromGeneralSecretary',
-                        2 => 'messageFromOfficeSecretary',
-                        3 => 'messageFromPNPSecretary',
+                        0 => 'message-from-president',
+                        1 => 'message-from-general-secretary',
+                        2 => 'message-from-office-secretary',
+                        3 => 'message-from-pnp-secretary',
                     ];
                     $defaultImages = asset('assets/images/user.png');
                     $imageUrl = $person->image ? asset('assets/images/websiteImages/' . $person->image) : $defaultImages;
@@ -623,7 +623,7 @@
                             <div class="pricing-body">
                                 <h5 class="pricing-title">{{ $event->heading }}</h5>
                                 <p style="word-break: break-all;">
-                                    <a href="{{ url('Information/showEventsDetails/' . $event->id) }}"
+                                    <a href="{{ url('event/event-details/' . $event->id) }}"
                                        style="color:#444444;font-size: 14px">{{ $event->short_description }}</a>
                                 </p>
                                 <div class="card-date">{{ date('Y-M-d', strtotime($event->date)) }}</div>
@@ -718,7 +718,7 @@
                             <div class="pricing-body">
                                 <h5 class="pricing-title">{{ $achievement->heading }}</h5>
                                 <p style="word-break: break-all;">
-                                    <a href="{{ url('AboutUs/showAchievementsDetails/' . $achievement->id) }}"
+                                    <a href="{{ url('achievement-details/' . $achievement->id) }}"
                                        style="color:#444444;font-size: 14px">{{ $achievement->short_description }}</a>
                                 </p>
                                 <div class="card-date">{{ date('Y-M-d', strtotime($achievement->date)) }}</div>
