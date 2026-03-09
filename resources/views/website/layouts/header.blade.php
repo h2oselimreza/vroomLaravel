@@ -134,16 +134,16 @@
                 <a href="#">Members</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('Members/applyForMembership') }}">Apply For Membership</a>
+                    <a href="{{ url('apply-member-ship') }}">Apply For Membership</a>
                   </li>
                   <li>
-                    <a href="{{ url('Members/applyForCarSticker') }}">Apply For Car Sticker</a>
+                    <a href="{{ url('apply-for-car-sticker') }}">Apply For Car Sticker</a>
                   </li>
                   <li>
-                    <a href="{{ url('Home/lifeMember') }}">Life Members</a>
+                    <a href="{{ url('life-members') }}">Life Members</a>
                   </li>
                   <li>
-                    <a href="{{ url('Home/donarMember') }}">Donor Members</a>
+                    <a href="{{ url('donar-members') }}">Donor Members</a>
                   </li>
                 </ul>
               </li>

@@ -82,4 +82,14 @@ class Member extends Model
         'created_dt_tm',
         'updated_dt_tm',
     ];
+
+    public function block()
+    {
+        return $this->belongsTo(Block::class, 'society_block', 'block_code');
+    }
+
+    public function road()
+    {
+        return $this->belongsTo(Road::class, 'society_road', 'road_code');
+    }
 }

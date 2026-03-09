@@ -225,5 +225,14 @@ Route::get('show-tender', [SinglePageController::class,'index'])->name('website.
 Route::get('event', [\App\Http\Controllers\WebSite\EventController::class,'index'])->name('website.event.index');
 Route::get('event/event-details/{id}', [\App\Http\Controllers\WebSite\EventController::class,'show'])->name('website.event.details');
 
+/*=======================Web Member================*/
+Route::get('apply-member-ship', [\App\Http\Controllers\WebSite\MemberController::class,'applyMembership'])->name('website.member.apply-member-ship');
+Route::post('apply-member-ship', [\App\Http\Controllers\WebSite\MemberController::class,'applyForMembershipMailSend'])->name('website.member.apply-member-ship');
+
+Route::get('apply-for-car-sticker', [\App\Http\Controllers\WebSite\MemberController::class,'applyForCarSticker'])->name('website.member.apply-car-sticker');
+Route::post('apply-for-car-sticker', [\App\Http\Controllers\WebSite\MemberController::class,'applyForCarStickerMailSend'])->name('website.member.apply-car-sticker');
+
+Route::get('life-members', [\App\Http\Controllers\WebSite\MemberController::class,'lifeMember'])->name('website.life-member');
+Route::get('donar-members', [\App\Http\Controllers\WebSite\MemberController::class,'donarMember'])->name('website.donar-member');
 
 require __DIR__.'/auth.php';

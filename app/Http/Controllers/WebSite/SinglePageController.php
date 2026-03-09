@@ -41,6 +41,8 @@ class SinglePageController extends Controller
             'forms'=> 'A035',
 
             'show-tender'=> 'A013',
+            'life-members'=> 'A028',
+            'donar-members'=> 'A030',
         ];
         $moduleCode = $moduleMap[$routeName] ?? null;
         if(!$moduleCode) {
