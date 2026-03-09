@@ -36,4 +36,17 @@ class WebGalleryImage extends Model
     {
         return $this->belongsTo(WebGalleryAlbum::class, 'gallery_album');
     }
+
+    public static function getGalleryAlbumImage($albumId = null, $homeFlag = 0)
+    {
+        return self::when($albumId, function ($q) use ($albumId) {
+                    $q->where('gallery_album', $albumId);
+                })
+                ->when($homeFlag, function ($q) {
+                    $q->where('home_flag', 1);
+                })
+                ->where('is_active', 1)
+                ->get()
+                ->toArray();
+    }
 }

@@ -128,7 +128,7 @@
                 </ul>
               </li>
               <li>
-                <a href="{{ url('Home/showGallary') }}">Gallery</a>
+                <a href="{{ url('gallery') }}">Gallery</a>
               </li>
               <li>
                 <a href="#">Members</a>

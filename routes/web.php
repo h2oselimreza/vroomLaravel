@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\WebSite\AboutUsController;
 use App\Http\Controllers\WebSite\CommitteeController;
 use App\Http\Controllers\WebSite\ContactController;
+use App\Http\Controllers\WebSite\GalleryController;
 use App\Http\Controllers\WebSite\HomeController;
 use App\Http\Controllers\WebSite\SinglePageController;
 use Illuminate\Support\Facades\Route;
@@ -238,5 +239,8 @@ Route::get('donar-members', [\App\Http\Controllers\WebSite\MemberController::cla
 
 Route::get('contact-us', [ContactController::class,'index'])->name('website.contact-us.index');
 Route::post('contact-us', [ContactController::class, 'contactUsMailSend'])->name('website.contact-us.contactUsMailSend');
+
+Route::get('gallery', [GalleryController::class,'index'])->name('website.gallery.index');
+Route::get('gallery/{albumId}/{albumName}', [GalleryController::class,'show'])->name('website.gallery.show');
 
 require __DIR__.'/auth.php';
