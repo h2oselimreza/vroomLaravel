@@ -33,6 +33,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\WebSite\AboutUsController;
 use App\Http\Controllers\WebSite\CommitteeController;
+use App\Http\Controllers\WebSite\ContactController;
 use App\Http\Controllers\WebSite\HomeController;
 use App\Http\Controllers\WebSite\SinglePageController;
 use Illuminate\Support\Facades\Route;
@@ -234,5 +235,8 @@ Route::post('apply-for-car-sticker', [\App\Http\Controllers\WebSite\MemberContro
 
 Route::get('life-members', [\App\Http\Controllers\WebSite\MemberController::class,'lifeMember'])->name('website.life-member');
 Route::get('donar-members', [\App\Http\Controllers\WebSite\MemberController::class,'donarMember'])->name('website.donar-member');
+
+Route::get('contact-us', [ContactController::class,'index'])->name('website.contact-us.index');
+Route::post('contact-us', [ContactController::class, 'contactUsMailSend'])->name('website.contact-us.contactUsMailSend');
 
 require __DIR__.'/auth.php';

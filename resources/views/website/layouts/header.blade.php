@@ -179,7 +179,7 @@
                 <a href="{{ url('/login') }}">Login</a>
               </li>
               <li>
-                <a href="{{ url('ContactUs') }}">Contact</a>
+                <a href="{{ url('contact-us') }}">Contact</a>
               </li>
             </ul>
           </div>
