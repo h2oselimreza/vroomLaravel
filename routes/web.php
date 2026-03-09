@@ -182,6 +182,7 @@ Route::get('message-from-office-secretary', [AboutUsController::class, 'aboutSoc
 Route::get('message-from-pnp-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-pnp-secretary');
 Route::get('campaign', action: [AboutUsController::class, 'aboutSociety'])->name('website.campaign');
 Route::get('about/achievements', action: [AboutUsController::class, 'achievements'])->name('website.about.achievements');
+Route::get('achievement-details/{id}', action: [AboutUsController::class, 'show'])->name('website.achievements.show');
 
 /*=======================Committee================*/
 Route::get('present-executive-committee', [SinglePageController::class, 'index'])->name('website.present-executive-committee');

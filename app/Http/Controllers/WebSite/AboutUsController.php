@@ -33,4 +33,9 @@ class AboutUsController extends Controller
         $achievements = WebAchievement::where('is_active', 1)->orderBy('date','desc')->get();
         return view('website.achievement.index', compact('achievements'));
     }
+
+    public function show($id) {
+        $data = WebAchievement::find($id);
+        return view('website.achievement.achievement-details', compact('data'));
+    }
 }

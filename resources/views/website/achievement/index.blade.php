@@ -38,7 +38,7 @@
                             </h5>
 
                             <p style="word-break: break-all;">
-                                <a href="{{ url('AboutUs/showAchievementsDetails/'.$achievement->id) }}" style="color:#444444;font-size:14px">
+                                <a href="{{ url('achievement-details/'.$achievement->id) }}" style="color:#444444;font-size:14px">
                                     {{ $achievement->short_description }}
                                 </a>
                             </p>
