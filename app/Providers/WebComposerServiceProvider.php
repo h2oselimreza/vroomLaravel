@@ -40,9 +40,7 @@ class WebComposerServiceProvider extends ServiceProvider
 
         // Prayer time
         $prayerTime = function () {
-
             return app(PrayerService::class)->getPrayerTime();
-
         };
 
         // Pass variables to all views

@@ -54,30 +54,30 @@
                 <a href="#">Committee</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('presentExecutiveCommittee') }}">Present Executive Committee</a>
+                    <a href="{{ url('present-executive-committee') }}">Present Executive Committee</a>
                   </li>
                   <li>
-                    <a href="{{ url('presentSubCommittee') }}">Present Sub Committee</a>
+                    <a href="{{ url('present-sub-committee') }}">Present Sub Committee</a>
                   </li>
                   <li>
-                    <a href="{{ url('adviserComittee') }}">Adviser Comittee</a>
+                    <a href="{{ url('adviser-comittee') }}">Adviser Comittee</a>
                   </li>
                   <li>
-                    <a href="{{ url('centralMosqueCommittee') }}">Central Mosque Committee</a>
+                    <a href="{{ url('central-mosque-committee') }}">Central Mosque Committee</a>
                   </li>
                 </ul>
               </li>
               <li>
-                <a href="{{ url('showFacilities') }}">Facilities</a>
+                <a href="{{ url('show-facilities') }}">Facilities</a>
               </li>
               <li>
-                <a href="{{ url('Information/showAllEvents') }}">Events</a>
+                <a href="{{ url('event') }}">Events</a>
               </li>
               <li>
                 <a href="#">Meeting</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('eCMeetings') }}">EC Meetings</a>
+                    <a href="{{ url('ec-meetings') }}">EC Meetings</a>
                   </li>
                   <li>
                     <a href="{{ url('agm') }}">AGM</a>
@@ -91,13 +91,13 @@
                 <a href="#">Archive</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('previousExecutiveCommittee') }}">Previous Executive Committee</a>
+                    <a href="{{ url('previous-executive-committee') }}">Previous Executive Committee</a>
                   </li>
                   <li>
-                    <a href="{{ url('previousPresident') }}">Previous President</a>
+                    <a href="{{ url('previous-president') }}">Previous President</a>
                   </li>
                   <li>
-                    <a href="{{ url('previousGeneralSecretary') }}">Previous General Secretary</a>
+                    <a href="{{ url('previous-general-secretary') }}">Previous General Secretary</a>
                   </li>
                 </ul>
               </li>
@@ -105,25 +105,25 @@
                 <a href="#">Maps</a>
                 <ul class="dropdown">
                   <li>
-                    <a href="{{ url('aBlock') }}">A Block Map</a>
+                    <a href="{{ url('a-block') }}">A Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('bBlock') }}">B Block Map</a>
+                    <a href="{{ url('b-block') }}">B Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('cBlock') }}">C Block Map</a>
+                    <a href="{{ url('c-block') }}">C Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('dBlock') }}">D Block Map</a>
+                    <a href="{{ url('d-block') }}">D Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('eBlock') }}">E Block Map</a>
+                    <a href="{{ url('e-block') }}">E Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('fBlock') }}">F Block Map</a>
+                    <a href="{{ url('f-block') }}">F Block Map</a>
                   </li>
                   <li>
-                    <a href="{{ url('gBlock') }}">G Block Map</a>
+                    <a href="{{ url('g-block') }}">G Block Map</a>
                   </li>
                 </ul>
               </li>
@@ -154,7 +154,7 @@
                     <a href="{{ url('vacancy') }}">Vacancy</a>
                   </li>
                   <li>
-                    <a href="{{ url('careerResult') }}">Career Result</a>
+                    <a href="{{ url('career-result') }}">Career Result</a>
                   </li>
                   <li>
                     <a href="{{ url('advertisement') }}">Advertisement</a>
@@ -173,10 +173,10 @@
                 </ul>
               </li>
               <li>
-                <a href="{{ url('Home/showTender') }}">Tender</a>
+                <a href="{{ url('show-tender') }}">Tender</a>
               </li>
               <li>
-                <a href="{{ url('Login') }}">Login</a>
+                <a href="{{ url('/login') }}">Login</a>
               </li>
               <li>
                 <a href="{{ url('ContactUs') }}">Contact</a>

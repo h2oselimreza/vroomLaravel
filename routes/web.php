@@ -32,7 +32,9 @@ use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\WebSite\AboutUsController;
+use App\Http\Controllers\WebSite\CommitteeController;
 use App\Http\Controllers\WebSite\HomeController;
+use App\Http\Controllers\WebSite\SinglePageController;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\Html\Columns\Index;
 
@@ -181,6 +183,46 @@ Route::get('message-from-pnp-secretary', [AboutUsController::class, 'aboutSociet
 Route::get('campaign', action: [AboutUsController::class, 'aboutSociety'])->name('website.campaign');
 Route::get('about/achievements', action: [AboutUsController::class, 'achievements'])->name('website.about.achievements');
 
+/*=======================Committee================*/
+Route::get('present-executive-committee', [SinglePageController::class, 'index'])->name('website.present-executive-committee');
+Route::get('present-sub-committee', [SinglePageController::class, 'index'])->name('website.present-sub-committee');
+Route::get('adviser-comittee', [SinglePageController::class, 'index'])->name('website.adviser-comittee');
+Route::get('central-mosque-committee', [SinglePageController::class, 'index'])->name('website.central-mosque-committee');
+
+Route::get('show-facilities', [SinglePageController::class, 'index'])->name('website.showFacilities');
+Route::get('ec-meetings', [SinglePageController::class, 'index'])->name('website.ec-meetings');
+Route::get('agm', [SinglePageController::class, 'index'])->name('website.agm');
+Route::get('gm', [SinglePageController::class, 'index'])->name('website.gm');
+
+/*=======================Archive================*/
+Route::get('previous-executive-committee', [SinglePageController::class,'index'])->name('website.previous-executive-committee');
+Route::get('previous-president', [SinglePageController::class,'index'])->name('website.previous-president');
+Route::get('previous-general-secretary', [SinglePageController::class,'index'])->name('website.previous-general-secretary');
+
+/*=======================Maps================*/
+Route::get('a-block', [SinglePageController::class,'index'])->name('website.a-block');
+Route::get('b-block', [SinglePageController::class,'index'])->name('website.b-block');
+Route::get('c-block', [SinglePageController::class,'index'])->name('website.c-block');
+Route::get('d-block', [SinglePageController::class,'index'])->name('website.d-block');
+Route::get('e-block', [SinglePageController::class,'index'])->name('website.e-block');
+Route::get('f-block', [SinglePageController::class,'index'])->name('website.f-block');
+Route::get('g-block', [SinglePageController::class,'index'])->name('website.g-block');
+
+/*=======================Maps================*/
+Route::get('vacancy', [SinglePageController::class,'index'])->name('website.vacancy');
+Route::get('career-result', [SinglePageController::class,'index'])->name('website.career-result');
+Route::get('advertisement', [SinglePageController::class,'index'])->name('website.advertisement');
+
+/*=======================Download================*/
+Route::get('letters', [SinglePageController::class,'index'])->name('website.letters');
+Route::get('forms', [SinglePageController::class,'index'])->name('website.forms');
+
+/*=======================Download================*/
+Route::get('show-tender', [SinglePageController::class,'index'])->name('website.show-tender');
+
+/*=======================Events================*/
+Route::get('event', [\App\Http\Controllers\WebSite\EventController::class,'index'])->name('website.event.index');
+Route::get('event/event-details/{id}', [\App\Http\Controllers\WebSite\EventController::class,'show'])->name('website.event.details');
 
 
 require __DIR__.'/auth.php';
