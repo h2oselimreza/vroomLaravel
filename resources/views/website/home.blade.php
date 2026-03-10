@@ -1,5 +1,13 @@
 @extends('website.layouts.web')
 @section('content')
+<style>
+    .messageNameMargin {
+        margin-bottom: 20px !important;
+    }
+    .message-divider{
+        line-height: 1px;
+    }
+</style>
 <div class="banner mt-3">
     <div class="container">
 
@@ -161,7 +169,7 @@
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-12">
-                    <a href="{{ url('aboutSociety') }}">
+                    <a href="{{ url('about-society') }}">
                         <div class="heading-custom-panel" style="">
                             <div class="panel-heading">
                                 {{ isset($aboutSociety->heading) ? $aboutSociety->heading : NULL }}
@@ -180,7 +188,7 @@
             <br>
             <div class="row">
                 <div class="col-md-3">
-                    <a href="{{ url('Members/applyForMembership') }}" class="no-hover-color">
+                    <a href="{{ url('apply-member-ship') }}" class="no-hover-color">
                         <div class="heading-custom-panel">
                             <div class="about-two">
                                 <div class="about-two-header">
@@ -195,7 +203,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ url('Members/applyForCarSticker') }}" class="no-hover-color">
+                    <a href="{{ url('apply-for-car-sticker') }}" class="no-hover-color">
                         <div class="heading-custom-panel">
                             <div class="about-two">
                                 <div class="about-two-header">
@@ -210,7 +218,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ url('ContactUs/mailToComplain') }}" class="no-hover-color">
+                    <a href="{{ url('life-members') }}" class="no-hover-color">
                         <div class="heading-custom-panel">
                             <div class="about-two">
                                 <div class="about-two-header">
@@ -225,7 +233,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ url('ContactUs') }}" class="no-hover-color">
+                    <a href="{{ url('donar-members') }}" class="no-hover-color">
                         <div class="heading-custom-panel">
                             <div class="about-two">
                                 <div class="about-two-header">
@@ -340,7 +348,7 @@
                                             </div>
                                             <br>
                                             <div class="messageNameDesignation">
-                                                <div class="messageName">{{ $names[$index] }}</div>
+                                                <div class="messageName <?= ($names[$index] == 'J C Md Abdur Rouf') ? 'messageNameMargin':''?>">{{ $names[$index] }}</div>
                                                 <div class="message-divider"><span></span></div>
                                                 <div>{{ $designations[$index] }}</div>
                                                 <div class="message-divider"><span></span></div>

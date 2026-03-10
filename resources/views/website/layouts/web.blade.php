@@ -109,5 +109,37 @@
 <script src="{{ asset('assets/website/js/map.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="{{ asset('assets/website/js/script.js') }}"></script>
+<script>
+    function isInViewport(element) {
+        var rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+        );
+    }
+    var animated = false
+    $(window).on('scroll load', function () {
+        if (!animated && $('.counter').length && isInViewport($('.counter')[0])) {
+            $('.counter').each(function () {
+                var $this = $(this);
+                var countTo = $this.attr('data-count');
+                $({countNum: 0}).animate(
+                    {countNum: countTo},
+                    {
+                        duration: 3000,
+                        easing: 'swing',
+                        step: function () {
+                            $this.text(Math.floor(this.countNum));
+                        },
+                        complete: function () {
+                            $this.text(this.countNum);
+                        }
+                    }
+                );
+            });
+            animated = true;
+        }
+    });
+</script>
 </body>
 </html>
