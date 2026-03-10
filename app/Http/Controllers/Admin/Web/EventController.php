@@ -52,7 +52,7 @@ class EventController extends Controller
             // Show image
             ->addColumn('image', function ($data) {
                 if ($data->image) {
-                    $url = asset('images/events/' . $data->image);
+                    $url = asset('assets/images/websiteImages/' . $data->image);
                     return '<img src="' . $url . '" alt="Image" style="height:50px">';
                 }
                 return 'No Image';
@@ -101,7 +101,7 @@ class EventController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/events'), $filename);
+            $image->move(public_path('assets/images/websiteImages/'), $filename);
 
             $data['image'] = $filename;
         }
@@ -140,13 +140,13 @@ class EventController extends Controller
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
 
-            if ($achievement->image && file_exists(public_path('images/events/' . $achievement->image))) {
-                unlink(public_path('images/events/' . $achievement->image));
+            if ($achievement->image && file_exists(public_path('assets/images/websiteImages/' . $achievement->image))) {
+                unlink(public_path('assets/images/websiteImages/' . $achievement->image));
             }
 
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/events'), $filename);
+            $image->move(public_path('assets/images/websiteImages/'), $filename);
 
             $data['image'] = $filename;
         }

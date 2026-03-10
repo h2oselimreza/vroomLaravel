@@ -41,7 +41,7 @@ class ImageAlbumsController extends Controller
                     $images = $row->images->take(3);
 
                     foreach ($images as $image) {
-                        $url = asset('images/gallery/' . $image->image);
+                        $url = asset('assets/images/websiteImages/' . $image->image);
 
                         $html .= '<img src="' . $url . '" 
                                 style="
@@ -181,7 +181,7 @@ class ImageAlbumsController extends Controller
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $file) {
                     $filename = Str::random(10) . '-' . $file->getClientOriginalName();
-                    $file->move(public_path('images/gallery'), $filename);
+                    $file->move(public_path('assets/images/websiteImages/'), $filename);
 
                     WebGalleryImage::create([
                         'gallery_album' => $album->id,

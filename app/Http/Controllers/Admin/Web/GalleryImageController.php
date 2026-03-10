@@ -54,7 +54,7 @@ class GalleryImageController extends Controller
         $image = WebGalleryImage::findOrFail($gallery_id);
 
         // delete file and DB
-        $imagePath = public_path('images/gallery/' . $image->image);
+        $imagePath = public_path('assets/images/websiteImages/' . $image->image);
         if (file_exists($imagePath)) {
             unlink($imagePath);
         }

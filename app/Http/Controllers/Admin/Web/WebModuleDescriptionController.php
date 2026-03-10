@@ -47,7 +47,7 @@ class WebModuleDescriptionController extends Controller
             // Show image
             ->addColumn('image', function ($data) {
                 if ($data->image) {
-                    $url = asset('images/module-description/' . $data->image);
+                    $url = asset('assets/images/websiteImages/' . $data->image);
                     return '<img src="' . $url . '" alt="module-description Image" width="200" height="150">';
                 }
                 return 'No Image';
@@ -97,7 +97,7 @@ class WebModuleDescriptionController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/module-description'), $filename);
+            $image->move(public_path('assets/images/websiteImages/'), $filename);
 
             $data['image'] = $filename;
         }
@@ -139,13 +139,13 @@ class WebModuleDescriptionController extends Controller
         if ($request->hasFile('image')) {
 
             // Optional: delete old image
-            if ($moduleDetail->image && file_exists(public_path('images/module-description/' . $moduleDetail->image))) {
-                unlink(public_path('images/module-description/' . $moduleDetail->image));
+            if ($moduleDetail->image && file_exists(public_path('assets/images/websiteImages/' . $moduleDetail->image))) {
+                unlink(public_path('assets/images/websiteImages/' . $moduleDetail->image));
             }
 
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/module-description'), $filename);
+            $image->move(public_path('assets/images/websiteImages/'), $filename);
 
             $validatedData['image'] = $filename;
         }

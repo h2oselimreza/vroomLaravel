@@ -39,7 +39,7 @@ class WebSliderController extends Controller
             // Show image
             ->addColumn('image', function ($data) {
                 if ($data->image) {
-                    $url = asset('images/slider/' . $data->image);
+                    $url = asset('assets/images/websiteImages/' . $data->image);
                     return '<img src="' . $url . '" alt="Slider Image" width="200" height="150">';
                 }
                 return 'No Image';
@@ -85,7 +85,7 @@ class WebSliderController extends Controller
     {
         $image = $request->file('image');
         $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-        $image->move(public_path('images/slider'), $filename);
+        $image->move(public_path('assets/images/websiteImages/'), $filename);
 
         Slider::create([
         'image' => $filename,
@@ -121,10 +121,10 @@ class WebSliderController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = Str::random(10) . '-' . $image->getClientOriginalName();
-            $image->move(public_path('images/slider'), $filename);
+            $image->move(public_path('assets/images/websiteImages/'), $filename);
 
-            if ($slider->image && file_exists(public_path('images/slider/' . $slider->image))) {
-                unlink(public_path('images/slider/' . $slider->image));
+            if ($slider->image && file_exists(public_path('assets/images/websiteImages/' . $slider->image))) {
+                unlink(public_path('assets/images/websiteImages/' . $slider->image));
             }
 
             $slider->image = $filename;
@@ -144,8 +144,8 @@ class WebSliderController extends Controller
     public function destroy(Slider $slider)
     {
         // Delete the image file if it exists
-        if ($slider->image && file_exists(public_path('images/slider/' . $slider->image))) {
-            unlink(public_path('images/slider/' . $slider->image));
+        if ($slider->image && file_exists(public_path('assets/images/websiteImages/' . $slider->image))) {
+            unlink(public_path('assets/images/websiteImages/' . $slider->image));
         }
 
         $slider->delete();

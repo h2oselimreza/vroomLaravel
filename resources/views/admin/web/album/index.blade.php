@@ -137,12 +137,12 @@
                                 <a class="thumbnail fancybox"
                                 rel="ligthbox"
                                 href="{{ in_array($ext, ['jpg','jpeg','png','bmp']) 
-                                            ? asset('images/album/'.$albumImage->image) 
+                                            ? asset('assets/images/websiteImages/'.$albumImage->image) 
                                             : asset('assets/images/pdf_icon.jpg') }}">
 
                                     <div id="imageDiv{{ $count }}">
                                         <img style="height:100px" src="{{ in_array($ext, ['jpg','jpeg','png','bmp']) 
-                                                ? asset('images/album/'.$albumImage->image) 
+                                                ? asset('assets/images/websiteImages/'.$albumImage->image) 
                                                 : asset('assets/images/pdf_icon.jpg') }}" 
                                             alt="image">
                                     </div>
