@@ -23,10 +23,5 @@
     </div>
 </div>
 @endsection
-@push('scripts')
-    <script src="{{ asset('assets/website/js/jquery.littlelightbox.js') }}"></script>
-    <script>
-        $('.lightbox1').littleLightBox();
-    </script>
-@endpush
+
 
