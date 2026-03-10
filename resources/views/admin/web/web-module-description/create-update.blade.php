@@ -82,7 +82,7 @@
                         
                         @if(isset($data) && $data->image)
                             <div class="mb-2">
-                                <img src="{{ asset('images/module-description/' . $data->image) }}" alt="Banner" width="300">
+                                <img src="{{ asset('assets/images/websiteImages/' . $data->image) }}" alt="Banner" width="300">
                             </div>
                         @endif
 

@@ -107,7 +107,7 @@
                                 <tr>
                                     <td>{{ $serial }}</td>
                                     <td>
-                                        <img src="{{ asset('images/gallery/' . $image->image) }}" 
+                                        <img src="{{ asset('assets/images/websiteImages/' . $image->image) }}" 
                                             style="height:60px;">
                                     </td>
                                     <td class="text-center">
