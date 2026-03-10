@@ -16,6 +16,20 @@
 <div class="container">
     <div class="card shadow">
         <div class="card-body">
+             @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul style="margin-bottom:0;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Nav Tabs -->
             @include('admin.employee.nav-tab')
             {{-- Success Message --}}
@@ -62,7 +76,7 @@
                                                 </div>
                                             @endif
 
-                                            @php $serial = 1; @endphp
+                                            @php $serial = 0; @endphp
 
                                             @foreach($empWorkingDetails as $employeeWorkingDetail)
 
@@ -167,7 +181,7 @@
                                                                 <select name="fYear{{ $serial }}"
                                                                         id="fYear{{ $serial }}"
                                                                         onchange="setDay('{{ $serial }}',1)"
-                                                                        class="form-select">
+                                                                        class="form-select" required>
 
                                                                     @if(!empty($fromDateArr[0]))
                                                                         <option value="{{ $fromDateArr[0] }}">{{ $fromDateArr[0] }}</option>
@@ -182,7 +196,7 @@
                                                                 <select name="fMonth{{ $serial }}"
                                                                         id="fMonth{{ $serial }}"
                                                                         onchange="setDay('{{ $serial }}',1)"
-                                                                        class="form-select mt-1">
+                                                                        class="form-select mt-1" required>
 
                                                                     @if(!empty($fromDateArr[1]))
                                                                         <option value="{{ $fromDateArr[1] }}">{{ $fromDateArr[1] }}</option>
@@ -196,7 +210,7 @@
 
                                                                 <select name="fDay{{ $serial }}"
                                                                         id="fDay{{ $serial }}"
-                                                                        class="form-select mt-1">
+                                                                        class="form-select mt-1" required>
 
                                                                     @if(!empty($fromDateArr[2]))
                                                                         <option value="{{ $fromDateArr[2] }}">{{ $fromDateArr[2] }}</option>
@@ -355,7 +369,7 @@
 
     });
     var counter = {{ count($empWorkingDetails ?? []) }};
-    counter++;
+    counter;
 
     function addEduQualificationDiv() {
 
@@ -415,19 +429,19 @@
                         <div class="col-md-6">\
                             <div class="form-group ">\
                                 <label class="form-label"> From Date </label> <small class="text-danger" id="fromDateError' + counter + '"></small><br>\
-                                <select class="form-control" name="fYear' + counter + '" id="fYear' + counter + '" onchange="setDay(' + counter + ',' + fDt + ')">\
+                                <select required class="form-control" name="fYear' + counter + '" id="fYear' + counter + '" onchange="setDay(' + counter + ',' + fDt + ')">\
                                     <option value="">--yyyy--</option>\
                                     @for ($i = 1962; $i <= date('Y'); $i++)\
                                         <option value="{{ $i }}">{{ $i }}</option>\
                                     @endfor\
                                 </select>\
-                                <select class="form-control mt-1" name="fMonth' + counter + '" id="fMonth' + counter + '" onchange="setDay(' + counter + ',' + fDt + ')">\
+                                <select required class="form-control mt-1" name="fMonth' + counter + '" id="fMonth' + counter + '" onchange="setDay(' + counter + ',' + fDt + ')">\
                                     <option value="">-- mm --</option>\
                                     @foreach ($month as $m)\
                                         <option value="{{ $m }}">{{ $m }}</option>\
                                     @endforeach\
                                 </select>\
-                                <select class="form-control mt-1" name="fDay' + counter + '" id="fDay' + counter + '">\
+                                <select required class="form-control mt-1" name="fDay' + counter + '" id="fDay' + counter + '">\
                                     <option value="">-- dd --</option>\
                                 </select>\
                                 <small class="text-danger" id="fromToErrorBlock' + counter + '"></small>\
