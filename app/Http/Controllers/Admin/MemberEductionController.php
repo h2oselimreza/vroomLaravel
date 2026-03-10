@@ -68,6 +68,21 @@ class MemberEductionController extends Controller
         // Get total number of rows
         $totalRows = $request->input('eduQualificationCount', 0);
 
+        if ($totalRows == 0) {
+            return redirect()->back()->with('error','All Field are empty');
+       }
+        for ($i = 0; $i < $totalRows; $i++) {
+            $request->validate([
+                "levelOfEducation$i" => 'required',
+                "examDegree$i" => 'required',
+                "duration$i" => 'required',
+            ],[
+                "levelOfEducation$i.required" => "Level of education is required in row ".($i+1),
+                "examDegree$i.required" => "Exam/Degree is required in row ".($i+1),
+                "duration$i.required" => "Duration is required in row ".($i+1),
+            ]);
+       }
+
         // Collect deleted row IDs
         $deleteIds = explode(',', $request->input('deleteEduRow', ''));
 
