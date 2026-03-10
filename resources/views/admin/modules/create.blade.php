@@ -121,34 +121,6 @@
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">
-                            Module Panel :
-                        </label>
-
-                        <select class="form-select"
-                            name="user_group"
-                            id="user_group"
-                            data-selected="{{ $module->panel_type ?? '' }}">
-
-                            <option value="">Select User Group</option>
-                            @if (isset($userGroups))
-                                @foreach ( $userGroups as  $userGroup)
-                            
-                                @endforeach
-                            @endif
-                            
-                            <option value="admin"
-                                {{ old('user_group', isset($module->user_group)) == 'admin' ? 'selected' : '' }}>
-                                Society Admin
-                            </option>
-
-                        </select>
-
-                        @error('user_group')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
                 </div>
 
                 <div class="ps-0 card-footer bg-white d-flex gap-2">

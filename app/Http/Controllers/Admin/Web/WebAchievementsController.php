@@ -43,6 +43,14 @@ class WebAchievementsController extends Controller
                 }
                 return 'No Image';
             })
+            ->addColumn('short_description', function ($row) {
+                return Str::words($row->short_description, 15, '...');
+            })
+
+            
+            ->addColumn('details', function ($row) {
+                return Str::words($row->details, 15, '...');
+            })
 
             // Action buttons
             ->addColumn('action', function ($data) {

@@ -8,6 +8,7 @@ use App\Models\Web\ModuleDetail;
 use App\Models\Web\Slider;
 use App\Models\Web\WebsiteModule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,6 +36,13 @@ class WebModuleDescriptionController extends Controller
 
             return DataTables::of($data)
             ->addIndexColumn()
+
+            ->addColumn('short_description', function ($row) {
+                return Str::words($row->short_description, 15, '...');
+            })
+            ->addColumn('description', function ($row) {
+                return Str::words($row->short_description, 15, '...');
+            })
 
             // Show image
             ->addColumn('image', function ($data) {

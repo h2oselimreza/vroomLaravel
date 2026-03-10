@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\NewsRequest;
 use App\Models\Web\WebNews;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class NewsController extends Controller
@@ -25,7 +26,7 @@ class NewsController extends Controller
             $webnews = WebNews::select([
                 'id',
                 'heading',
-                'body',
+                DB::raw('NULL as body'),
                 'is_active',
                 'publish_date',
             ]);

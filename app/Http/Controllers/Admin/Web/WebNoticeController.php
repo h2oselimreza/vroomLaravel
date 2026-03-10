@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\NoticeRequest;
 use App\Models\Web\Notices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\TestStatus\Notice;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class WebNoticeController extends Controller
             $data = Notices::select([
                 'id',
                 'heading',
-                'body',
+                DB::raw('NULL as body'),
                 'is_active',
                 'publish_date',
             ]);

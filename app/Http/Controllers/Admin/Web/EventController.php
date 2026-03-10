@@ -39,6 +39,15 @@ class EventController extends Controller
                         ? 'Active'
                         : 'Inactive';
                 })
+                
+            ->addColumn('short_description', function ($row) {
+                return Str::words($row->short_description, 15, '...');
+            })
+
+            
+            ->addColumn('details', function ($row) {
+                return Str::words($row->details, 15, '...');
+            })
 
             // Show image
             ->addColumn('image', function ($data) {

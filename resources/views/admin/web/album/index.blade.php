@@ -141,7 +141,7 @@
                                             : asset('assets/images/pdf_icon.jpg') }}">
 
                                     <div id="imageDiv{{ $count }}">
-                                        <img style="width: 300px; height:100px" src="{{ in_array($ext, ['jpg','jpeg','png','bmp']) 
+                                        <img style="height:100px" src="{{ in_array($ext, ['jpg','jpeg','png','bmp']) 
                                                 ? asset('images/album/'.$albumImage->image) 
                                                 : asset('assets/images/pdf_icon.jpg') }}" 
                                             alt="image">
