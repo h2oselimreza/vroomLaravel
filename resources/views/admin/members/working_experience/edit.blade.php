@@ -21,6 +21,20 @@
 <div class="container">
     <div class="card shadow">
         <div class="card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul style="margin-bottom:0;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <!-- Nav Tabs -->
             @include('admin.members.member-nav-tab')
             {{-- Success Message --}}
@@ -67,7 +81,7 @@
                                                 </div>
                                             @endif
 
-                                            @php $serial = 1; @endphp
+                                            @php $serial = 0; @endphp
 
                                             @foreach($empWorkingDetails as $employeeWorkingDetail)
 
@@ -360,7 +374,7 @@
 
     });
     var counter = {{ count($empWorkingDetails ?? []) }};
-    counter++;
+    counter;
 
     function addEduQualificationDiv() {
 

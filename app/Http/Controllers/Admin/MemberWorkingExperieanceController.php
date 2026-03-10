@@ -22,6 +22,19 @@ class MemberWorkingExperieanceController extends Controller
     {
         $workingExpCount = (int) $request->workingExpCount;
         // IDs of rows deleted by user
+        for ($i = 0; $i < $workingExpCount; $i++) {
+            $request->validate([
+                "fYear$i" => 'required',
+                "fMonth$i"=> 'required',
+                "fDay$i" => 'required',
+                "institutionName$i"=> 'required',
+            ],[
+                "institutionNamey$i.required" => "InstitutionName is required in row ".($i),
+                "fYear$i.required" => "Year is required in row ".($i),
+                "fMonth$i.required" => "Month is required in row ".($i),
+                "fDay$i.required" => "Day is required in row ".($i),
+            ]);
+       }
         $deleteRows = $request->deleteWorkingRow ? explode(',', $request->deleteWorkingRow) : [];
 
         DB::transaction(function () use ($request, $id, $workingExpCount, $deleteRows) {
@@ -54,6 +67,10 @@ class MemberWorkingExperieanceController extends Controller
                     $toMonth = $request->input("tMonth{$i}") ?? '00';
                     $toDay   = $request->input("tDay{$i}") ?? '00';
                     $toDate  = "{$toYear}-{$toMonth}-{$toDay}";
+                }
+
+                if ($toDate === '0000-00-00') {
+                    $toDate = null;
                 }
 
                 // Check if existing row
