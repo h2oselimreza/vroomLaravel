@@ -10,6 +10,20 @@
 <div class="container">
   <div class="card shadow">
     <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul style="margin-bottom:0;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
       <!-- Nav Tabs -->
        @include('admin.employee.nav-tab')
       {{-- Success Message --}} @if(session('success')) <div class="alert alert-success">
