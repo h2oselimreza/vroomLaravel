@@ -109,6 +109,7 @@
 <script src="{{ asset('assets/website/js/map.js') }}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script src="{{ asset('assets/website/js/script.js') }}"></script>
+<script src="{{ asset('assets/website/js/jquery.littlelightbox.js') }}"></script>
 <script>
     function isInViewport(element) {
         var rect = element.getBoundingClientRect();
@@ -139,6 +140,10 @@
             });
             animated = true;
         }
+    });
+
+    $( document ).ready(function() {
+        $('.lightbox1').littleLightBox();
     });
 </script>
 </body>

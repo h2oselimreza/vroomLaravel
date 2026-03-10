@@ -263,10 +263,6 @@
         });
             })
         </script>
-        <script src="{{ asset('assets/website/js/jquery.littlelightbox.js') }}"></script>
-        <script>
-            $('.lightbox1').littleLightBox();
-        </script>
         @stack('scripts')
     </body>
 </html>
