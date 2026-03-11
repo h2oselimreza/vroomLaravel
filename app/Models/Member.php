@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\TracksUser;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
@@ -94,8 +95,19 @@ class Member extends Model
         return $this->belongsTo(Road::class, 'society_road', 'road_code');
     }
 
-    public static function getBirthdayMember($flag = 1)
+    public static function getBirthdayOrAnniversaryMember($flag = 1)
     {
+        $today = Carbon::today()->format('m-d');
+
+        // Determine which column & status to use
+        if ($flag == 1) {
+            $dateColumn = 'dob';
+            $statusColumn = 'birthday_sms_status';
+        } else {
+            $dateColumn = 'anniversary';
+            $statusColumn = 'anniversary_sms_status';
+        }
+
         $query = DB::table('members')
             ->select(
                 'members.id',
@@ -110,14 +122,13 @@ class Member extends Model
             )
             ->leftJoin('blocks', 'blocks.block_code', '=', 'members.society_block')
             ->leftJoin('roads', 'roads.road_code', '=', 'members.society_road')
-            ->whereRaw("DATE_FORMAT(members.dob, '%m-%d') = ?", [date('m-d')])
+            ->whereRaw("DATE_FORMAT(members.{$dateColumn}, '%m-%d') = ?", [$today])
             ->where('members.is_active', 1)
             ->orderBy('blocks.block_name')
             ->orderBy('roads.road_name');
 
-        if ($flag == 1) {
-            $query->where('members.birthday_sms_status', 0);
-        }
+        // Only pick members whose status is 0 (unsent)
+        $query->where("members.{$statusColumn}", 0);
 
         return $query->get();
     }

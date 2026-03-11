@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\SMS\EmployeeAnniversarySMSController;
+use App\Http\Controllers\Admin\SMS\MemberAnniversarySMSController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\AlbumController;
 use App\Http\Controllers\Admin\Web\EventController;
@@ -180,6 +181,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-birthday-sms', [MemberBirthdaySMSController::class,'index'])->name('admin.member-birthday-sms.index');
     Route::get('member-birthday-sms-data', [MemberBirthdaySMSController::class, 'getMemberBirthdaySMSData'])->name('admin.member-birthday-sms-data.data.index');
     Route::post('member-birthday-sms-send/{checkFlag}', [MemberBirthdaySMSController::class, 'sendMemberBirthdaySms'])->name('admin.member-birthday-sms-send');
+
+    /*===========================Member-aaniversary=SMS=============================*/
+    Route::get('member-anniversary-sms', [MemberAnniversarySMSController::class,'index'])->name('admin.member-anniversary-sms.index');
+    Route::get('member-anniversary-sms-data', [MemberAnniversarySMSController::class, 'getMemberAnniversarySMSData'])->name('admin.member-anniversary-sms-data.index');
+    Route::post('member-anniversary-sms-send/{checkFlag}', [MemberAnniversarySMSController::class, 'sendMemberAnniversarySms'])->name('admin.member-anniversary-sms-send');
 
     /*===========================Employee-birthday=SMS=============================*/
     Route::get('employee-birthday-sms', [EmployeeBirthdaySMSController::class,'index'])->name('admin.employee-birthday-sms.index');

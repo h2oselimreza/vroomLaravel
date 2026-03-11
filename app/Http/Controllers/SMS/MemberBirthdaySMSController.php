@@ -18,7 +18,7 @@ class MemberBirthdaySMSController extends Controller
     public function getMemberBirthdaySMSData(Request $request){
         if ($request->ajax()) {
 
-            $members = Member::getBirthdayMember();
+            $members = Member::getBirthdayOrAnniversaryMember();
 
             return DataTables::of($members)
 
