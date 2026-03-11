@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\TracksUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class Member extends Model
 {
@@ -91,5 +92,33 @@ class Member extends Model
     public function road()
     {
         return $this->belongsTo(Road::class, 'society_road', 'road_code');
+    }
+
+    public static function getBirthdayMember($flag = 1)
+    {
+        $query = DB::table('members')
+            ->select(
+                'members.id',
+                'members.member_id',
+                'members.member_name',
+                'members.father_contact as contact_no',
+                'blocks.block_name as block',
+                'roads.road_name as road',
+                'members.society_plot',
+                'members.society_flat',
+                'members.is_active as status',
+            )
+            ->leftJoin('blocks', 'blocks.block_code', '=', 'members.society_block')
+            ->leftJoin('roads', 'roads.road_code', '=', 'members.society_road')
+            ->whereRaw("DATE_FORMAT(members.dob, '%m-%d') = ?", [date('m-d')])
+            ->where('members.is_active', 1)
+            ->orderBy('blocks.block_name')
+            ->orderBy('roads.road_name');
+
+        if ($flag == 1) {
+            $query->where('members.birthday_sms_status', 0);
+        }
+
+        return $query->get();
     }
 }
