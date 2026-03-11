@@ -101,7 +101,7 @@
                         
                         @if(isset($data) && $data->image)
                             <div class="mb-2">
-                                <img src="{{ asset('images/achievements/' . $data->image) }}" alt="image" width="200" height="150">
+                                <img src="{{ asset('assets/images/websiteImages/' . $data->image) }}" alt="image" width="200" height="150">
                             </div>
                         @endif
 

@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\SMS\EmployeeBirthdaySMSController;
 use App\Http\Controllers\SMS\MemberBirthdaySMSController;
 use App\Http\Controllers\WebSite\AboutUsController;
 use App\Http\Controllers\WebSite\CommitteeController;
@@ -174,10 +175,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('album/delete', [AlbumController::class, 'deleteImages'])->name('admin.album.delete');
     Route::get('/admin/album-details', [AlbumController::class, 'albumDetails'])->name('admin.album.details');
 
-    /*============================SMS=============================*/
+    /*===========================member-birthday=SMS=============================*/
     Route::get('member-birthday-sms', [MemberBirthdaySMSController::class,'index'])->name('admin.member-birthday-sms.index');
     Route::get('member-birthday-sms-data', [MemberBirthdaySMSController::class, 'getMemberBirthdaySMSData'])->name('admin.member-birthday-sms-data.data.index');
     Route::post('member-birthday-sms-send/{checkFlag}', [MemberBirthdaySMSController::class, 'sendMemberBirthdaySms'])->name('admin.member-birthday-sms-send');
+
+    /*===========================Employee-birthday=SMS=============================*/
+    Route::get('employee-birthday-sms', [EmployeeBirthdaySMSController::class,'index'])->name('admin.employee-birthday-sms.index');
+    Route::get('employee-birthday-sms-data', [EmployeeBirthdaySMSController::class, 'getEmployeeData'])->name('admin.employee-birthday-sms-data.data.index');
+    Route::post('employee-birthday-sms-send/{checkFlag}', [EmployeeBirthdaySMSController::class, 'sendMemberBirthdaySms'])->name('admin.employee-birthday-sms-send');
 });
 
 

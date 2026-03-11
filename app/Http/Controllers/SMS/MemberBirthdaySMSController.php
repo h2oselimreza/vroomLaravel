@@ -12,7 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 class MemberBirthdaySMSController extends Controller
 {
     public function index(){
-        return view("admin.sms.index");
+        return view("admin.sms.member-birthday-sms");
     }
 
     public function getMemberBirthdaySMSData(Request $request){
@@ -67,10 +67,10 @@ class MemberBirthdaySMSController extends Controller
                 return redirect()->back()->with('success', 'Sms has successfully sent!');
             }
 
-            return redirect()->route('admin.memberBirthdaySms');
+            return redirect()->back()->with('error', 'No birthday members found.');
 
         } else {
-            return redirect()->route('home');
+            return redirect()->back()->with('error', 'check flag value is not matching');
         }
     }
 }

@@ -50,4 +50,25 @@ class SentSms extends Model
                 'birthday_sms_status' => 0
             ]);
     }
+
+    public static function EmployeeBirthdayStatusChange($IdArr)
+    {
+        // 1. Update selected members
+        DB::table('employee')
+            ->whereIn('id', $IdArr)
+            ->update([
+                'birthday_sms_status' => 1
+            ]);
+
+        // 2. Reset others whose birthday is not today
+        DB::table('employee')
+            ->whereNotIn('id', $IdArr)
+            ->where(function ($query) {
+                $query->whereDay('dob', '!=', date('d'))
+                    ->orWhereMonth('dob', '!=', date('m'));
+            })
+            ->update([
+                'birthday_sms_status' => 0
+            ]);
+    }
 }
