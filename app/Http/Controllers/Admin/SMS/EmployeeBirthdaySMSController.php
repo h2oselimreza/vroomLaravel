@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\SMS;
+namespace App\Http\Controllers\Admin\SMS;
 
 use App\Models\Employee;
 use App\Models\SentSms;

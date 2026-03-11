@@ -169,11 +169,10 @@ class SmsService
 
     public function getBalance()
     {
-
         $crlpostdata = [
             "apikey" => config('sms.api_key'),
             "secretkey" => config('sms.secret_key'),
-            "content" => "Niketan"
+            "clienttransid" => "Niketan"
         ];
 
         $curl = curl_init();
@@ -190,11 +189,15 @@ class SmsService
 
         $response = curl_exec($curl);
 
+        if (curl_errno($curl)) {
+            Log::error('SMS Balance Curl Error: ' . curl_error($curl));
+        }
+
         curl_close($curl);
 
-        Log::info("Get Balance SMS response : ".json_encode($response));
+        Log::info("Get Balance SMS response : " . $response);
 
-        return $response;
+        return json_decode($response, true);
     }
 
      public function sendMessage($responsedbdata)
