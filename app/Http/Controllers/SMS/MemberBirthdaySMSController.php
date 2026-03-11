@@ -62,7 +62,7 @@ class MemberBirthdaySMSController extends Controller
 
                 SentSms::create($smsArr);
 
-                SentSms::memberBirthdayStatusChange($memberIdArr);
+                SentSms::updateSmsStatus($memberIdArr,$msgType);
 
                 return redirect()->back()->with('success', 'Sms has successfully sent!');
             }

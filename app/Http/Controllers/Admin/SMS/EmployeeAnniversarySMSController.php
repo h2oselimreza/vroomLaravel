@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\SMS;
+namespace App\Http\Controllers\Admin\SMS;
 
+use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\SentSms;
 use App\Services\SmsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
-class EmployeeBirthdaySMSController extends Controller
+class EmployeeAnniversarySMSController extends Controller
 {
-    public function index()
+     public function index()
     {
-        return view("admin.sms.employee-birthday-sms");
+        return view("admin.sms.employee-aaniversary-sms");
     }
 
     public function getEmployeeData(Request $request){
@@ -29,9 +29,9 @@ class EmployeeBirthdaySMSController extends Controller
                 'designation',
                 'primary_mobile',
             ])
-            ->whereDay('dob', $today->day)
-            ->whereMonth('dob', $today->month)
-            ->where('birthday_sms_status', 0)
+            ->whereDay('anniversary', $today->day)
+            ->whereMonth('anniversary', $today->month)
+            ->where('anniversary_sms_status', 0)
             ->where('is_active', 1);
 
             return DataTables::of($employees)
@@ -48,14 +48,14 @@ class EmployeeBirthdaySMSController extends Controller
         }
     }
 
-    public function sendMemberBirthdaySms(Request $request, SmsService $smsService, $checkFlag = 1)
+    public function sendMemberAnniversarySms(Request $request, SmsService $smsService, $checkFlag = 1)
     {
     
         if ($checkFlag == 1) {
 
             $IdArr = explode(",", $request->ids);
 
-            $msgType = 'employeeBirthday';
+            $msgType = 'employeeAnniversary';
 
             $responsedbdata = $smsService->getDataForMess($IdArr, $msgType);
             if ($responsedbdata['msgCount'] > 0) {
