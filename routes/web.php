@@ -206,7 +206,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-bulk-sms', [memberBulkSmsController::class,'index'])->name('admin.member-bulk-sms.index');
     Route::post('member-bulk-sms-send', [memberBulkSmsController::class,'showMemberBulkSmsPanel'])->name('admin.member-bulk-sms-send.showMemberBulkSmsPanel');
     Route::post('send-member-custom-bulk-msg', [memberBulkSmsController::class,'sendMemberCustomBulkMsg'])->name('admin.send-member-custom-bulk-msg');
-
+    Route::post('show-member-sms-panel-from-list', [memberBulkSmsController::class,'showMemberSmsPanelFromList'])->name('admin.show-member-sms-panel-from-list');
 });
 
 

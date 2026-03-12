@@ -275,3 +275,9 @@ table.dataTable .dt-column-header {
 .gallery_image_reload {
     color: #0d6efd;
 }
+.member_bulk_sms .bg-info {
+    background: #d9edf7 !important;
+}
+.member_bulk_sms .bg-warning {
+    background: #fcf8e3 !important;
+}

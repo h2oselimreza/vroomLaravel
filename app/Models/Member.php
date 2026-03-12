@@ -132,4 +132,61 @@ class Member extends Model
 
         return $query->get();
     }
+
+    public static function getMemberDetails(array $arr)
+    {
+        $query = DB::table('members')
+            ->select(
+                'members.*',
+                'blocks.block_name',
+                'roads.road_name',
+                'member_type_tb.element as member_type_name',
+                'occupation_member_tb.element as member_occupation_name'
+            )
+            ->leftJoin('blocks', 'blocks.block_code', '=', 'members.society_block')
+            ->leftJoin('roads', 'roads.road_code', '=', 'members.society_road')
+            ->leftJoin('common_table as member_type_tb', 'member_type_tb.element_code', '=', 'members.member_type')
+            ->leftJoin('common_table as occupation_member_tb', 'occupation_member_tb.element_code', '=', 'members.member_occupation')
+            ->where('members.is_active', 1)
+            
+            // Dynamic filters
+            ->when(!empty($arr['memberType']), function ($q) use ($arr) {
+                $q->whereIn('members.member_type', explode(',', $arr['memberType']));
+            })
+            ->when(!empty($arr['block']), function ($q) use ($arr) {
+                $q->whereIn('members.society_block', explode(',', $arr['block']));
+            })
+            ->when(!empty($arr['road']), function ($q) use ($arr) {
+                $q->whereIn('members.society_road', explode(',', $arr['road']));
+            })
+            ->when(!empty($arr['occupation']), function ($q) use ($arr) {
+                $q->whereIn('members.member_occupation', explode(',', $arr['occupation']));
+            })
+            ->when(!empty($arr['bloodGroup']), function ($q) use ($arr) {
+                $q->whereIn('members.blood_group', explode(',', $arr['bloodGroup']));
+            });
+
+        return $query->get()->toArray(); // returns array of stdClass objects
+    }
+
+    public static function getSmsMemberList(array $memberIdArr)
+    {
+        $query = DB::table('members')
+            ->select(
+                'members.*',
+                'blocks.block_name',
+                'roads.road_name',
+                'member_type_tb.element as member_type_name',
+                'occupation_member_tb.element as member_occupation_name'
+            )
+            ->leftJoin('blocks', 'blocks.block_code', '=', 'members.society_block')
+            ->leftJoin('roads', 'roads.road_code', '=', 'members.society_road')
+            ->leftJoin('common_table as member_type_tb', 'member_type_tb.element_code', '=', 'members.member_type')
+            ->leftJoin('common_table as occupation_member_tb', 'occupation_member_tb.element_code', '=', 'members.member_occupation')
+            ->where('members.is_active', 1)
+            ->whereIn('members.id', $memberIdArr);
+
+        // Return as array of arrays (similar to CI's result_array())
+        return $query->get()->toArray();
+    }
 }

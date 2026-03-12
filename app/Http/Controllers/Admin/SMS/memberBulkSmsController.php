@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\SMS;
 
 use App\Http\Controllers\Controller;
 use App\Models\Block;
+use App\Models\Member;
 use App\Models\Road;
 use App\Services\SmsService;
 use Faker\Provider\ar_EG\Company;
@@ -40,18 +41,50 @@ class memberBulkSmsController extends Controller
             return view('admin.sms.custom-member-bulk-sms', Compact('memberType','block','road','occupation','bloodGroup','memberIdStr','checkBulkMemberFlag'));
 
         } elseif ($checkBulkMemberFlag == 2) {
+            $members = Member::getMemberDetails([
+                'block'=>$block,
+                'memberType'=>$memberType,
+                'road' => $road,
+                'occupation' => $occupation,
+                'bloodGroup' => $bloodGroup,
+                'checkBulkMemberFlag' => $checkBulkMemberFlag,
+                'memberIdStr'=> $memberIdStr
+                ]);
+            return view('admin.sms.sms-member-list-view',compact('members'));
 
-            //$data['members'] = $this->smsService->getMemberDetails($data);
-
-            return view('admin.sms.smsMemberListView');
         }
 
         return redirect()->back();
     }
 
+    public function showMemberSmsPanelFromList(Request $request)
+    {
+        $data = [
+            'breadcrumbModuleUrl' => route('admin.member-bulk-sms.index'),
+            'memberType' => '',
+            'block' => '',
+            'road' => '',
+            'occupation' => '',
+            'bloodGroup' => '',
+            'checkBulkMemberFlag' => 2,
+        ];
+
+        $memberIdArr = $request->member_ids 
+            ? explode(',', $request->member_ids) 
+            : [];
+        if (count($memberIdArr) > 0) {
+            $data['members'] = Member::getSmsMemberList($memberIdArr);
+            $data['memberIdStr'] = implode(',', $memberIdArr);
+            return view('admin.sms.custom-member-sms-panel-view', $data);
+        } else {
+            // Redirect back to the bulk SMS page if no members selected
+            return redirect()->route('admin.member-bulk-sms.index')
+                            ->with('error', 'No members selected!');
+        }
+    }
+
     public function sendMemberCustomBulkMsg(Request $request, SmsService $smsService)
     {
-
         $insertSmsDetailsArr = [];
 
         $createUser = Auth::user()->user_id;
@@ -60,12 +93,12 @@ class memberBulkSmsController extends Controller
         $customMsg = trim($request->input('customMsg'));
 
         $arr = [
-            'memberType'  => $request->input('memberType'),
-            'block'       => $request->input('block'),
-            'road'        => $request->input('road'),
-            'occupation'  => $request->input('occupation'),
-            'bloodGroup'  => $request->input('bloodGroup'),
-            'memberIdStr' => $request->input('memberIdStr'),
+            'memberType'  => $request->memberType,
+            'block'       => $request->block,
+            'road'        => $request->road,
+            'occupation'  => $request->occupation,
+            'bloodGroup'  => $request->bloodGroup,
+            'memberIdStr' => $request->memberIdStr,
         ];
 
         $smsTemplate = "bulkMemberCustom";
@@ -80,7 +113,6 @@ class memberBulkSmsController extends Controller
 
         // Get Members
         $members = $this->getMemberCustomBulkMsgData($arr);
-        //dd($members);
         // Format SMS
         $responsedbdata = $smsService->getFormatedMessArrayV2($members, $smsTemplate, $customMsg);
         // Send SMS
@@ -159,7 +191,6 @@ class memberBulkSmsController extends Controller
                 });
 
             })
-            ->where('id', 1)
             ->get()
             ->map(function ($item) {
                 return (array) $item; // convert object to array
