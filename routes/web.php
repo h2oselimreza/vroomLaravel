@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SMS\EmployeeAnniversarySMSController;
 use App\Http\Controllers\Admin\SMS\EmployeeBirthdaySMSController;
 use App\Http\Controllers\Admin\SMS\MemberAnniversarySMSController;
 use App\Http\Controllers\Admin\SMS\MemberBirthdaySMSController;
+use App\Http\Controllers\Admin\SMS\memberBulkSmsController;
 use App\Http\Controllers\Admin\SMS\SmsReportController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\AlbumController;
@@ -200,6 +201,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===========================SMS Balance=============================*/
     Route::get('sms-balance', [SmsReportController::class,'index'])->name('admin.sms-balance.index');
+
+    /*===========================Member Bulk SMS=============================*/
+    Route::get('member-bulk-sms', [memberBulkSmsController::class,'index'])->name('admin.member-bulk-sms.index');
+    Route::post('member-bulk-sms-send', [memberBulkSmsController::class,'showMemberBulkSmsPanel'])->name('admin.member-bulk-sms-send.showMemberBulkSmsPanel');
+    Route::post('send-member-custom-bulk-msg', [memberBulkSmsController::class,'sendMemberCustomBulkMsg'])->name('admin.send-member-custom-bulk-msg');
 
 });
 

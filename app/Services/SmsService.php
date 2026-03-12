@@ -63,7 +63,6 @@ class SmsService
         $messcount = 0;
 
         foreach ($responsedbdata as $row) {
-
             if (!empty($row['mob1'])) {
 
                 $messcount++;
