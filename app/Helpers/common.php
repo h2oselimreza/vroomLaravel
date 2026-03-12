@@ -39,3 +39,7 @@ if (!function_exists('get_road_name_str')) {
     }
 
 }
+
+function reference_no(){
+    return uniqid("ap", false);
+}

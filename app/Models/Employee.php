@@ -78,4 +78,24 @@ class Employee extends Model
         'birthday_sms_status',
         'anniversary_sms_status'
     ];
+
+    public static function getEmployeeCustomBulkMsgData(array $arr)
+    {
+        $employeeQuery = Employee::query()
+            ->select('primary_mobile as mob1')
+            ->where('is_active', 1);
+
+        // If specific employees selected
+        if (!empty($arr['employeeIdStr'])) {
+            $employeeIds = explode(',', $arr['employeeIdStr']);
+            $employeeQuery->whereIn('id', $employeeIds);
+        } 
+        // Otherwise, filter by designation
+        elseif (!empty($arr['designation'])) {
+            $designations = explode(',', $arr['designation']);
+            $employeeQuery->whereIn('designation', $designations);
+        }
+
+        return $employeeQuery->get()->toArray();
+    }
 }

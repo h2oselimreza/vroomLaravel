@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\SMS\EmployeeAnniversarySMSController;
 use App\Http\Controllers\Admin\SMS\EmployeeBirthdaySMSController;
+use App\Http\Controllers\Admin\SMS\EmployeeBulkSmsController;
 use App\Http\Controllers\Admin\SMS\MemberAnniversarySMSController;
 use App\Http\Controllers\Admin\SMS\MemberBirthdaySMSController;
 use App\Http\Controllers\Admin\SMS\memberBulkSmsController;
@@ -207,6 +208,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('member-bulk-sms-send', [memberBulkSmsController::class,'showMemberBulkSmsPanel'])->name('admin.member-bulk-sms-send.showMemberBulkSmsPanel');
     Route::post('send-member-custom-bulk-msg', [memberBulkSmsController::class,'sendMemberCustomBulkMsg'])->name('admin.send-member-custom-bulk-msg');
     Route::post('show-member-sms-panel-from-list', [memberBulkSmsController::class,'showMemberSmsPanelFromList'])->name('admin.show-member-sms-panel-from-list');
+
+    /*===========================Employee Bulk SMS=============================*/
+    Route::get('employee-bulk-sms', [EmployeeBulkSmsController::class,'index'])->name('admin.employee-bulk-sms.index');
+    Route::post('show-custom-sms-panel', [EmployeeBulkSmsController::class,'showEmployeeBulkSmsPanel'])->name('admin.employee-showcustom-sms-panel');
+    Route::post('send-employee-custom-bulk-msg', [EmployeeBulkSmsController::class,'sendEmployeeCustomBulkMsg'])->name('admin.send-employee-custom-bulk-msg');
+
 });
 
 
