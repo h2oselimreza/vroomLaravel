@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
 use App\Http\Controllers\Admin\EmployeeController;
@@ -212,12 +213,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===========================Employee Bulk SMS=============================*/
     Route::get('employee-bulk-sms', [EmployeeBulkSmsController::class,'index'])->name('admin.employee-bulk-sms.index');
     Route::post('show-custom-sms-panel', [EmployeeBulkSmsController::class,'showEmployeeBulkSmsPanel'])->name('admin.employee-showcustom-sms-panel');
-
     Route::post('send-employee-custom-bulk-msg', [EmployeeBulkSmsController::class,'sendEmployeeCustomBulkMsg'])->name('admin.send-employee-custom-bulk-msg');
+    
     Route::post('show-employee-sms-panel-from-list', [EmployeeBulkSmsController::class,'showEmployeeSmsPanelFromList'])->name('admin.show-employee-sms-panel-from-list');
 
-});
+    /*===========================Anniversary and Birthday Card=============================*/
+    Route::get('anniversary-birthday-card', [AnniversaryOrBirthdayCardController::class,'index'])->name('admin.anniversary-birthday-card.index');
+    Route::post('anniversary-birthday-filter-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCardPanel'])->name('admin.anniversary-birthday-filter-member.showMemberAnniversaryCardPanel');
 
+
+});
 
 Route::get('/', [HomeController::class, 'index'])->name('website.home');
 Route::get('about-society', [AboutUsController::class, 'aboutSociety'])->name('website.about.society');
