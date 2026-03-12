@@ -35,7 +35,6 @@ class EmployeeBulkSmsController extends Controller
                 $employees = Employee::getEmployeeDetails([
                     'designation' => $designation
                 ]);
-
                 return view('admin.sms.employee.sms-employee-list-view', compact(
                     'designation', 'employees', 'employeeIdStr', 'checkBulkEmployeeFlag'
                 ));
@@ -44,6 +43,31 @@ class EmployeeBulkSmsController extends Controller
             return redirect()->route('admin.employee-bulk-sms.index')
                  ->with('error', 'Designations is not selected');
         }
+    }
+
+    public function showEmployeeSmsPanelFromList(Request $request)
+    {
+        $data = [];
+        $data['designation'] = "";
+        $data['checkBulkEmployeeFlag'] = 2;
+
+        if($request->filled('employee_ids')){
+
+            $employeeIdArr = explode(',', $request->employee_ids);
+
+            if (!empty($employeeIdArr)) {
+                $data['employees'] = Employee::getEmployeeDetails($employeeIdArr, 1);
+                $data['employeeIdStr'] = implode(',', $employeeIdArr);
+
+                return view(
+                    'admin.sms.employee.custom-employee-sms-panel-view',
+                    $data
+                );
+            }
+        }else{
+            return redirect()->route('admin.employee-bulk-sms.index');
+        }
+        
     }
 
     public function sendEmployeeCustomBulkMsg(Request $request, SmsService $smsService)
@@ -61,8 +85,8 @@ class EmployeeBulkSmsController extends Controller
         $customMsg = trim($request->input('customMsg'));
 
         $arr = [
-            'designation' => $request->input('designation'),
-            'employeeIdStr' => $request->input('employeeIdStr'),
+            'designation' => $request->designation,
+            'employeeIdStr' => $request->employeeIdStr,
         ];
 
         $smsTemplate = $arr['employeeIdStr'] ? 'selectedEmployeeBulkCustom' : 'bulkEmployeeCustom';
@@ -70,11 +94,10 @@ class EmployeeBulkSmsController extends Controller
         $singleMsgCount = $this->singleMshCount($customMsg); 
 
         $employees = Employee::getEmployeeCustomBulkMsgData($arr);
-
         // Format messages (keep your existing logic)
         $responsedbdata = $smsService->getFormatedMessArrayV2($employees, $smsTemplate, $customMsg);
         // Send SMS (keep your existing SMS library call)
-        $smsService->sendMessageV2($responsedbdata['message']);
+        //$smsService->sendMessageV2($responsedbdata['message']);
 
         // Prepare SMS details for database insert
         $insertSmsDetailsArr = [];

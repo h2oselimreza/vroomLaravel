@@ -49,7 +49,7 @@
                                 <br> <br>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover custom-table" id="dataTable">
+                                <table class="table table-bordered table-hover custom-table" id="datatable">
                                     <thead>
                                         <tr class="bg-primary">
                                             <th>SL</th>
@@ -90,6 +90,35 @@
 @endsection
 @push('scripts')
 <script language="JavaScript">
+      var table = $('#datatable').DataTable({
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+
+                    // ❌ Skip Action column (last column index = 9)
+                    if (column.index() === 9) return;
+
+                    var select = $('<select class="form-control" style="width:100%"><option value="">All</option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d) {
+                        // ✅ Convert HTML → plain text
+                        var text = $('<div>').html(d).text().trim();
+
+                        if (text) {
+                            select.append('<option value="' + text + '">' + text + '</option>');
+                        }
+                    });
+                });
+            }
+        });
     function sendMessage() {
         if ($.trim($('#textAreaMsg').val()) === "") {
             alert('Message body is required...!');

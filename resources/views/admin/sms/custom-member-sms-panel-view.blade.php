@@ -67,7 +67,7 @@
                                 <br> <br>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover custom-table" id="dataTable">
+                                <table class="table table-bordered table-hover custom-table" id="datatable">
                                     <thead>
                                         <tr class="bg-primary">
                                             <th>SL</th>
@@ -115,7 +115,7 @@
 @push('scripts')
 <script language="JavaScript">
    $(document).ready(function () {
-        var table = $('#dataTable').DataTable();
+        var table = $('#datatable').DataTable();
     });
 
     function sendMessage() {

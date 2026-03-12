@@ -2,91 +2,98 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Member Bulk SMS</h1>
+    <h1 class="page-title">Employee Bulk SMS</h1>
     <ul class="breadcrumb">
         <li><a href="#"> Home</a></li>
         <li><a href="#">/ SMS</a></li>
-        <li><a href="#">/ Member Bulk SMS</a></li>
+        <li><a href="#">/ Employee List</a></li>
     </ul>
 </div>
+
 <div class="main-content">
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default">
-                <div class="text-right"><h4><b>Selected Member: <span id="selectedMember">0</span></b></h4></div>
+
+                <div class="text-right">
+                    <h4><b>Selected Employee: <span id="selectedEmployee">0</span></b></h4>
+                </div>
+
                 <div class="table-responsive">
-                    <form action="{{ route('admin.show-member-sms-panel-from-list') }}" method="POST">
+                    <form action="{{ route('admin.show-employee-sms-panel-from-list') }}" method="POST">
                         @csrf
+
                         <table class="table table-bordered table-hover custom-table" id="datatable">
                             <thead>
                                 <tr class="bg-primary">
                                     <th>SL</th>
-                                    <th>Member ID</th>
-                                    <th>Member Name</th>
-                                    <th>Block</th>
-                                    <th>Road</th>
-                                    <th>Member Type</th>
-                                    <th>Occupation</th>
-                                    <th>Blood Group</th>
+                                    <th>Employee ID</th>
+                                    <th>Employee Name</th>
+                                    <th>Designation</th>
                                     <th>Contact No</th>
-                                    <th class="no-sort" style="width:50px"><input type="checkbox" id="selectAll" /></th>
+                                    <th class="no-sort" style="width:50px">
+                                        <input type="checkbox" id="selectAll" />
+                                    </th>
                                 </tr>
                             </thead>
+
                             <tfoot>
                                 <tr>
                                     <th>SL</th>
-                                    <th>Member ID</th>
-                                    <th>Member Name</th>
-                                    <th>Block</th>
-                                    <th>Road</th>
-                                    <th>Member Type</th>
-                                    <th>Occupation</th>
-                                    <th>Blood Group</th>
+                                    <th>Employee ID</th>
+                                    <th>Employee Name</th>
+                                    <th>Designation</th>
                                     <th>Contact No</th>
                                 </tr>
                             </tfoot>
+
                             <tbody>
                                 @php $count = 1; @endphp
-                                @foreach($members as $member)
+
+                                @foreach ($employees as $employee)
                                     <tr>
                                         <td class="td-center">{{ $count }}</td>
-                                        <td>{{ $member->member_id }}</td>
-                                        <td>{{ $member->member_name }}</td>
-                                        <td>{{ $member->block_name }}</td>
-                                        <td>{{ $member->road_name }}</td>
-                                        <td>{{ $member->member_type_name }}</td>
-                                        <td>{{ $member->member_occupation_name }}</td>
-                                        <td>{{ $member->blood_group }}</td>
-                                        <td>{{ $member->primary_mobile }}</td>
+                                        <td>{{ $employee['employee_id'] }}</td>
+                                        <td>{{ $employee['employee_name'] }}</td>
+                                        <td>{{ $employee['designation_name'] }}</td>
+                                        <td>{{ $employee['primary_mobile'] }}</td>
+
                                         <td class="td-center">
-                                            <input type="checkbox" class="rowCheckbox" value="{{ $member->id }}" />
+                                            <input type="checkbox"
+                                                   class="rowCheckbox"
+                                                   value="{{ $employee['id'] }}">
                                         </td>
                                     </tr>
+
                                     @php $count++; @endphp
                                 @endforeach
+
                             </tbody>
                         </table>
                         <div style="text-align:right;padding-right:25px">
                             <input type="submit" class="btn btn-success save_button" value="Show Custom SMS Panel">
                         </div>
-                        <input type="hidden" name="member_ids" id="member_ids">
+
+                        <input type="hidden" name="employee_ids" id="employee_ids">
                     </form>
-                </div> 
+                </div>
+
             </div>
         </div>
     </div>
 </div>
+
 @endsection
 @push('scripts')
 <script language="JavaScript">
-   $(document).ready(function () {
+    $(document).ready(function () {
         var table = $('#datatable').DataTable({
             initComplete: function () {
                 this.api().columns().every(function () {
                     var column = this;
 
                     // ❌ Skip Action column (last column index = 9)
-                    if (column.index() === 9) return;
+                    if (column.index() === 5) return;
 
                     var select = $('<select class="form-control" style="width:100%"><option value="">All</option></select>')
                         .appendTo($(column.footer()).empty())
@@ -131,8 +138,8 @@
             }
 
             // Store in hidden field
-            $("#selectedMember").html(selected.length);
-            $('#member_ids').val(selected.join(','));
+            $("#selectedEmployee").html(selected.length);
+            $('#employee_ids').val(selected.join(','));
         });
 
         // Handle "Select All" checkbox

@@ -212,7 +212,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===========================Employee Bulk SMS=============================*/
     Route::get('employee-bulk-sms', [EmployeeBulkSmsController::class,'index'])->name('admin.employee-bulk-sms.index');
     Route::post('show-custom-sms-panel', [EmployeeBulkSmsController::class,'showEmployeeBulkSmsPanel'])->name('admin.employee-showcustom-sms-panel');
+
     Route::post('send-employee-custom-bulk-msg', [EmployeeBulkSmsController::class,'sendEmployeeCustomBulkMsg'])->name('admin.send-employee-custom-bulk-msg');
+    Route::post('show-employee-sms-panel-from-list', [EmployeeBulkSmsController::class,'showEmployeeSmsPanelFromList'])->name('admin.show-employee-sms-panel-from-list');
 
 });
 

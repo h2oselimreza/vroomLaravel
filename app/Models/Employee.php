@@ -98,4 +98,28 @@ class Employee extends Model
 
         return $employeeQuery->get()->toArray();
     }
+
+    public static function getEmployeeDetails($arr, $flag = 0)
+    {
+        $query = self::select(
+                'employee.*',
+                'designation_tb.element as designation_name'
+            )
+            ->leftJoin(
+                'common_table as designation_tb',
+                'designation_tb.element_code',
+                '=',
+                'employee.designation'
+            )
+            ->where('employee.is_active', 1);
+
+        if (!empty($arr['designation'])) {
+            $query->whereIn('employee.designation', explode(',', $arr['designation']));
+        }
+        if ($flag == 1) {
+            $query->whereIn('employee.id',$arr);
+        }
+
+        return $query->get()->toArray();
+    }
 }
