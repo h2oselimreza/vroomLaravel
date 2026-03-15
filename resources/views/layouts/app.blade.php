@@ -84,7 +84,7 @@
                     </button>
 
                     <!-- Brand -->
-                    <a class="navbar-brand d-lg-none" href="#">COMPANY_NAME</a>
+                    <a class="navbar-brand d-lg-none" href="#">{{ env('COMPANY_NAME', 'Default Company') }}</a>
 
                     <!-- Navbar content -->
                     <div class="collapse navbar-collapse" id="mainNavbar">
@@ -92,7 +92,7 @@
                         <!-- Sidebar toggle -->
                         <div id="sideNavigation" class="d-flex align-items-center me-auto">
                             <i class="fa-solid fa-bars fs-5 me-2" onclick="hideSideBar()" role="button"></i>
-                            <a class="navbar-brand mb-0" href="#">COMPANY_NAME</a>
+                            <a class="navbar-brand mb-0" href="#">{{ env('COMPANY_NAME', 'Default Company') }}</a>
                         </div>
 
                         <!-- Right menu -->

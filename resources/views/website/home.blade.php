@@ -617,32 +617,29 @@
     </div>
 </div>
 <br>
-<div class="container">
-    <div class="row">
-        @php $serial = 1; @endphp
+<div class="container event_area">
+    <div class="row owl-carousel owl-theme" style="margin-left:0px">
         @if($events && count($events) > 0)
             @foreach($events as $event)
-                <div class="col-md-2">
-                    <div class="heading-custom-panel">
-                        <div class="pricing">
-                            <div class="pricing-header">
-                                <img src="{{ asset('assets/images/websiteImages/' . $event->image) }}">
-                            </div>
-                            <div class="pricing-body">
-                                <h5 class="pricing-title">{{ $event->heading }}</h5>
-                                <p style="word-break: break-all;">
-                                    <a href="{{ url('event/event-details/' . $event->id) }}"
-                                       style="color:#444444;font-size: 14px">{{ $event->short_description }}</a>
-                                </p>
-                                <div class="card-date">{{ date('Y-M-d', strtotime($event->date)) }}</div>
-                            </div>
+            <div class="item col-md-12">
+                <div class="heading-custom-panel">
+                    <div class="pricing">
+                        <div class="pricing-header">
+                            <img src="{{ asset('assets/images/websiteImages/' . $event->image) }}">
+                        </div>
+                        <div class="pricing-body">
+                            <h5 class="pricing-title">{{ $event->heading }}</h5>
+                            <p style="word-break: break-all;">
+                                <a href="{{ url('event/event-details/' . $event->id) }}"
+                                style="color:#444444;font-size: 14px">
+                                {{ \Illuminate\Support\Str::limit($event->short_description, 80, '...') }}
+                            </a>
+                            </p>
+                            <div class="card-date">{{ date('Y-M-d', strtotime($event->date)) }}</div>
                         </div>
                     </div>
                 </div>
-                @php
-                    if($serial == 6) break;
-                    $serial++;
-                @endphp
+            </div>
             @endforeach
         @else
             no data found
@@ -712,12 +709,11 @@
     </div>
 </div>
 <br>
-<div class="container">
-    <div class="row">
-        @php $serial = 1; @endphp
+<div class="container event_area">
+    <div class="row owl-carousel owl-theme" style="margin-left:0px">
         @if($achievements)
             @foreach($achievements as $achievement)
-                <div class="col-md-2">
+                <div class="item col-md-12">
                     <div class="heading-custom-panel">
                         <div class="pricing">
                             <div class="pricing-header">
@@ -727,17 +723,15 @@
                                 <h5 class="pricing-title">{{ $achievement->heading }}</h5>
                                 <p style="word-break: break-all;">
                                     <a href="{{ url('achievement-details/' . $achievement->id) }}"
-                                       style="color:#444444;font-size: 14px">{{ $achievement->short_description }}</a>
+                                       style="color:#444444;font-size: 14px">
+                                       {{ \Illuminate\Support\Str::limit($achievement->short_description, 80, '...') }}
+                                    </a>
                                 </p>
                                 <div class="card-date">{{ date('Y-M-d', strtotime($achievement->date)) }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @php
-                    if($serial == 6) break;
-                    $serial++;
-                @endphp
             @endforeach
         @else
             no data found

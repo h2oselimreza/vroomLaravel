@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
+use App\Http\Controllers\Admin\PrayerTimeController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RoadController;
 use App\Http\Controllers\Admin\SMS\EmployeeAnniversarySMSController;
@@ -181,6 +182,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('album', [AlbumController::class, 'store'])->name('admin.album.store');
     Route::post('album/delete', [AlbumController::class, 'deleteImages'])->name('admin.album.delete');
     Route::get('/admin/album-details', [AlbumController::class, 'albumDetails'])->name('admin.album.details');
+
+    Route::get('prayer-time', [PrayerTimeController::class, 'index'])->name('admin.prayer-time.module');
+    Route::get('prayer-time/{id}', [PrayerTimeController::class, 'edit'])->name('admin.prayer-time.edit.module');
+    Route::put('/prayer-time/{webPrayerTime}', [PrayerTimeController::class, 'update'])->name('admin.prayer-time.update');
 
     /*===========================member-birthday=SMS=============================*/
     Route::get('member-birthday-sms', [MemberBirthdaySMSController::class,'index'])->name('admin.member-birthday-sms.index');

@@ -81,6 +81,32 @@
 .navbar-nav li ul.dropdown li a:hover{
     background: #f5f5f5;
 }
+
+/*==========Wol carosul button modify==========*/
+.event_area {
+    position: relative;
+}
+    .event_area .owl-carousel .owl-controls .owl-buttons .owl-prev {
+        position: absolute;
+        top: 52px;
+        left: -25px;
+        background: transparent;
+        color: #3c763d;
+        font-size: 28px;
+        z-index: 51;
+    }
+    .event_area .owl-carousel .owl-controls .owl-buttons .owl-next {
+        position: absolute;
+        top: 52px;
+        right: -25px;
+        background: transparent;
+        color: #3c763d;
+        font-size: 28px;
+        z-index: 51;
+    }
+    .event_area .owl-wrapper{
+        margin-bottom: 10px;
+    }
     </style>
 </head>
 
@@ -144,6 +170,23 @@
 
     $( document ).ready(function() {
         $('.lightbox1').littleLightBox();
+
+        $(".owl-carousel").owlCarousel({
+            loop: true,            // Infinite loop
+            margin: 50,
+            navigation: true,      // Show next/prev buttons
+            stopOnHover: false,    // Keep autoplay running on hover
+            items: 5,              // Default number of items
+            itemsDesktop: [1000,5],      // 1000px and above → 5 items
+            itemsDesktopSmall: [900,3],  // 900px - 999px → 3 items
+            itemsTablet: [600,3],        // 600px - 899px → 3 items
+            itemsMobile: [400,1],        // Below 400px → 1 item
+            navigationText: [             // HTML for nav buttons
+                '<span class="glyphicon glyphicon-chevron-left"></span>',
+                '<span class="glyphicon glyphicon-chevron-right"></span>'
+            ],
+            pagination: false            // ✅ v1.3.3 way to hide dots
+        });
     });
 </script>
 </body>
