@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\SMS\SmsReportController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\AlbumController;
 use App\Http\Controllers\Admin\Web\EventController;
+use App\Http\Controllers\Admin\Web\FooterSliderController;
 use App\Http\Controllers\Admin\Web\GalleryImageController;
 use App\Http\Controllers\Admin\Web\ImageAlbumsController;
 use App\Http\Controllers\Admin\Web\NewsController;
@@ -186,6 +187,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('prayer-time', [PrayerTimeController::class, 'index'])->name('admin.prayer-time.module');
     Route::get('prayer-time/{id}', [PrayerTimeController::class, 'edit'])->name('admin.prayer-time.edit.module');
     Route::put('/prayer-time/{webPrayerTime}', [PrayerTimeController::class, 'update'])->name('admin.prayer-time.update');
+
+    Route::resource('footer-slider', FooterSliderController::class)->names('admin.footer-slider.module');
+    Route::get('footer-slider-data', [FooterSliderController::class, 'getTableData'])->name('admin.footer-slider.data.index');
 
     /*===========================member-birthday=SMS=============================*/
     Route::get('member-birthday-sms', [MemberBirthdaySMSController::class,'index'])->name('admin.member-birthday-sms.index');

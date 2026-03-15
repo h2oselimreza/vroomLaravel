@@ -74,7 +74,7 @@
                             <div class="carousel-inner" role="listbox">
                                 @foreach($footerSilderImages as $i => $footerSilderImage)
                                     <div class="item {{ $i == 0 ? 'active' : '' }}">
-                                        <img src="{{ asset('assets/images/websiteFooterImages/' . $footerSilderImage->image) }}" style="height: 130px;object-fit: contain">
+                                        <img src="{{ asset('assets/images/websiteImages/' . $footerSilderImage->image) }}" style="height: 130px;object-fit: contain">
                                     </div>
                                 @endforeach
                             </div>
