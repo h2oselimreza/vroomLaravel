@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
+use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
@@ -221,6 +222,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('anniversary-birthday-card', [AnniversaryOrBirthdayCardController::class,'index'])->name('admin.anniversary-birthday-card.index');
     Route::post('anniversary-birthday-filter-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCardPanel'])->name('admin.anniversary-birthday-filter-member.showMemberAnniversaryCardPanel');
     Route::post('anniversary-birthday-card-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCard'])->name('admin.anniversary-birthday-card-member');
+
+    /*===========================Anniversary and Birthday Card=============================*/
+    Route::get('employee-anniversary-birthday-card', [EmployeeAnniversaryOrBirthdayCardController::class,'index'])->name('admin.employee-anniversary-birthday-card.index');
+    Route::post('show-employee-anniversary-card-panel', [EmployeeAnniversaryOrBirthdayCardController::class,'showEmployeeAnniversaryCardPanel'])->name('admin.show-employee-anniversary-card-panel');
+    Route::post('show-employee-anniversary-card', [EmployeeAnniversaryOrBirthdayCardController::class,'showEmployeeAnniversaryCard'])->name('admin.show-employee-anniversary-card');
 
 
 });

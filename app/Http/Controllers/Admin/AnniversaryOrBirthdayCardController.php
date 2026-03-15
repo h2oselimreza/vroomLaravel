@@ -55,22 +55,22 @@ class AnniversaryOrBirthdayCardController extends Controller
         }
     }
 
-        public function showMemberAnniversaryCard(Request $request) {
+    public function showMemberAnniversaryCard(Request $request) {
 
-            $memberIdArr = $request->memberIdArr;
-            $cardType = $request->cardType;
+        $memberIdArr = $request->memberIdArr;
+        $cardType = $request->cardType;
 
-            if ($memberIdArr) {
-                $personalInformations = $this->getMemberPersonalInfo(null, null, null, $memberIdArr);
-                if($cardType == 'anniversary'){
-                    return view('admin.anniversary-birthday-card/member-anniversary-card-print-view', compact('personalInformations'));
-                } elseif($cardType == 'birthday'){
-                    return view('admin.anniversary-birthday-card/member-birthday-card-print-view', compact('personalInformations'));
-                }
-
-            } else {
-                return redirect()->route('admin.anniversary-birthday-card.index')->with('error', 'Data saved successfully');
+        if ($memberIdArr) {
+            $personalInformations = $this->getMemberPersonalInfo(null, null, null, $memberIdArr);
+            if($cardType == 'anniversary'){
+                return view('admin.anniversary-birthday-card/member-anniversary-card-print-view', compact('personalInformations'));
+            } elseif($cardType == 'birthday'){
+                return view('admin.anniversary-birthday-card/member-birthday-card-print-view', compact('personalInformations'));
             }
+
+        } else {
+            return redirect()->route('admin.anniversary-birthday-card.index')->with('error', 'Data is not selected');
+        }
         
     }
 

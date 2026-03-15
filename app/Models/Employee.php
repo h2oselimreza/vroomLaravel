@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\TracksUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class Employee extends Model
 {
@@ -116,8 +118,54 @@ class Employee extends Model
         if (!empty($arr['designation'])) {
             $query->whereIn('employee.designation', explode(',', $arr['designation']));
         }
+
+        if ($arr['cardType'] == 'anniversary') {
+
+            $date = Carbon::parse($arr['anniversaryDate']);
+
+            $query->whereDay('employee.anniversary', $date->day)
+                ->whereMonth('employee.anniversary', $date->month);
+
+        } elseif ($arr['cardType'] == 'birthday') {
+
+            $date = Carbon::parse($arr['anniversaryDate']);
+
+            $query->whereDay('employee.dob', $date->day)
+                ->whereMonth('employee.dob', $date->month);
+        }
+
         if ($flag == 1) {
             $query->whereIn('employee.id',$arr);
+        }
+
+        return $query->get()->toArray();
+    }
+
+    public static function getEmpPersonalInfo($employeeId = null, $employeeIdArr = [], $flag = null, $employeeAutoIdArr = [])
+    {
+        $query = DB::table('employee')
+            ->select(
+                'employee.*',
+                'occupation_father_tb.element as father_occupation_name',
+                'occupation_mother_tb.element as mother_occupation_name',
+                'occupation_spouse_tb.element as spouse_occupation_name',
+                'designation_tb.element as designation_name'
+            )
+            ->leftJoin('common_table as occupation_father_tb', 'occupation_father_tb.element_code', '=', 'employee.father_occupation')
+            ->leftJoin('common_table as occupation_mother_tb', 'occupation_mother_tb.element_code', '=', 'employee.mother_occupation')
+            ->leftJoin('common_table as occupation_spouse_tb', 'occupation_spouse_tb.element_code', '=', 'employee.spouse_occupation')
+            ->leftJoin('common_table as designation_tb', 'designation_tb.element_code', '=', 'employee.designation');
+
+        if ($flag == 1) {
+            $query->where('employee.is_active', 1);
+        }
+
+        if ($employeeId) {
+            $query->where('employee.employee_id', $employeeId);
+        } elseif (!empty($employeeIdArr)) {
+            $query->whereIn('employee.employee_id', $employeeIdArr);
+        } elseif (!empty($employeeAutoIdArr)) {
+            $query->whereIn('employee.id', $employeeAutoIdArr);
         }
 
         return $query->get()->toArray();

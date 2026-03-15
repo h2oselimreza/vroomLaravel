@@ -10,6 +10,19 @@
     </ul>
 </div>
 <div class="main-content">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default">
@@ -29,7 +42,7 @@
                                 <div class="col-sm-6 col-md-4">
                                     <div class="form-group">
                                         <label class="form-label" for="">Date</label>
-                                        <input type="date" class="form-control dateInput" name="anniversaryDateCalendar" id="anniversaryDateCalendar">
+                                        <input type="text" class="form-control dateInput" name="anniversaryDateCalendar" id="anniversaryDateCalendar" placeholder="Select date">
                                     </div>
                                 </div>
                             </div>
@@ -257,6 +270,14 @@
 @endsection
 @push('scripts')
 <script language="JavaScript">
+    $('.dateInput').datepicker({
+        format: 'yyyy-mm-dd',  // format compatible with Laravel date column
+        autoclose: true,       // close picker after selecting a date
+        todayHighlight: true,  // highlight today
+        clearBtn: true,        // optional clear button
+        orientation: 'bottom'  // show below the input
+    });
+
     var memberTypeCount = '<?php echo count($memberTypes) ?>';
     var blockCount = '<?php echo count($blocks) ?>';
     var roadCount = '<?php echo count($roads) ?>';
