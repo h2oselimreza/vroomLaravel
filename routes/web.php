@@ -220,6 +220,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===========================Anniversary and Birthday Card=============================*/
     Route::get('anniversary-birthday-card', [AnniversaryOrBirthdayCardController::class,'index'])->name('admin.anniversary-birthday-card.index');
     Route::post('anniversary-birthday-filter-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCardPanel'])->name('admin.anniversary-birthday-filter-member.showMemberAnniversaryCardPanel');
+    Route::post('anniversary-birthday-card-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCard'])->name('admin.anniversary-birthday-card-member');
 
 
 });

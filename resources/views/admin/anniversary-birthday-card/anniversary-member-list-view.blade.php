@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <form action="{{ url('admin/AnniversaryCard/showMemberAnniversaryCard') }}" method="POST">
+                    <form action="{{ route('admin.anniversary-birthday-card-member') }}" method="POST">
                         @csrf
 
                         <table class="table table-bordered table-hover custom-table" id="datatable">
@@ -91,7 +91,7 @@
 
                         <div style="text-align:right;">
                             <input type="hidden" name="cardType" value="{{ $cardType }}">
-                            <input type="submit" class="btn btn-success" value="Show Card">
+                            <input type="submit" class="btn btn-success save_button" value="Show Card">
                         </div>
 
                     </form>
