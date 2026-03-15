@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use App\Services\TokenService;
+use App\Traits\TracksUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Block extends Model
 {
+    use HasFactory, TracksUser;
      protected $fillable = [
         'block_code',
         'block_name',
@@ -22,33 +26,22 @@ class Block extends Model
         'is_active' => 'boolean',
     ];
 
-    public $timestamps = false;
+    const CREATED_AT = 'created_dt_tm';
+    const UPDATED_AT = 'updated_dt_tm';
 
     protected static function boot()
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $user = auth()->user()->user_id ?? 'system';
-
-            $model->created_by = $user;
-            $model->updated_by = $user;
-        });
-
-        static::updating(function ($model) {
-            $model->updated_by = auth()->user()->user_id ?? 'system';
-        });
-
         static::created(function ($group) {
 
-            $prefix = \DB::table('token')
-                        ->where('code', 'BLK-')
-                        ->value('code') ?? 'BLK-';
+            $prefix = 'M-GRP-';
 
-            $group->block_code =
-                $prefix . str_pad($group->id, 5, '0', STR_PAD_LEFT);
+            $tokenService = app(TokenService::class);
 
-            $group->saveQuietly();
+            $block_code = $prefix . $tokenService->getTokenByCode($prefix);
+
+            $group->block_code = $block_code;
         });
     }
 
