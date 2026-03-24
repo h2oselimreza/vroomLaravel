@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('user_group', function (Blueprint $table) {
             $table->id();
             $table->string('group_name', 250)->nullable();
-            $table->string('modules', 700);
+            $table->text('modules');
+            $table->text('sub_modules');
+            $table->string('panel_type',100);
             $table->integer('is_active')->default(1);
             $table->string('created_by', 70);
             $table->string('updated_by', 70);
-            $table->timestamp('created_dt_tm')->useCurrent();
-            $table->timestamp('updated_dt_tm')
-                ->useCurrent()
-                ->useCurrentOnUpdate();
+            $table->timestamp('created_dt_tm');
+            $table->timestamp('updated_dt_tm');
         });
     }
 

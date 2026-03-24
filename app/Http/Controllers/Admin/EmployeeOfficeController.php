@@ -13,7 +13,10 @@ class EmployeeOfficeController extends Controller
 {
     public function edit($id){
         $data = Employee::findOrFail($id);
-        return view("admin.employee_office.office",compact("data"));
+        $commonTableElementArr = array('type' => 'emp_designation');
+        $designations = $this->getCommonTableElement($commonTableElementArr);
+        //dd($designations);
+        return view("admin.employee_office.office",compact("data","designations"));
     }
 
     public function update(EmployeeOfficeRequest $request, Employee $employee)
@@ -76,6 +79,23 @@ class EmployeeOfficeController extends Controller
         return redirect()
             ->route('admin.employee.office.edit', $employee->id)
             ->with('success', 'Employee office information updated successfully.');
+    }
+
+    function getCommonTableElement($commonTableElementArr)
+    {
+        $query = DB::table('common_table');
+
+        if (isset($commonTableElementArr['type'])) {
+            $query->where('type', $commonTableElementArr['type']);
+        }
+
+        if (isset($commonTableElementArr['depend_on_element'])) {
+            $query->where('depend_on_element', $commonTableElementArr['depend_on_element']);
+        }
+
+        return $query->orderBy('element_order', 'ASC')
+                    ->orderBy('element', 'ASC')
+                    ->get();
     }
 
 }

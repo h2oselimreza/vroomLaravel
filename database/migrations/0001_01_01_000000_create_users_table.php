@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('email', 300)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('user_type_code', 30);
+            $table->string('panel_type');
 
             $table->string('full_name', 250)->nullable();
             $table->string('contact_no', 30)->nullable();
@@ -28,16 +29,16 @@ return new class extends Migration
             $table->boolean('is_reset')->default(true);
 
             $table->string('created_by', 70);
+            $table->string('created_type');
             $table->string('updated_by', 70);
 
-            $table->timestamp('created_dt_tm')->useCurrent();
-            $table->timestamp('updated_dt_tm')
-                ->useCurrent()
-                ->useCurrentOnUpdate();
+            $table->timestamp('created_dt_tm');
+            $table->timestamp('updated_dt_tm');
 
             $table->boolean('is_active')->default(true);
             
             $table->string('password');
+            $table->string('password_reset_code')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

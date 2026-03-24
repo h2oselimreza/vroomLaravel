@@ -49,9 +49,10 @@
                             <thead>
                                 <tr class="bg-primary text-white">
                                     <th>SL</th>
+                                    <th>Panel Type</th>
                                     <th>Module Group</th>
                                     <th>Module</th>
-                                    <th>Select</th>
+                                    <th>Select Module</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,7 +78,11 @@
                                         <tr>
                                             @if($loopFlag)
                                                 <td class="td-center" rowspan="{{ $rowspanValue }}">
-                                                    {{ $serial }}
+                                                    {{ $serial }}   
+                                                </td>
+
+                                                <td class="td-center" rowspan="{{ $rowspanValue }}">
+                                                    {{ $moduleGroup->panel_type }}
                                                 </td>
 
                                                 <td class="td-center" rowspan="{{ $rowspanValue }}">

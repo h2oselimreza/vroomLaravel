@@ -73,27 +73,18 @@
                                                     <div class="text-danger mt-1">{{ $message }}</div>
                                                 @enderror
                                             </div>
-
                                             {{-- Designation --}}
                                             <div class="col-md-6">
                                                 <label class="form-label">Designation</label>
                                                 <select name="designation"
                                                     class="form-control @error('designation') is-invalid @enderror">
                                                     <option value="">-- Select Designation--</option>
-
-                                                    @php
-                                                        $designations = [
-                                                            'computer_operator' => 'Computer Operator',
-                                                            'office_assistance' => 'Office Assistance'
-                                                        ];
-                                                    @endphp
-
-                                                    @foreach($designations as $value => $label)
-                                                        <option value="{{ $value }}" 
-                                                            {{ old('designation', $data->designation ?? '') == $value ? 'selected' : '' }}>
-                                                            {{ $label }}
-                                                        </option>
-                                                    @endforeach
+                                                        @foreach($designations as $value)
+                                                            <option value="{{ $value->element_code }}" 
+                                                                {{ old('designation', $data->designation ?? '') == $value->element_code ? 'selected' : '' }}>
+                                                                {{ $value->element }}
+                                                            </option>
+                                                        @endforeach
                                                 </select>
 
                                                 @error('designation')

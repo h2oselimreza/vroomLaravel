@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\SMS\MemberAnniversarySMSController;
 use App\Http\Controllers\Admin\SMS\MemberBirthdaySMSController;
 use App\Http\Controllers\Admin\SMS\memberBulkSmsController;
 use App\Http\Controllers\Admin\SMS\SmsReportController;
+use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\Web\AlbumController;
 use App\Http\Controllers\Admin\Web\EventController;
@@ -42,14 +43,7 @@ use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\WebSite\AboutUsController;
-use App\Http\Controllers\WebSite\CommitteeController;
-use App\Http\Controllers\WebSite\ContactController;
-use App\Http\Controllers\WebSite\GalleryController;
-use App\Http\Controllers\WebSite\HomeController;
-use App\Http\Controllers\WebSite\SinglePageController;
 use Illuminate\Support\Facades\Route;
-use Yajra\DataTables\Html\Columns\Index;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -91,16 +85,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/modules-data', [ModuleController::class, 'getModulesData'])->name('modules.data.index');
     Route::get('/module-groups/{panel}', [ModuleController::class, 'selectModuleData'])->name('select.modules.data');
 
-    Route::resource('roads', RoadController::class)->names('road.module');
-    Route::get('/road-data', [RoadController::class, 'getRoadData'])->name('road.data.index');
-
-    Route::resource('blocks', BlockController::class)->names('admin.block.module');
-    Route::get('/block-data', [BlockController::class, 'getBlockData'])->name('admin.block.data.index');
-
-    Route::get('/block-road', [BlockRoadController::class, 'index'])->name('admin.block.block.index');
-    
-    Route::post('/admin/masterData/setRoad', [BlockRoadController::class, 'setRoad'])
-    ->name('admin.masterData.setRoad');
+    Route::resource('sub-modules', SubModuleController::class)->names('admin.sub-modules');
+    Route::get('/sub-modules-data', [SubModuleController::class, 'getSubModulesData'])->name('sub-modules.data.index');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
@@ -152,160 +138,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('member-id-card-data', [MemberIdCardController::class, 'getMemberIdCardData'])->name('admin.memberIdCard.data.index');
     Route::post('print-member-id-card', [MemberIdCardController::class, 'PrintMemberIdCard'])->name('print.member.id.card');
 
-    /*==================Web Controllers==============*/
-    Route::resource('news', NewsController::class)->names('admin.news.module');
-    Route::get('news-data', [NewsController::class, 'getNewsData'])->name('admin.news.data.index');
-
-    Route::resource('sliders', WebSliderController::class)->names('admin.slider.module');
-    Route::get('slider-data', [WebSliderController::class, 'getTableData'])->name('admin.slider.data.index');
-
-    Route::resource('website-module', WebsiteController::class)->names('admin.website.module');
-    Route::get('website-module-data', [WebsiteController::class, 'getTableData'])->name('admin.website.data.index');
-
-    Route::resource('module-description', WebModuleDescriptionController::class)->names('admin.module-description.module');
-    Route::get('module-description-data', [WebModuleDescriptionController::class, 'getTableData'])->name('admin.module-description.data.index');
-
-    Route::resource('achievements', WebAchievementsController::class)->names('admin.achievements.module');
-    Route::get('module-achievements-data', [WebAchievementsController::class, 'getTableData'])->name('admin.achievements.data.index');
-
-    Route::resource('notices', WebNoticeController::class)->names('admin.notices.module');
-    Route::get('module-notices-data', [WebNoticeController::class, 'getTableData'])->name('admin.notices.data.index');
-
-    Route::resource('events', EventController::class)->names('admin.events.module');
-    Route::get('module-events-data', [EventController::class, 'getTableData'])->name('admin.events.data.index');
-
-    Route::resource('gallery-image', ImageAlbumsController::class)->names('admin.gallery-image.module');
-    Route::get('module-gallery-image-data', [ImageAlbumsController::class, 'getTableData'])->name('admin.gallery-image.data.index');
-    Route::post('gallery-image/update-home', [GalleryImageController::class, 'updateHomeGallery'])->name('gallery-image.module.update');
-    Route::get('gallery-image/{album_id}/{gallery_id}', [GalleryImageController::class, 'destroy'])->name('gallery-image.destroy');
-
-    Route::get('album', [AlbumController::class, 'index'])->name('admin.album.index');
-    Route::post('album', [AlbumController::class, 'store'])->name('admin.album.store');
-    Route::post('album/delete', [AlbumController::class, 'deleteImages'])->name('admin.album.delete');
-    Route::get('/admin/album-details', [AlbumController::class, 'albumDetails'])->name('admin.album.details');
-
-    Route::get('prayer-time', [PrayerTimeController::class, 'index'])->name('admin.prayer-time.module');
-    Route::get('prayer-time/{id}', [PrayerTimeController::class, 'edit'])->name('admin.prayer-time.edit.module');
-    Route::put('/prayer-time/{webPrayerTime}', [PrayerTimeController::class, 'update'])->name('admin.prayer-time.update');
-
-    Route::resource('footer-slider', FooterSliderController::class)->names('admin.footer-slider.module');
-    Route::get('footer-slider-data', [FooterSliderController::class, 'getTableData'])->name('admin.footer-slider.data.index');
-
-    /*===========================member-birthday=SMS=============================*/
-    Route::get('member-birthday-sms', [MemberBirthdaySMSController::class,'index'])->name('admin.member-birthday-sms.index');
-    Route::get('member-birthday-sms-data', [MemberBirthdaySMSController::class, 'getMemberBirthdaySMSData'])->name('admin.member-birthday-sms-data.data.index');
-    Route::post('member-birthday-sms-send/{checkFlag}', [MemberBirthdaySMSController::class, 'sendMemberBirthdaySms'])->name('admin.member-birthday-sms-send');
-
-    /*===========================Member-aaniversary=SMS=============================*/
-    Route::get('member-anniversary-sms', [MemberAnniversarySMSController::class,'index'])->name('admin.member-anniversary-sms.index');
-    Route::get('member-anniversary-sms-data', [MemberAnniversarySMSController::class, 'getMemberAnniversarySMSData'])->name('admin.member-anniversary-sms-data.index');
-    Route::post('member-anniversary-sms-send/{checkFlag}', [MemberAnniversarySMSController::class, 'sendMemberAnniversarySms'])->name('admin.member-anniversary-sms-send');
-
-    /*===========================Employee-birthday=SMS=============================*/
-    Route::get('employee-birthday-sms', [EmployeeBirthdaySMSController::class,'index'])->name('admin.employee-birthday-sms.index');
-    Route::get('employee-birthday-sms-data', [EmployeeBirthdaySMSController::class, 'getEmployeeData'])->name('admin.employee-birthday-sms-data.data.index');
-    Route::post('employee-birthday-sms-send/{checkFlag}', [EmployeeBirthdaySMSController::class, 'sendMemberBirthdaySms'])->name('admin.employee-birthday-sms-send');
-
-    /*===========================Employee-aaniversary=SMS=============================*/
-    Route::get('employee-anniversary-sms', [EmployeeAnniversarySMSController::class,'index'])->name('admin.employee-anniversary-sms.index');
-    Route::get('employee-anniversary-sms-data', [EmployeeAnniversarySMSController::class, 'getEmployeeData'])->name('admin.employee-anniversary-sms-data.index');
-    Route::post('employee-anniversary-sms-send/{checkFlag}', [EmployeeAnniversarySMSController::class, 'sendMemberAnniversarySms'])->name('admin.employee-anniversary-sms-send');
-
-    /*===========================SMS Balance=============================*/
-    Route::get('sms-balance', [SmsReportController::class,'index'])->name('admin.sms-balance.index');
-
-    /*===========================Member Bulk SMS=============================*/
-    Route::get('member-bulk-sms', [memberBulkSmsController::class,'index'])->name('admin.member-bulk-sms.index');
-    Route::post('member-bulk-sms-send', [memberBulkSmsController::class,'showMemberBulkSmsPanel'])->name('admin.member-bulk-sms-send.showMemberBulkSmsPanel');
-    Route::post('send-member-custom-bulk-msg', [memberBulkSmsController::class,'sendMemberCustomBulkMsg'])->name('admin.send-member-custom-bulk-msg');
-    Route::post('show-member-sms-panel-from-list', [memberBulkSmsController::class,'showMemberSmsPanelFromList'])->name('admin.show-member-sms-panel-from-list');
-
-    /*===========================Employee Bulk SMS=============================*/
-    Route::get('employee-bulk-sms', [EmployeeBulkSmsController::class,'index'])->name('admin.employee-bulk-sms.index');
-    Route::post('show-custom-sms-panel', [EmployeeBulkSmsController::class,'showEmployeeBulkSmsPanel'])->name('admin.employee-showcustom-sms-panel');
-    Route::post('send-employee-custom-bulk-msg', [EmployeeBulkSmsController::class,'sendEmployeeCustomBulkMsg'])->name('admin.send-employee-custom-bulk-msg');
-    
-    Route::post('show-employee-sms-panel-from-list', [EmployeeBulkSmsController::class,'showEmployeeSmsPanelFromList'])->name('admin.show-employee-sms-panel-from-list');
-
-    /*===========================Anniversary and Birthday Card=============================*/
-    Route::get('anniversary-birthday-card', [AnniversaryOrBirthdayCardController::class,'index'])->name('admin.anniversary-birthday-card.index');
-    Route::post('anniversary-birthday-filter-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCardPanel'])->name('admin.anniversary-birthday-filter-member.showMemberAnniversaryCardPanel');
-    Route::post('anniversary-birthday-card-member', [AnniversaryOrBirthdayCardController::class,'showMemberAnniversaryCard'])->name('admin.anniversary-birthday-card-member');
-
-    /*===========================Anniversary and Birthday Card=============================*/
-    Route::get('employee-anniversary-birthday-card', [EmployeeAnniversaryOrBirthdayCardController::class,'index'])->name('admin.employee-anniversary-birthday-card.index');
-    Route::post('show-employee-anniversary-card-panel', [EmployeeAnniversaryOrBirthdayCardController::class,'showEmployeeAnniversaryCardPanel'])->name('admin.show-employee-anniversary-card-panel');
-    Route::post('show-employee-anniversary-card', [EmployeeAnniversaryOrBirthdayCardController::class,'showEmployeeAnniversaryCard'])->name('admin.show-employee-anniversary-card');
-
-
 });
 
-Route::get('/', [HomeController::class, 'index'])->name('website.home');
-Route::get('about-society', [AboutUsController::class, 'aboutSociety'])->name('website.about.society');
-Route::get('history-of-society', [AboutUsController::class, 'aboutSociety'])->name('website.history-of-society');
-Route::get('message-from-president', [AboutUsController::class, 'aboutSociety'])->name('website.message-from-president');
-Route::get('message-from-general-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-general-secretary');
-Route::get('message-from-office-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-office-secretary');
-Route::get('message-from-pnp-secretary', [AboutUsController::class, 'aboutSociety'])->name('message-from-pnp-secretary');
-Route::get('campaign', action: [AboutUsController::class, 'aboutSociety'])->name('website.campaign');
-Route::get('about/achievements', action: [AboutUsController::class, 'achievements'])->name('website.about.achievements');
-Route::get('achievement-details/{id}', action: [AboutUsController::class, 'show'])->name('website.achievements.show');
-
-/*=======================Committee================*/
-Route::get('present-executive-committee', [SinglePageController::class, 'index'])->name('website.present-executive-committee');
-Route::get('present-sub-committee', [SinglePageController::class, 'index'])->name('website.present-sub-committee');
-Route::get('adviser-comittee', [SinglePageController::class, 'index'])->name('website.adviser-comittee');
-Route::get('central-mosque-committee', [SinglePageController::class, 'index'])->name('website.central-mosque-committee');
-
-Route::get('show-facilities', [SinglePageController::class, 'index'])->name('website.showFacilities');
-Route::get('ec-meetings', [SinglePageController::class, 'index'])->name('website.ec-meetings');
-Route::get('agm', [SinglePageController::class, 'index'])->name('website.agm');
-Route::get('gm', [SinglePageController::class, 'index'])->name('website.gm');
-
-/*=======================Archive================*/
-Route::get('previous-executive-committee', [SinglePageController::class,'index'])->name('website.previous-executive-committee');
-Route::get('previous-president', [SinglePageController::class,'index'])->name('website.previous-president');
-Route::get('previous-general-secretary', [SinglePageController::class,'index'])->name('website.previous-general-secretary');
-
-/*=======================Maps================*/
-Route::get('a-block', [SinglePageController::class,'index'])->name('website.a-block');
-Route::get('b-block', [SinglePageController::class,'index'])->name('website.b-block');
-Route::get('c-block', [SinglePageController::class,'index'])->name('website.c-block');
-Route::get('d-block', [SinglePageController::class,'index'])->name('website.d-block');
-Route::get('e-block', [SinglePageController::class,'index'])->name('website.e-block');
-Route::get('f-block', [SinglePageController::class,'index'])->name('website.f-block');
-Route::get('g-block', [SinglePageController::class,'index'])->name('website.g-block');
-
-/*=======================Maps================*/
-Route::get('vacancy', [SinglePageController::class,'index'])->name('website.vacancy');
-Route::get('career-result', [SinglePageController::class,'index'])->name('website.career-result');
-Route::get('advertisement', [SinglePageController::class,'index'])->name('website.advertisement');
-
-/*=======================Download================*/
-Route::get('letters', [SinglePageController::class,'index'])->name('website.letters');
-Route::get('forms', [SinglePageController::class,'index'])->name('website.forms');
-
-/*=======================Download================*/
-Route::get('show-tender', [SinglePageController::class,'index'])->name('website.show-tender');
-
-/*=======================Events================*/
-Route::get('event', [\App\Http\Controllers\WebSite\EventController::class,'index'])->name('website.event.index');
-Route::get('event/event-details/{id}', [\App\Http\Controllers\WebSite\EventController::class,'show'])->name('website.event.details');
-
-/*=======================Web Member================*/
-Route::get('apply-member-ship', [\App\Http\Controllers\WebSite\MemberController::class,'applyMembership'])->name('website.member.apply-member-ship');
-Route::post('apply-member-ship', [\App\Http\Controllers\WebSite\MemberController::class,'applyForMembershipMailSend'])->name('website.member.apply-member-ship');
-
-Route::get('apply-for-car-sticker', [\App\Http\Controllers\WebSite\MemberController::class,'applyForCarSticker'])->name('website.member.apply-car-sticker');
-Route::post('apply-for-car-sticker', [\App\Http\Controllers\WebSite\MemberController::class,'applyForCarStickerMailSend'])->name('website.member.apply-car-sticker');
-
-Route::get('life-members', [\App\Http\Controllers\WebSite\MemberController::class,'lifeMember'])->name('website.life-member');
-Route::get('donar-members', [\App\Http\Controllers\WebSite\MemberController::class,'donarMember'])->name('website.donar-member');
-
-Route::get('contact-us', [ContactController::class,'index'])->name('website.contact-us.index');
-Route::post('contact-us', [ContactController::class, 'contactUsMailSend'])->name('website.contact-us.contactUsMailSend');
-
-Route::get('gallery', [GalleryController::class,'index'])->name('website.gallery.index');
-Route::get('gallery/{albumId}/{albumName}', [GalleryController::class,'show'])->name('website.gallery.show');
+Route::get('/', function() {
+    return view('welcome');
+});
 
 require __DIR__.'/auth.php';

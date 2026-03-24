@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('web_website_module', function (Blueprint $table) {
+        Schema::create('sub_modules', function (Blueprint $table) {
             $table->id();
-            $table->string('module_code', 4)->index();
-            $table->string('web_module_name', 100);
+            $table->integer('module');
+            $table->string('sub_module_name',100);
+            $table->string('sub_module_code',100);
+            $table->string('panel_type',50);
         });
     }
 
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('web_website_module');
+        Schema::dropIfExists('sub_modules');
     }
 };

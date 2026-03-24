@@ -27,28 +27,28 @@ class WebComposerServiceProvider extends ServiceProvider
     View::composer('*', function ($view) {
 
         // Footer slider images
-        $footerSliderImage = DB::table('web_footer_image')
-            ->select('image')
-            ->orderBy('image_order', 'ASC')
-            ->get()
-            ->toArray();
+        // $footerSliderImage = DB::table('web_footer_image')
+        //     ->select('image')
+        //     ->orderBy('image_order', 'ASC')
+        //     ->get()
+        //     ->toArray();
 
-        // Active notices
-        $noticeLists = Notices::where('is_active', 1)
-            ->orderBy('updated_dt_tm', 'DESC')
-            ->get();
+        // // Active notices
+        // $noticeLists = Notices::where('is_active', 1)
+        //     ->orderBy('updated_dt_tm', 'DESC')
+        //     ->get();
 
-        // Prayer time
-        $prayerTime = function () {
-            return app(PrayerService::class)->getPrayerTime();
-        };
+        // // Prayer time
+        // $prayerTime = function () {
+        //     return app(PrayerService::class)->getPrayerTime();
+        // };
 
-        // Pass variables to all views
-        $view->with([
-            'footerSliderImage' => $footerSliderImage,
-            'noticeLists' => $noticeLists,
-            'prayerTime' => $prayerTime(), // call function
-        ]);
+        // // Pass variables to all views
+        // $view->with([
+        //     'footerSliderImage' => $footerSliderImage,
+        //     'noticeLists' => $noticeLists,
+        //     'prayerTime' => $prayerTime(), // call function
+        // ]);
     });
 }
 }
