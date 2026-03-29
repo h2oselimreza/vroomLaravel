@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
+use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\MemberOfficeController;
 use App\Http\Controllers\Admin\MemberPhotoController;
 use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
+use App\Http\Controllers\Admin\MetaData\AreaController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\PrayerTimeController;
@@ -87,6 +89,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::resource('sub-modules', SubModuleController::class)->names('admin.sub-modules');
     Route::get('/sub-modules-data', [SubModuleController::class, 'getSubModulesData'])->name('sub-modules.data.index');
+
+    /*===============MetaData Route==================*/
+    Route::get('area', [AreaController::class, 'index'])->name('Admin.module.metadata.index');
+    Route::get('divisions', [AreaController::class, 'division'])->name('Admin.module.metadata.division');
+    Route::get('districts', [AreaController::class, 'district'])->name('Admin.module.metadata.districts');
+    Route::get('upazila', [AreaController::class, 'upazila'])->name('Admin.module.metadata.upazila');
+
+    /*===============Corporate customer Route==================*/
+    Route::resource('company', CompanyController::class)->names('admin.company-modules');
+    Route::get('/company-data', [CompanyController::class, 'getCompanyData'])->name('company-modules.data.index');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

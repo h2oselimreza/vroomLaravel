@@ -1,0 +1,86 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="header dashboard_from">
+    <h1 class="page-title">District</h1>
+    <ul class="breadcrumb">
+        <li><a href="{{ url('admin/Home') }}">Home</a></li>
+        <li><a href="#">/ Master Data</a></li>
+        <li><a href="{{ url('admin/MasterData/area') }}">/ District</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+
+            @include('admin.metadata.areaHeaderMenu')
+
+            <div class="panel panel-default"> 
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover custom-table" id="datatable">
+                        <thead>
+                            <tr class="bg-primary">
+                                <th>SL</th>
+                                <th>Division Name (En)</th>
+                                <th>Division Name (Bn)</th>
+                                <th>District Name (En)</th>
+                                <th>District Name (Bn)</th>
+                                <th>Upazila Name (En)</th>
+                                <th>Upazila Name (Bn)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse ($upazila as $value)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $value->division_en_name }}</td>
+                                    <td class="text-center">{{ $value->division_bn_name }}</td>
+                                    <td class="text-center">{{ $value->district_en_name }}</td>
+                                    <td class="text-center">{{ $value->district_bn_name }}</td>
+                                    <td class="text-center">{{ $value->upozilla_en_name }}</td>
+                                    <td class="text-center">{{ $value->upozilla_bn_name }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">No Data Found</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@endsection
+
+
+@push('scripts')
+<script>
+$(document).ready(function () {
+
+    $('#datatable').DataTable({
+        pageLength: 10,
+        ordering: true,
+        searching: true
+    });
+
+});
+</script>
+@endpush

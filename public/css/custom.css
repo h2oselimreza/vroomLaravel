@@ -281,3 +281,17 @@ table.dataTable .dt-column-header {
 .member_bulk_sms .bg-warning {
     background: #fcf8e3 !important;
 }
+.border-ccc {
+    border: 1px solid #ccc !important;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 13px;
+}
+
+.border-ccc .col-md-4:not(:last-child) {
+    border-right: 1px solid #ccc;
+}
+.border-ccc .btn-group,
+.border-ccc button {
+    width: 100% !important;
+}

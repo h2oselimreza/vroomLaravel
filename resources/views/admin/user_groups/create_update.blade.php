@@ -53,6 +53,7 @@
                                     <th>Module Group</th>
                                     <th>Module</th>
                                     <th>Select Module</th>
+                                    <th>Sub Module</th>
                                 </tr>
                             </thead>
                             <tbody>

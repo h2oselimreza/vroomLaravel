@@ -82,7 +82,6 @@ class ModuleGroupController extends Controller
     public function edit($id){
         $module = ModuleGroup::findOrFail($id);
         $subModule = SubModules::where('module',$id)->get();
-        dd($subModule);
         return view('admin.module_group.create', compact('module'));
             
     }
