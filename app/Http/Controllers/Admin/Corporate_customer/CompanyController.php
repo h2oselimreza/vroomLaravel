@@ -3,57 +3,65 @@
 namespace App\Http\Controllers\Admin\Corporate_customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MetaData\CorporateCompanyRequest;
 use App\Models\CorporateCompany;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use App\Models\MetaData\District;
+use App\Models\MetaData\Upozilla;
+use App\Repositories\MetaData\AreaRepository;
+use App\Services\TokenService;
 
 class CompanyController extends Controller
 {
     public function index(){
-        return view('admin.corporate_customer.index');
+        $companies = CorporateCompany::where('is_active',1)->get();
+        return view('admin.corporate_customer.index',compact('companies'));
     }
 
-    public function getCompanyData(Request $request){
-        if ($request->ajax()) {
+    public function create(AreaRepository $areaRepository){
+        $divisions = $areaRepository->getDivision();
+        $districts = ['districtData' => $areaRepository->getDistrict()];
+        $upozillas = ['upozillaData' => $areaRepository->getUpozilla()];
+        return view('admin.corporate_customer.createEdit',compact('divisions','districts','upozillas'));
+    }
 
-            $companies = CorporateCompany::select([
-                'id',
-                'title',
-                'company_code',
-                'company_mobile',
-                'address',
-                'package',
-                'status'
-            ]);
+    public function getDistricts($division_id)
+    {
+        $districts = District::where('division', $division_id)
+            ->where('is_active', 1)
+            ->get();
+        return response()->json($districts);
+    }
 
-            return DataTables::of($companies)
+    public function getUpazilas($district_id)
+    {
+        $upazilas = Upozilla::where('district', $district_id)
+            ->where('is_active', 1)
+            ->get();
 
-                ->addIndexColumn()
+        return response()->json($upazilas);
+    }
 
-                ->addColumn('action', content: function ($companies) {
-                    $editUrl   = route('admin.company-modules.edit', $companies->id);
-                    return '
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Actions
-                            </button>
+    public function store(CorporateCompanyRequest $request, TokenService $tokenService)
+    {
+        $prefix = "FC";
+        try {
 
-                            <ul class="dropdown-menu dropdown-menu-end">
+            $data = $request->validated();
+            // Add extra fields
+            $data['status'] = 1;
+            $data['company_code']  = $prefix . $tokenService->getTokenByCode($prefix);;
+            $data['company_type'] = 'corp_customer';
+            CorporateCompany::create($data);
 
-                                <!-- Edit -->
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="' . $editUrl . '">
-                                        <i class="fa fa-edit me-2"></i> Edit
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    ';
-                })
+            return redirect()
+                ->route('admin.company-modules.index')
+                ->with('success', 'Company created successfully');
 
-                ->rawColumns(['action'])
-                ->make(true);
+        } catch (\Exception $e) {
 
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
 }

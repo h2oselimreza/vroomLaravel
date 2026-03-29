@@ -98,7 +98,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============Corporate customer Route==================*/
     Route::resource('company', CompanyController::class)->names('admin.company-modules');
-    Route::get('/company-data', [CompanyController::class, 'getCompanyData'])->name('company-modules.data.index');
+    Route::get('/get-districts/{division_id}', [CompanyController::class, 'getDistricts']);
+    Route::get('/get-upazilas/{district_id}', [CompanyController::class, 'getUpazilas']);
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

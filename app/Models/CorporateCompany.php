@@ -1,14 +1,17 @@
 <?php
 
 namespace App\Models;
-
 use App\Traits\TracksUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CorporateCompany extends BaseModel
+class CorporateCompany extends Model
 {
+    use HasFactory, TracksUser;
     protected $table = 'corporate_companies';
+    
+    const CREATED_AT = 'created_dt_tm';
+    const UPDATED_AT = 'updated_dt_tm';
 
     protected $fillable = [
         'company_code',
