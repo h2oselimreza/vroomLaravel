@@ -23,10 +23,10 @@
     </li>
     <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'employee-education-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company-modules.edit', $data->company_code) : '#' }}"> Images </a>
+                    <?= $secondLastSegment == 'company-profile-image' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company.profile-image.edit', $data->company_code) : '#' }}"> Images </a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company-modules.edit', $data->company_code) : '#' }}" id="official-tab" role="tab"> Attachment </a>
+                    <?= $secondLastSegment == 'company-attachment' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company.attachment.edit', $data->company_code) : '#' }}" id="official-tab" role="tab"> Attachment </a>
     </li>
 </ul>

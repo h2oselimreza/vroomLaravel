@@ -3,8 +3,10 @@
 use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
+use App\Http\Controllers\Admin\Corporate_customer\CompanyAttachmentController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyOfficeController;
+use App\Http\Controllers\Admin\Corporate_customer\CompanyProfileController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -105,6 +107,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('company-office-info', [CompanyOfficeController::class, 'editCompanyOfficial'])->name('admin.company.office.update');
     Route::put('company-notification-permission', [CompanyOfficeController::class, 'updateNotificationPermission'])->name('admin.company.notification-permission');
     Route::put('company-setting', [CompanyOfficeController::class, 'updateSmsSettings'])->name('admin.company.setting');
+
+    Route::get('company-profile-image/{company_code}', [CompanyProfileController::class, 'edit'])->name('admin.company.profile-image.edit');
+    Route::post('profile-photo-info/{company_code}', [CompanyProfileController::class, 'update'])->name('admin.company.profile-image.update');
+    Route::get('company-attachment/{company_code}', [CompanyAttachmentController::class, 'edit'])->name('admin.company.attachment.edit');
+    Route::post('company-attachment', [CompanyAttachmentController::class, 'store'])->name('admin.company.attachment.store');
+    // Route::get('company-attachment/{company_code}', [CompanyAttachmentController::class, 'delete'])->name('admin.company.attachment.delete');
+
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
