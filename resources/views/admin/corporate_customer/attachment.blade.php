@@ -46,6 +46,7 @@
                             class="dropzone" 
                             id="image-upload">
                             @csrf
+                            <input type="hidden" name="company_code" value="{{ $company_code }}">
                         </form>
 
                         <a href="javascript:location.reload();" class="gallery_image_reload">
@@ -57,61 +58,78 @@
 
                 <div class="gallery">
                     <div class="row">
-                        @php $count = 0; @endphp
-                        @forelse ($albumImages as $albumImage)
-                            @php
-                                $ext = strtolower(pathinfo($albumImage->image, PATHINFO_EXTENSION));
-                                $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'bmp']);
-                                $filePath = $isImage 
-                                            ? asset('assets/images/websiteImages/' . $albumImage->image) 
-                                            : asset('assets/images/pdf_icon.jpg');
-                            @endphp
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover custom-table" id="datatable">
+                                <thead>
+                                    <tr class="bg-primary">
+                                        <th>SL</th>
+                                        <th>File Name</th>
+                                        <th>File Type</th>
+                                        <th>Show</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </thead>
 
-                            <div class="col-sm-6 col-md-3">
-                                <div class="image_block">
-                                    <div class="image_block_inner">
-                                        <div class="checkbox_wrapper">
-                                            <input type="checkbox" class="img-checkbox" id="checkBox{{ $count }}" data-id="{{ $albumImage->id }}">
-                                        </div>
+                                <tbody>
+                                    @forelse ($albumImages as $value)
+                                        @php
+                                            $filePath = asset('assets/images/websiteImages/' . $value->file_name);
+                                            $ext = strtolower($value->file_type);
+                                            $isImage = in_array($ext, ['jpg','jpeg','png','gif','bmp']);
+                                        @endphp
 
-                                        <a class="thumbnail fancybox" rel="gallery" href="{{ $filePath }}">
-                                            <div class="img-container">
-                                                <img src="{{ $filePath }}" alt="{{ $albumImage->image }}">
-                                            </div>
-                                            <div class="text-center" style="word-break: break-all; padding: 5px;">
-                                                <small class="text-muted">{{ Str::limit($albumImage->image, 20) }}</small>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            @php $count++; @endphp
-                        @empty
-                            <div class="col-md-12 text-center">
-                                <p class="alert alert-info">No images found in this album.</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
+                                        <tr>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
 
-                @if($count > 0)
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-danger" onclick="submitDelete()">
-                            <i class="fa fa-trash"></i> Delete Selected
-                        </button>
-                    </div>
-                </div>
-                @endif
-            </div>
+                                            <td class="text-center">
+                                                {{ $value->original_name ?? $value->file_name }}
+                                            </td>
 
-            {{-- Hidden Delete Form --}}
-            {{-- Replace 'admin.gallery.delete' with your actual route name --}}
-            <form action="#" method="POST" id="imagePostForm">
-                @csrf
-                @method('DELETE')
-                <input type="hidden" name="imageIdStr" id="imageIdPost">
-            </form>
+                                            <td class="text-center">
+                                                {{ $value->file_type }}
+                                            </td>
+
+                                            {{-- ✅ SHOW --}}
+                                            <td class="text-center">
+                                                <a href="{{ $filePath }}" target="_blank"
+                                                style="color: blue; text-decoration: underline;">
+                                                    View File
+                                                </a>
+                                            </td>
+
+                                            {{-- ✅ DELETE --}}
+                                            <td class="text-center">
+                                                <form action="{{ route('admin.company.file.delete', $value->id) }}" 
+                                                    method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this file?')">
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="submit" class="btn btn-sm">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center">No Data Found</td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+
+                            </table>
+
+                        </div>
 
         </div>
     </div>
@@ -124,6 +142,12 @@
 
 <script>
     $(document).ready(function () {
+        $('#datatable').DataTable({
+            pageLength: 10,
+            ordering: true,
+            searching: true
+        });
+
         // Initialize Fancybox
         $(".fancybox").fancybox({
             openEffect: "elastic",

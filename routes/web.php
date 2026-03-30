@@ -112,8 +112,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('profile-photo-info/{company_code}', [CompanyProfileController::class, 'update'])->name('admin.company.profile-image.update');
     Route::get('company-attachment/{company_code}', [CompanyAttachmentController::class, 'edit'])->name('admin.company.attachment.edit');
     Route::post('company-attachment', [CompanyAttachmentController::class, 'store'])->name('admin.company.attachment.store');
-    // Route::get('company-attachment/{company_code}', [CompanyAttachmentController::class, 'delete'])->name('admin.company.attachment.delete');
-
+    Route::delete('/company-file/{id}', [CompanyAttachmentController::class, 'destroy'])
+    ->name('admin.company.file.delete');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
