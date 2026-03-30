@@ -34,7 +34,7 @@ class CorporateCompanyRequest extends FormRequest
             'company_email' => 'nullable|email|max:100',
             'website' => 'nullable|string|max:100',
 
-            'company_mobile' => 'required|string|max:20|unique:corporate_companies,company_mobile',
+            'company_mobile' => 'required|string|max:20',
             'company_land_phone' => 'nullable|string|max:20',
 
             'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

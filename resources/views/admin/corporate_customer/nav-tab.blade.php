@@ -9,24 +9,24 @@
     @if(isset($data->exists))
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                        <?= $thirdLastSegment == 'employees' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.employee.module.edit', $data->id) : '#' }}" id="personal-tab" role="tab"> General Info </a>
+                        <?= $thirdLastSegment == 'company' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.company-modules.edit', $data->id) : '#' }}" id="personal-tab" role="tab"> General Info </a>
         </li>
     @else
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                        <?= $lastSegment == 'create' ? 'active' : ''?>" href="{{ route('admin.employee.module.create') }}" id="personal-tab" role="tab"> General Info </a>
+                        <?= $lastSegment == 'create' ? 'active' : ''?>" href="{{ route('admin.company-modules.create') }}" id="personal-tab" role="tab"> General Info </a>
         </li>
     @endif
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'employee-office-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.employee.office.edit', $data->id) : '#' }}"> Official </a>
+                    <?= $secondLastSegment == 'employee-office-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company-modules.edit', $data->id) : '#' }}"> Official </a>
     </li>
     <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'employee-education-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.employee.education.edit', $data->id) : '#' }}"> Images </a>
+                    <?= $secondLastSegment == 'employee-education-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company-modules.edit', $data->id) : '#' }}"> Images </a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.working.experience.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Attachment </a>
+                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.company-modules.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Attachment </a>
     </li>
 </ul>

@@ -4,7 +4,7 @@
 
 <div class="header dashboard_from">
     <h1 class="page-title">
-        {{ isset($data->exists) ? 'Edit Employee' : 'Add Employee' }}
+        {{ isset($data->exists) ? 'Edit Company' : 'Add Company' }}
     </h1>
 </div>
 
@@ -162,7 +162,7 @@
                                             <div class="col-md-6">
                                                 <label class="form-label">Division</label>
                                                 <select name="division"
-                                                    class="form-select @error('division') is-invalid @enderror" onchange="setDistrict(this.value)" id="division">
+                                                    class="form-select @error('division') is-invalid @enderror" id="division">
                                                     <option value="">Select Division</option>
                                                     @foreach($divisions as $division)
                                                         <option value="{{ $division->id }}"
@@ -201,8 +201,10 @@
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-
-
+                                            @if ($isEdit)
+                                                <input type="hidden" id="selected_district" value="{{ $data->district }}">
+                                                <input type="hidden" id="selected_upazila" value="{{ $data->upozilla }}">
+                                            @endif
 
                                             {{-- Postal Code --}}
                                             <div class="col-md-6">
@@ -210,7 +212,7 @@
                                                 <input type="text"
                                                     name="postal_code"
                                                     value="{{ old('postal_code', $data->postal_code ?? '') }}"
-                                                    placeholder="Mobile"
+                                                    placeholder="Postal code"
                                                     class="form-control @error('postal_code') is-invalid @enderror">
 
                                                 @error('postal_code')
@@ -224,7 +226,7 @@
                                                 <input type="text"
                                                     name="latitude"
                                                     value="{{ old('latitude', $data->latitude ?? '') }}"
-                                                    placeholder="Mobile"
+                                                    placeholder="Latitude"
                                                     class="form-control @error('latitude') is-invalid @enderror">
 
                                                 @error('latitude')
@@ -238,36 +240,13 @@
                                                 <input type="text"
                                                     name="longitude"
                                                     value="{{ old('longitude', $data->longitude ?? '') }}"
-                                                    placeholder="Mobile"
+                                                    placeholder="longitude"
                                                     class="form-control @error('longitude') is-invalid @enderror">
 
                                                 @error('longitude')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
-
-                                            <!-- {{-- Gender --}}
-                                            <div class="col-md-6">
-                                                <label class="form-label">Gender</label>
-                                                <select name="gender"
-                                                    class="form-select @error('gender') is-invalid @enderror">
-                                                    <option value="">Select Gender</option>
-                                                    <option value="male" {{ old('gender')=='male'?'selected':'' }}>Male</option>
-                                                    <option value="female" {{ old('gender')=='female'?'selected':'' }}>Female</option>
-
-                                                    <option value="male"
-                                                        {{ old('gender', $data->gender ?? '') == 'male'?'selected':'' }}>
-                                                        Male
-                                                    </option>
-                                                    <option value="female"
-                                                        {{ old('gender', $data->gender ?? '')=='female'?'selected':'' }}>
-                                                        Female
-                                                    </option>
-                                                </select>
-                                                @error('gender')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -480,7 +459,7 @@
 
                         <div class="mt-4 text-end">
                             <button type="submit" class="btn btn-success save_button">
-                                {{ $isEdit ? 'Update Employee' : 'Save Employee' }}
+                                {{ $isEdit ? 'Update Company' : 'Save Company' }}
                             </button>
                         </div>
 
@@ -504,14 +483,15 @@
             orientation: 'bottom'  // show below the input
         });
 
-        $('#division').on('change', function () {
+        let selectedDistrict = $('#selected_district').val();
+       $('#division').on('change', function () {
 
         let division_id = $(this).val();
 
         $('#district').html('<option>Loading...</option>');
         $('#upozilla').html('<option>Select Upazila</option>');
 
-        if(division_id) {
+        if (division_id) {
             $.ajax({
                 url: '/admin/get-districts/' + division_id,
                 type: 'GET',
@@ -519,18 +499,28 @@
 
                     let option = '<option value="">Select District</option>';
 
-                    data.forEach(function(item){
-                        option += `<option value="${item.id}">
+                    data.forEach(function (item) {
+
+                        // ✅ Set selected district on edit
+                        let selected = (item.id == selectedDistrict) ? 'selected' : '';
+
+                        option += `<option value="${item.id}" ${selected}>
                             ${item.district_en_name} (${item.district_bn_name})
                         </option>`;
                     });
 
                     $('#district').html(option);
+
+                    // 🔥 IMPORTANT: trigger next dropdown
+                    if (selectedDistrict) {
+                        $('#district').trigger('change');
+                    }
                 }
             });
         }
     });
 
+    let selectedUpazila = $('#selected_upazila').val();
 
     // ✅ District → Upazila
     $('#district').on('change', function () {
@@ -539,7 +529,7 @@
 
         $('#upozilla').html('<option>Loading...</option>');
 
-        if(district_id) {
+        if (district_id) {
             $.ajax({
                 url: '/admin/get-upazilas/' + district_id,
                 type: 'GET',
@@ -547,8 +537,12 @@
 
                     let option = '<option value="">Select Upazila</option>';
 
-                    data.forEach(function(item){
-                        option += `<option value="${item.id}">
+                    data.forEach(function (item) {
+
+                        // ✅ Set selected on edit
+                        let selected = (item.id == selectedUpazila) ? 'selected' : '';
+
+                        option += `<option value="${item.id}" ${selected}>
                             ${item.upozilla_en_name} (${item.upozilla_bn_name})
                         </option>`;
                     });
@@ -558,6 +552,11 @@
             });
         }
     });
+
+     // 🔥 AUTO LOAD on edit page
+    if ($('#division').val()) {
+        $('#division').trigger('change');
+    }
 
     });
 </script>

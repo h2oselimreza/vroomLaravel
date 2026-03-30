@@ -68,8 +68,38 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.company-modules.edit', $company->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                            <button type="button" onclick="deleteRecord('{{ route('admin.company-modules.destroy', $company->id) }}')" class="btn btn-sm btn-danger">Delete</button>
+                                            @php
+                                                $statusText = $company->is_active == 1 ? 'Inactive' : 'Active';
+                                            @endphp
+
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Actions
+                                                </button>
+
+                                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                                    <!-- Edit -->
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('admin.company-modules.edit', $company->id) }}">
+                                                            <i class="fa fa-edit me-2"></i> Edit
+                                                        </a>
+                                                    </li>
+
+                                                    <!-- Active / Inactive -->
+                                                    <li>
+                                                        <form action="{{ route('admin.company-modules.edit', $company->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="dropdown-item d-flex align-items-center">
+                                                                <i class="fa fa-toggle-on me-2"></i> {{ $statusText }}
+                                                            </button>
+                                                        </form>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
