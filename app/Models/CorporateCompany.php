@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class CorporateCompany extends BaseModel
 {
     protected $table = 'corporate_companies';
+
+    public function getRouteKeyName()
+    {
+        return 'company_code';
+    }
     
     protected $fillable = [
         'company_code',

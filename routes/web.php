@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
+use App\Http\Controllers\Admin\Corporate_customer\CompanyOfficeController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -98,8 +99,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============Corporate customer Route==================*/
     Route::resource('company', CompanyController::class)->names('admin.company-modules');
-    Route::get('/get-districts/{division_id}', [CompanyController::class, 'getDistricts']);
-    Route::get('/get-upazilas/{district_id}', [CompanyController::class, 'getUpazilas']);
+    Route::get('get-districts/{division_id}', [CompanyController::class, 'getDistricts']);
+    Route::get('get-upazilas/{district_id}', [CompanyController::class, 'getUpazilas']);
+    Route::get('company-office-info/{company_code}', [CompanyOfficeController::class, 'index'])->name('admin.company.office.edit');
+    Route::put('company-office-info', [CompanyOfficeController::class, 'editCompanyOfficial'])->name('admin.company.office.update');
+    Route::put('company-notification-permission', [CompanyOfficeController::class, 'updateNotificationPermission'])->name('admin.company.notification-permission');
+    Route::put('company-setting', [CompanyOfficeController::class, 'updateSmsSettings'])->name('admin.company.setting');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

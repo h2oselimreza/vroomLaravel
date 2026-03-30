@@ -82,14 +82,14 @@
                                                     <!-- Edit -->
                                                     <li>
                                                         <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('admin.company-modules.edit', $company->id) }}">
+                                                        href="{{ route('admin.company-modules.edit', $company->company_code) }}">
                                                             <i class="fa fa-edit me-2"></i> Edit
                                                         </a>
                                                     </li>
 
                                                     <!-- Active / Inactive -->
                                                     <li>
-                                                        <form action="{{ route('admin.company-modules.edit', $company->id) }}" method="POST">
+                                                        <form action="{{ route('admin.company-modules.edit', $company->company_code) }}" method="POST">
                                                             @csrf
                                                             @method('PATCH')
                                                             <button type="submit" class="dropdown-item d-flex align-items-center">
