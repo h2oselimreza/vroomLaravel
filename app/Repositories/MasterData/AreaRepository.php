@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\MetaData;
+namespace App\Repositories\MasterData;
 
 use App\Models\MetaData\District;
 use App\Models\MetaData\Division;

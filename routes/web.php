@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Corporate_customer\CompanyAttachmentController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyProfileController;
+use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Admin\MemberPhotoController;
 use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
 use App\Http\Controllers\Admin\MetaData\AreaController;
+use App\Http\Controllers\Admin\MetaData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\PrayerTimeController;
@@ -93,11 +95,14 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('sub-modules', SubModuleController::class)->names('admin.sub-modules');
     Route::get('/sub-modules-data', [SubModuleController::class, 'getSubModulesData'])->name('sub-modules.data.index');
 
-    /*===============MetaData Route==================*/
+    /*===============MasterData Route==================*/
     Route::get('area', [AreaController::class, 'index'])->name('Admin.module.metadata.index');
     Route::get('divisions', [AreaController::class, 'division'])->name('Admin.module.metadata.division');
     Route::get('districts', [AreaController::class, 'district'])->name('Admin.module.metadata.districts');
     Route::get('upazila', [AreaController::class, 'upazila'])->name('Admin.module.metadata.upazila');
+
+     /*===============vehicle Route==================*/
+     Route::get('master-data/vehicle', [VehicleController::class, 'index'])->name('Admin.module.master-data.vehicle.index');
 
     /*===============Corporate customer Route==================*/
     Route::resource('company', CompanyController::class)->names('admin.company-modules');
@@ -114,6 +119,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('company-attachment', [CompanyAttachmentController::class, 'store'])->name('admin.company.attachment.store');
     Route::delete('/company-file/{id}', [CompanyAttachmentController::class, 'destroy'])
     ->name('admin.company.file.delete');
+
+    Route::get('corporate/company-list', [CompanyController::class, 'companyList'])->name('admin.company.list');
+    Route::get('corporate/employee-list', [CompanyEmployeeController::class, 'index'])->name('admin.company-employee.index');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

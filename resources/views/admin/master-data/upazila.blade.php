@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-12">
 
-            @include('admin.metadata.areaHeaderMenu')
+            @include('admin.master-data.areaHeaderMenu')
 
             <div class="panel panel-default"> 
                 <div class="table-responsive">
@@ -28,17 +28,21 @@
                                 <th>Division Name (Bn)</th>
                                 <th>District Name (En)</th>
                                 <th>District Name (Bn)</th>
+                                <th>Upazila Name (En)</th>
+                                <th>Upazila Name (Bn)</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @forelse ($districts as $district)
+                            @forelse ($upazila as $value)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td class="text-center">{{ $district->division_relation->division_en_name }}</td>
-                                    <td class="text-center">{{ $district->division_relation->division_bn_name }}</td>
-                                    <td class="text-center">{{ $district->district_en_name }}</td>
-                                    <td class="text-center">{{ $district->district_bn_name }}</td>
+                                    <td class="text-center">{{ $value->division_en_name }}</td>
+                                    <td class="text-center">{{ $value->division_bn_name }}</td>
+                                    <td class="text-center">{{ $value->district_en_name }}</td>
+                                    <td class="text-center">{{ $value->district_bn_name }}</td>
+                                    <td class="text-center">{{ $value->upozilla_en_name }}</td>
+                                    <td class="text-center">{{ $value->upozilla_bn_name }}</td>
                                 </tr>
                             @empty
                                 <tr>

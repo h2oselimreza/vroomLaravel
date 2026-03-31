@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-12">
 
-            @include('admin.metadata.areaHeaderMenu')
+            @include('admin.master-data.areaHeaderMenu')
 
             <div class="panel panel-default"> 
                 <div class="table-responsive">

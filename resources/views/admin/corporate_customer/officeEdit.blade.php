@@ -184,7 +184,7 @@
                                 class="accordion-collapse collapse"
                                 data-bs-parent="#employeeAccordion">
                                 @php
-                                    $settingsObj = json_decode($companySettings->description); // decode to object
+                                    $settingsObj = json_decode($companySettings->description ?? null); // decode to object
                                 @endphp
                                 <div class="accordion-body">
                                 <form   action="{{ route('admin.company.setting')}}" method="post" id="companySetting">

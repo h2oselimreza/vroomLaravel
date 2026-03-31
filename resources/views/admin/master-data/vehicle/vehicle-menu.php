@@ -1,0 +1,139 @@
+<script>
+    function areaRoute(flag) {
+        var routeFunction;
+        if (flag === 'division') {
+            routeFunction = 'divisions';
+        } else if (flag === 'district') {
+            routeFunction = 'districts';
+        } else if (flag === 'upazila') {
+            routeFunction = 'upazila';
+        } 
+        window.location.href = "/admin/" + routeFunction;
+    }
+</script>
+
+<style>
+    /* Custom 7-column layout for laptops and desktops */
+    @media (min-width: 992px) {
+        .row-cols-lg-7 > * {
+            flex: 0 0 auto;
+            width: 14.2857142857%;
+        }
+    }
+
+    /* Ensure buttons fill the full width of their small columns */
+    .custom-button-group {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 13px; /* Smaller font helps fit 7 items on one line */
+        padding: 10px 5px;
+    }
+    
+    .vehicle .col {
+        margin-bottom: 0px; /* Spacing for mobile view */
+        margin-top: 0px;
+    }
+</style>
+
+<div class="row text-center border-ccc vehicle row-cols-1 row-cols-lg-7 g-2" role="group" aria-label="Vehicle Filters">
+    
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('division')"
+                class="btn btn-{{ ($btnFlag == 'division') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-bars"></i> <b>Vehicle Type</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('district')"
+                class="btn btn-{{ ($btnFlag == 'district') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list"></i> <b>Vehicle Class</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('brand')"
+                class="btn btn-{{ ($btnFlag == 'brand') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list-alt"></i> <b>Vehicle Brand</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('model')"
+                class="btn btn-{{ ($btnFlag == 'model') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list-alt"></i> <b>Brand Model</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('color')"
+                class="btn btn-{{ ($btnFlag == 'color') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list-alt"></i> <b>Vehicle Color</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('condition')"
+                class="btn btn-{{ ($btnFlag == 'condition') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list-alt"></i> <b>Condition</b>
+            </button>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="btn-group d-block" role="group">
+            <button type="button"
+                onclick="areaRoute('group')"
+                class="btn btn-{{ ($btnFlag == 'group') ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list-alt"></i> <b>Vehicle Group</b>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- end for web device -->
+
+<!-- for xs devices -->
+<!-- <div class="btn-group btn-group-vertical visible-xs" role="group" aria-label="...">
+    <div class="btn-group" role="group">
+        <button type="button"
+            onclick="areaRoute('division')"
+            class="btn btn-{{ ($btnFlag == 'division') ? 'success' : 'default' }} custom-button-group">
+            <i class="fa fa-bars"></i> <b>Division</b>
+        </button>
+    </div>
+
+    <div class="btn-group" role="group">
+        <button type="button"
+            onclick="areaRoute('district')"
+            class="btn btn-{{ ($btnFlag == 'district') ? 'success' : 'default' }} custom-button-group">
+            <i class="fa fa-list"></i> <b>District</b>
+        </button>
+    </div>
+
+    <div class="btn-group" role="group">
+        <button type="button"
+            onclick="areaRoute('upozilla')"
+            class="btn btn-{{ ($btnFlag == 'upozilla') ? 'success' : 'default' }} custom-button-group">
+            <i class="fa fa-list-alt"></i> <b>Upozilla</b>
+        </button>
+    </div>
+</div> -->

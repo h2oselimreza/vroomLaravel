@@ -7,7 +7,7 @@ use App\Http\Requests\MetaData\CorporateCompanyRequest;
 use App\Models\CorporateCompany;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Upozilla;
-use App\Repositories\MetaData\AreaRepository;
+use App\Repositories\MasterData\AreaRepository;
 use App\Services\TokenService;
 
 class CompanyController extends Controller
@@ -113,5 +113,10 @@ class CompanyController extends Controller
         return redirect()
             ->route('admin.company-modules.index')
             ->with('success', 'Company updated successfully!');
+    }
+
+    public function companyList(){
+        $companies = CorporateCompany::where('is_active',1)->get();
+        return view('admin.corporate_customer.employee.company-list',compact('companies'));
     }
 }

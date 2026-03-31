@@ -2,18 +2,18 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Area</h1>
+    <h1 class="page-title">Vehicle</h1>
     <ul class="breadcrumb">
         <li><a href="admin/Home">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="admin/MasterData/area">/ Area</a></li>
+        <li><a href="admin/MasterData/area">/ Vehicle</a></li>
     </ul>
 </div>
 <div class="main-content">
     <div class="row">
         <div class="col-sm-12 col-md-12">
             
-            @include('admin.metadata.areaHeaderMenu')
+            @include('admin.master-data.vehicle.vehicle-menu')
 
             <div class="panel panel-default"> 
                 <div class="row justify-content-center text-center">
@@ -65,6 +65,72 @@
                     </div>
 
                     <!-- Variants -->
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                        <div class="circle-tile">
+                            <a href="#">
+                                <div class="circle-tile-heading dark-blue">
+                                    <i class="fa fa-list-alt fa-fw fa-2x"></i>
+                                </div>
+                            </a>
+                            <div class="circle-tile-content dark-blue">
+                                <div class="circle-tile-description text-faded">
+                                    Upozilla
+                                </div>
+                                <div class="circle-tile-number text-faded">
+                                    {{ $areaCount['upozillaCount'] }}
+                                    <span id="sparklineA"></span>
+                                </div>
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                    View <i class="fa fa-chevron-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                        <div class="circle-tile">
+                            <a href="#">
+                                <div class="circle-tile-heading dark-blue">
+                                    <i class="fa fa-list-alt fa-fw fa-2x"></i>
+                                </div>
+                            </a>
+                            <div class="circle-tile-content dark-blue">
+                                <div class="circle-tile-description text-faded">
+                                    Upozilla
+                                </div>
+                                <div class="circle-tile-number text-faded">
+                                    {{ $areaCount['upozillaCount'] }}
+                                    <span id="sparklineA"></span>
+                                </div>
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                    View <i class="fa fa-chevron-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                        <div class="circle-tile">
+                            <a href="#">
+                                <div class="circle-tile-heading dark-blue">
+                                    <i class="fa fa-list-alt fa-fw fa-2x"></i>
+                                </div>
+                            </a>
+                            <div class="circle-tile-content dark-blue">
+                                <div class="circle-tile-description text-faded">
+                                    Upozilla
+                                </div>
+                                <div class="circle-tile-number text-faded">
+                                    {{ $areaCount['upozillaCount'] }}
+                                    <span id="sparklineA"></span>
+                                </div>
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                    View <i class="fa fa-chevron-circle-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-2 col-sm-4 col-xs-12">
                         <div class="circle-tile">
                             <a href="#">
