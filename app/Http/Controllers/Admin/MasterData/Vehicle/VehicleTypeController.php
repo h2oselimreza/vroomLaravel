@@ -37,7 +37,7 @@ class VehicleTypeController extends Controller
     {
         $validated = $request->validated();
         $prefix = "VTYP-";
-        $element_code  = $prefix . $tokenService->getTokenByCode($prefix);
+        $element_code  = $prefix . $tokenService->getTokenByCode('COMMON-');
         try {
             DB::beginTransaction();
 

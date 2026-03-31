@@ -55,19 +55,43 @@ class VehicleRepository
         return $query->get();
     }
 
-    public function getVehicleBrandModel(){
-        return  CommonTable::where(['type'=>'v_brand_model','is_active'=>1])->get();
+    public function getVehicleBrandModel($id = null){
+        $query = CommonTable::where(['type' => 'v_brand_model', 'is_active' => 1]);
+
+        if ($id) {
+            return $query->where('id', $id)->first();
+        }
+
+        return $query->get();
     }
 
-    public function getVehicleColor(){
-        return  CommonTable::where(['type'=>'vehicle_color','is_active'=>1])->get();
+    public function getVehicleColor($id = null){
+        $query = CommonTable::where(['type' => 'vehicle_color', 'is_active' => 1]);
+
+        if ($id) {
+            return $query->where('id', $id)->first();
+        }
+
+        return $query->get();
     }
 
-    public function getVehicleCondition(){
-        return  CommonTable::where(['type'=>'vehicle_cndtn','is_active'=>1])->get();
+    public function getVehicleCondition($id = null){
+        $query = CommonTable::where(['type' => 'vehicle_cndtn', 'is_active' => 1]);
+
+        if ($id) {
+            return $query->where('id', $id)->first();
+        }
+
+        return $query->get();
     }
-     public function getVehicleGroup(){
-        return  CommonTable::where(['type'=>'vehicle_group','is_active'=>1])->get();
+     public function getVehicleGroup($id = null){
+        $query = CommonTable::where(['type' => 'vehicle_group', 'is_active' => 1]);
+
+        if ($id) {
+            return $query->where('id', $id)->first();
+        }
+
+        return $query->get();
     }
 
 }

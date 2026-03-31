@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Vehicle Type</h1>
+    <h1 class="page-title">Vehicle Color</h1>
     <ul class="breadcrumb">
         <li><a href="{{ url('admin/Home') }}">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="{{ url('admin/MasterData/area') }}">/ Vehicle Type</a></li>
+        <li><a href="{{ url('admin/MasterData/area') }}">/ Vehicle Color</a></li>
     </ul>
 </div>
 <div class="main-content">
@@ -33,16 +33,16 @@
 
             <div class="panel panel-default"> 
                 <div class="add-button">
-                    <a href="{{ route('admin.modules.master-data.vehicle-type.create') }}">Add Vehicle Type</a>
+                    <a href="{{ route('admin.modules.master-data.vehicle-color.create') }}">Add Vehicle Color</a>
                 </div>
                 <div class="table-responsive">
 
                     <table class="table table-bordered table-hover custom-table vehicle-table" id="datatable">
                         <thead>
                             <tr class="bg-primary">
-                                <th>Vehicle Type</th>
+                                <th>Vehicle Color</th>
                                 <th>Active</th>
-                                <th>Vehicle Type Order</th>
+                                <th>Vehicle Color Order</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -54,11 +54,11 @@
                                     <td>{{ ($value->is_active) ? 'Active':'Inactive' }}</td>
                                     <td>{{ $value->element_order }}</td>
                                     <td class="text-center">
-                                        <a href="{{ route('admin.modules.master-data.vehicle-type.show',$value->id) }}" 
+                                        <a href="{{ route('admin.modules.master-data.vehicle-color.show',$value->id) }}" 
                                         class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
                                             <span class="ui-button-text">&nbsp;View</span>
                                         </a> |
-                                        <a href="{{ route('admin.modules.master-data.vehicle-type.edit',$value->id) }}" 
+                                        <a href="{{ route('admin.modules.master-data.vehicle-color.edit',$value->id) }}" 
                                         class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary action_button_modify">
                                             <span class="ui-button-text">&nbsp;Edit</span>
                                         </a>

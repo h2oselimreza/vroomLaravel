@@ -6,10 +6,10 @@
         } else if (flag === 'master-data/vehicle-class') {
             routeFunction = 'master-data/vehicle-class';
         } else if (flag === 'master-data/vehicle-brand') {
-            console.log(routeFunction)
-            console.log('pppppp')
             routeFunction = 'master-data/vehicle-brand';
-        } 
+        } else if (flag === 'master-data/vehicle-color'){
+            routeFunction = 'master-data/vehicle-color';
+        }
         
         window.location.href = "/admin/" + routeFunction;
     }
@@ -85,8 +85,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('color')"
-                class="btn btn-{{ ($btnFlag == 'color') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-color')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-color') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Color</b>
             </button>
         </div>
