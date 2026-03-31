@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\MetaData;
+namespace App\Http\Requests\Admin\MasterData;
 
 use Illuminate\Foundation\Http\FormRequest;
 

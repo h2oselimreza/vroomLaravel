@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleTypeController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberEductionController;
 use App\Http\Controllers\Admin\MemberFamilyMemberController;
@@ -20,33 +21,13 @@ use App\Http\Controllers\Admin\MemberOfficeController;
 use App\Http\Controllers\Admin\MemberPhotoController;
 use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
-use App\Http\Controllers\Admin\MetaData\AreaController;
+use App\Http\Controllers\Admin\MasterData\AreaController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
-use App\Http\Controllers\Admin\PrayerTimeController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
-use App\Http\Controllers\Admin\RoadController;
-use App\Http\Controllers\Admin\SMS\EmployeeAnniversarySMSController;
-use App\Http\Controllers\Admin\SMS\EmployeeBirthdaySMSController;
-use App\Http\Controllers\Admin\SMS\EmployeeBulkSmsController;
-use App\Http\Controllers\Admin\SMS\MemberAnniversarySMSController;
-use App\Http\Controllers\Admin\SMS\MemberBirthdaySMSController;
-use App\Http\Controllers\Admin\SMS\memberBulkSmsController;
-use App\Http\Controllers\Admin\SMS\SmsReportController;
 use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
-use App\Http\Controllers\Admin\Web\AlbumController;
-use App\Http\Controllers\Admin\Web\EventController;
-use App\Http\Controllers\Admin\Web\FooterSliderController;
-use App\Http\Controllers\Admin\Web\GalleryImageController;
-use App\Http\Controllers\Admin\Web\ImageAlbumsController;
-use App\Http\Controllers\Admin\Web\NewsController;
-use App\Http\Controllers\Admin\Web\WebAchievementsController;
-use App\Http\Controllers\Admin\Web\WebModuleDescriptionController;
-use App\Http\Controllers\Admin\Web\WebNoticeController;
-use App\Http\Controllers\Admin\Web\WebsiteController;
-use App\Http\Controllers\Admin\Web\WebSliderController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
@@ -101,8 +82,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('districts', [AreaController::class, 'district'])->name('Admin.module.metadata.districts');
     Route::get('upazila', [AreaController::class, 'upazila'])->name('Admin.module.metadata.upazila');
 
-     /*===============vehicle Route==================*/
-     Route::get('master-data/vehicle', [VehicleController::class, 'index'])->name('Admin.module.master-data.vehicle.index');
+    /*===============vehicle Route==================*/
+    Route::get('master-data/vehicle', [VehicleController::class, 'index'])->name('Admin.module.master-data.vehicle.index');
+
+    /*===============vehicle Route==================*/
+    Route::resource('master-data/vehicle-type', VehicleTypeController::class)->names('admin.modules.master-data.vehicle-type');
 
     /*===============Corporate customer Route==================*/
     Route::resource('company', CompanyController::class)->names('admin.company-modules');

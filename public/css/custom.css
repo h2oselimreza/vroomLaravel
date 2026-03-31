@@ -296,3 +296,30 @@ table.dataTable .dt-column-header {
 .border-ccc button {
     width: 100% !important;
 }
+.vehicle-table thead tr th:not(:last-child) {
+    text-align: left !important;
+}
+
+/*============data show page custom css========*/
+.data_view .card-header {
+    font-weight: 600;
+    font-size: 15px;
+    color: #555;
+}
+.data_view .label {
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+.data_view .value {
+    font-weight: 500;
+    color: #222;
+    font-size: 13px;
+}
+.data_view .row-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+.data_view .row-item:last-child {
+    border-bottom: none;
+}

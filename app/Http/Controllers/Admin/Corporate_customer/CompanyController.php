@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Corporate_customer;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MetaData\CorporateCompanyRequest;
+use App\Http\Requests\Admin\MasterData\CorporateCompanyRequest;
 use App\Models\CorporateCompany;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Upozilla;
@@ -49,7 +49,7 @@ class CompanyController extends Controller
             $data = $request->validated();
             // Add extra fields
             $data['status'] = 1;
-            $data['company_code']  = $prefix . $tokenService->getTokenByCode($prefix);;
+            $data['company_code']  = $prefix . $tokenService->getTokenByCode($prefix);
             $data['company_type'] = 'corp_customer';
             CorporateCompany::create($data);
 

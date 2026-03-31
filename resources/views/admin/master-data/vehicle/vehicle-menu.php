@@ -1,8 +1,8 @@
 <script>
     function areaRoute(flag) {
         var routeFunction;
-        if (flag === 'division') {
-            routeFunction = 'divisions';
+        if (flag === 'master-data/vehicle-type') {
+            routeFunction = 'master-data/vehicle-type';
         } else if (flag === 'district') {
             routeFunction = 'districts';
         } else if (flag === 'upazila') {
@@ -42,8 +42,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('division')"
-                class="btn btn-{{ ($btnFlag == 'division') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-type')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-type') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-bars"></i> <b>Vehicle Type</b>
             </button>
         </div>
