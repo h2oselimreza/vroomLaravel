@@ -5,9 +5,12 @@
             routeFunction = 'master-data/vehicle-type';
         } else if (flag === 'master-data/vehicle-class') {
             routeFunction = 'master-data/vehicle-class';
-        } else if (flag === 'upazila') {
-            routeFunction = 'upazila';
+        } else if (flag === 'master-data/vehicle-brand') {
+            console.log(routeFunction)
+            console.log('pppppp')
+            routeFunction = 'master-data/vehicle-brand';
         } 
+        
         window.location.href = "/admin/" + routeFunction;
     }
 </script>
@@ -62,8 +65,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('brand')"
-                class="btn btn-{{ ($btnFlag == 'brand') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-brand')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Brand</b>
             </button>
         </div>
@@ -72,8 +75,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('model')"
-                class="btn btn-{{ ($btnFlag == 'model') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-brand')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Brand Model</b>
             </button>
         </div>

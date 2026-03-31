@@ -22,14 +22,13 @@ class VehicleTypeRequest extends FormRequest
     public function rules(): array {
         return [
             'element' => 'required|string|max:255',
-            'element_order' => 'required|integer|min:0',
+            'element_order' => 'nullable|integer',
             'is_active' => 'required|in:0,1',
         ];
     }
 
     public function messages(): array {
         return [
-            'element.required' => 'The Vehicle Type field is mandatory.',
             'is_active.required' => 'Please select a status.',
         ];
     }
