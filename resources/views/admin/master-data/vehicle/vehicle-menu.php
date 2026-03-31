@@ -3,8 +3,8 @@
         var routeFunction;
         if (flag === 'master-data/vehicle-type') {
             routeFunction = 'master-data/vehicle-type';
-        } else if (flag === 'district') {
-            routeFunction = 'districts';
+        } else if (flag === 'master-data/vehicle-class') {
+            routeFunction = 'master-data/vehicle-class';
         } else if (flag === 'upazila') {
             routeFunction = 'upazila';
         } 
@@ -52,8 +52,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('district')"
-                class="btn btn-{{ ($btnFlag == 'district') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-class')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-class') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Vehicle Class</b>
             </button>
         </div>

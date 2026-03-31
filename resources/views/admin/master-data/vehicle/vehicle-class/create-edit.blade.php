@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Vehicle Type</h1>
+    <h1 class="page-title">Vehicle Class</h1>
     <ul class="breadcrumb">
-        <li><a href="{{ url('admin/Home') }}">Home</a></li>
+        <li><a href="#">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="{{ url('admin/MasterData/area') }}">/ Vehicle Type</a></li>
+        <li><a href="#">/ Vehicle Class</a></li>
     </ul>
 </div>
 
@@ -19,7 +19,7 @@
 
         <div class="card-body" x-data="vehicleForm()">
             <form 
-                action="{{ isset($data->exists) ? route('admin.modules.master-data.vehicle-type.update', $data->id) : route('admin.modules.master-data.vehicle-type.store') }}"
+                action="{{ isset($data->exists) ? route('admin.modules.master-data.vehicle-class.update', $data->id) : route('admin.modules.master-data.vehicle-class.store') }}"
                 method="POST"
                 @submit.prevent="submitForm($event)" 
             >
@@ -28,7 +28,7 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Vehicle Type : <span>*</span></label>
+                        <label class="form-label">Vehicle Class : <span>*</span></label>
                         <input type="text" name="element" class="form-control"
                             x-model="formData.element"
                             @blur="validateField('element')"
@@ -45,7 +45,24 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Vehicle Type Order :</label>
+                        <label class="form-label">Vehicle Class (bangla) :</label>
+                        <input type="text" name="element_bn" class="form-control"
+                            x-model="formData.element_bn"
+                            @blur="validateField('element_bn')"
+                            placeholder="element bn"
+                            :class="errors.element_bn ? 'is-invalid' : ''">
+                        
+                        <template x-if="errors.element_bn">
+                            <div class="text-danger small" x-text="errors.element_bn"></div>
+                        </template>
+                        
+                        @error('element_bn')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Vehicle Class Order :</label>
                         <input type="number" name="element_order" class="form-control"
                             x-model="formData.element_order"
                             placeholder="Enter order"
@@ -54,9 +71,7 @@
                             <div class="text-danger small">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Status : <span>*</span></label>
                         <select class="form-select" name="is_active" 
@@ -84,7 +99,7 @@
                         <span x-show="isSubmitting">Processing...</span>
                     </button> 
 
-                    <a href="{{ route('admin.modules.master-data.vehicle-type.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.modules.master-data.vehicle-class.index') }}" class="btn btn-outline-secondary">
                         Cancel
                     </a>
                 </div>
@@ -99,7 +114,8 @@ function vehicleForm() {
         formData: {
             element: "{{ old('element', $data->element ?? '') }}",
             element_order: "{{ old('element_order', $data->element_order ?? '') }}",
-            is_active: "{{ old('is_active', $data->is_active ?? '') }}"
+            is_active: "{{ old('is_active', $data->is_active ?? '') }}",
+            element_bn: "{{ old('element_bn', $data->element_bn ?? '') }}"
         },
         errors: {},
         isSubmitting: false,

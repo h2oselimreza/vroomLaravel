@@ -35,8 +35,14 @@ class VehicleRepository
         return $query->get();
     }
 
-    public function getVehicleClass(){
-        return  CommonTable::where(['type'=>'vehicle_class','is_active'=>1])->get();
+    public function getVehicleClass($id = null){
+        $query = CommonTable::where(['type' => 'vehicle_class', 'is_active' => 1]);
+
+        if ($id) {
+            return $query->where('id', $id)->first();
+        }
+
+        return $query->get();
     }
 
     public function getVehicleBrand(){
