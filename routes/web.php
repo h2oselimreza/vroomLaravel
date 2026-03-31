@@ -21,7 +21,7 @@ use App\Http\Controllers\Admin\MemberPhotoController;
 use App\Http\Controllers\Admin\MemberSearchController;
 use App\Http\Controllers\Admin\MemberWorkingExperieanceController;
 use App\Http\Controllers\Admin\MetaData\AreaController;
-use App\Http\Controllers\Admin\MetaData\Vehicle\VehicleController;
+use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\PrayerTimeController;

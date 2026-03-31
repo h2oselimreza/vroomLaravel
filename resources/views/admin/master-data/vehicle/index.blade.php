@@ -28,10 +28,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    Division
+                                    Class Type
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['divisionCount'] }}
+                                    {{ $vehicleCount['vehicleTypeCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('division')">
@@ -51,10 +51,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    District
+                                    Vehicle Class
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['districtCount'] }}
+                                    {{ $vehicleCount['vehicleClassCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('district')">
@@ -74,10 +74,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    Upozilla
+                                    Vehicle Brand
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['upozillaCount'] }}
+                                    {{ $vehicleCount['vehicleBrandCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
@@ -96,10 +96,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    Upozilla
+                                    Brand Model
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['upozillaCount'] }}
+                                    {{ $vehicleCount['vehicleBrandModelCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
@@ -118,10 +118,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    Upozilla
+                                    Vehicle Color
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['upozillaCount'] }}
+                                    {{ $vehicleCount['vehicleColorCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
@@ -140,10 +140,10 @@
                             </a>
                             <div class="circle-tile-content dark-blue">
                                 <div class="circle-tile-description text-faded">
-                                    Upozilla
+                                    Vehicle Condition
                                 </div>
                                 <div class="circle-tile-number text-faded">
-                                    {{ $areaCount['upozillaCount'] }}
+                                    {{ $vehicleCount['vehicleConditionCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
                                 <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
