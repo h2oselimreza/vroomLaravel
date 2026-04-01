@@ -3,11 +3,9 @@
 
         @foreach($moduleGroups as $group)
 
-            @php
-                $isActiveGroup = collect($group['modules'])
-                    ->pluck('module_url')
-                    ->contains(request()->path());
-            @endphp
+    @php
+        $isActiveGroup = collect($group['modules'])->contains(fn($m) => str_starts_with(request()->path(), ltrim($m['module_url'], '/')));
+    @endphp
 
             {{-- Group Header --}}
             <li class="nav-item">
@@ -35,7 +33,7 @@
                         @foreach($group['modules'] as $module)
 
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->path() == $module['module_url'] ? 'active fw-bold text-primary' : '' }}"
+                                <a class="nav-link {{ request()->is($module['module_url'] . '*') ? 'active fw-bold text-primary' : '' }}"
                                    href="{{ url($module['module_url']) }}">
 
                                     <i class="fa fa-caret-right me-2"></i>
