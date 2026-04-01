@@ -43,16 +43,20 @@
     .vehicle .col {
         margin-bottom: 0px; /* Spacing for mobile view */
         margin-top: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
     }
 </style>
-
+@php
+$btnFlag = "";
+@endphp
 <div class="row text-center border-ccc vehicle row-cols-1 row-cols-lg-7 g-2" role="group" aria-label="Vehicle Filters">
     
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-type')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-type') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-type')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-bars"></i> <b>Vehicle Type</b>
             </button>
         </div>
@@ -62,7 +66,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-class')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-class') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-class')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Vehicle Class</b>
             </button>
         </div>
@@ -72,7 +76,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-brand')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-brand')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Brand</b>
             </button>
         </div>
@@ -82,7 +86,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-brand-model')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand-model') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-brand-model')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Brand Model</b>
             </button>
         </div>
@@ -92,7 +96,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-color')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-color') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-color')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Color</b>
             </button>
         </div>
@@ -102,7 +106,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-condition')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-condition') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-condition')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Condition</b>
             </button>
         </div>
@@ -112,7 +116,7 @@
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/vehicle-group')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-group') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/vehicle-group')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Group</b>
             </button>
         </div>
