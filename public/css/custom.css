@@ -302,7 +302,9 @@ table.dataTable .dt-column-header {
 .vehicle-table thead tr th:not(:last-child) {
     text-align: left !important;
 }
-
+.table-align thead tr th:not(:last-child) {
+    text-align: left !important;
+}
 /*============data show page custom css========*/
 .data_view .card-header {
     font-weight: 600;
