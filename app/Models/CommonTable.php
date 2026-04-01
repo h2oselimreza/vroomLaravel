@@ -18,6 +18,7 @@ class CommonTable extends Model
         'is_active',
         'element_order',
         'element_bn',
+        'company',
     ];
 
     protected $casts = [

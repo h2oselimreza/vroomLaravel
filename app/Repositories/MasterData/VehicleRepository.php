@@ -55,17 +55,6 @@ class VehicleRepository
         return $query->get();
     }
 
-    // public function getVehicleBrandModel($id = null){
-    //     $query = CommonTable::where(['type' => 'v_brand_model', 'is_active' => 1]);
-
-    //     if ($id) {
-    //         return $query->where('id', $id)->first();
-    //     }
-    //     $query->oldest('element_order');
-    //     $query->oldest('element');
-    //     return $query->get();
-    // }
-
     public function getVehicleBrandModel($id = null)
     {
         $query = CommonTable::from('common_table as models')
@@ -106,13 +95,21 @@ class VehicleRepository
         return $query->get();
     }
      public function getVehicleGroup($id = null){
-        $query = CommonTable::where(['type' => 'vehicle_group', 'is_active' => 1]);
+        $query = CommonTable::from('common_table as models')
+            ->select('models.*', 'company.title as company_name')
+            ->leftJoin('corporate_companies as company', function($join) {
+                $join->on('models.company', '=', 'company.company_code');
+            })
+            ->where('models.type', 'vehicle_group')
+            ->where('models.is_active', 1);
 
         if ($id) {
-            return $query->where('id', $id)->first();
+            return $query->where('models.id', $id)->first();
         }
 
-        return $query->get();
+        return $query->orderBy('models.element_order', 'asc')
+                    ->orderBy('models.element', 'asc')
+                    ->get();
     }
 
 }

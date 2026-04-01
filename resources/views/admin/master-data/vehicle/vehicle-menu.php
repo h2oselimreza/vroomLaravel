@@ -13,6 +13,8 @@
             routeFunction = 'master-data/vehicle-condition';
         } else if(flag === 'master-data/vehicle-brand-model'){
             routeFunction = 'master-data/vehicle-brand-model';
+        } else if(flag == 'master-data/vehicle-group'){
+            routeFunction = 'master-data/vehicle-group';
         }
         
         window.location.href = "/admin/" + routeFunction;
@@ -109,8 +111,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('group')"
-                class="btn btn-{{ ($btnFlag == 'group') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-group')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-group') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Vehicle Group</b>
             </button>
         </div>
