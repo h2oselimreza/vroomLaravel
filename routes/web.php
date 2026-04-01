@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleClassController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleColorController;
+use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleConditionController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleTypeController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberEductionController;
@@ -93,6 +94,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/vehicle-class', VehicleClassController::class)->names('admin.modules.master-data.vehicle-class');
     Route::resource('master-data/vehicle-brand', VehicleBrandController::class)->names('admin.modules.master-data.vehicle-brand');
     Route::resource('master-data/vehicle-color', VehicleColorController::class)->names('admin.modules.master-data.vehicle-color');
+    Route::resource('master-data/vehicle-condition', VehicleConditionController::class)->names('admin.modules.master-data.vehicle-condition');
 
     /*===============Corporate customer Route==================*/
     Route::resource('company', CompanyController::class)->names('admin.company-modules');

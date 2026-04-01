@@ -56,7 +56,6 @@ class VehicleColorController extends Controller
                 ->with('success', 'Vehicle Color created successfully!');
 
         } catch (\Exception $e) {
-            dd($e->getMessage());
             DB::rollBack();
             \Log::error('Vehicle Color Store Error: ' . $e->getMessage());
             return redirect()
