@@ -85,9 +85,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============MasterData Route==================*/
     Route::get('area', [AreaController::class, 'index'])->name('Admin.module.metadata.index');
-    Route::get('divisions', [AreaController::class, 'division'])->name('Admin.module.metadata.division');
-    Route::get('districts', [AreaController::class, 'district'])->name('Admin.module.metadata.districts');
-    Route::get('upazila', [AreaController::class, 'upazila'])->name('Admin.module.metadata.upazila');
+    Route::get('area/divisions', [AreaController::class, 'division'])->name('Admin.module.metadata.division');
+    Route::get('area/districts', [AreaController::class, 'district'])->name('Admin.module.metadata.districts');
+    Route::get('area/upazila', [AreaController::class, 'upazila'])->name('Admin.module.metadata.upazila');
 
     /*===============vehicle Route==================*/
     Route::get('master-data/vehicle', [VehicleController::class, 'index'])->name('Admin.module.master-data.vehicle.index');
