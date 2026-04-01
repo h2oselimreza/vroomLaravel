@@ -11,6 +11,8 @@
             routeFunction = 'master-data/vehicle-color';
         } else if (flag === 'master-data/vehicle-condition'){
             routeFunction = 'master-data/vehicle-condition';
+        } else if(flag === 'master-data/vehicle-brand-model'){
+            routeFunction = 'master-data/vehicle-brand-model';
         }
         
         window.location.href = "/admin/" + routeFunction;
@@ -77,8 +79,8 @@
     <div class="col">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/vehicle-brand')"
-                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand') ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/vehicle-brand-model')"
+                class="btn btn-{{ ($btnFlag == 'master-data/vehicle-brand-model') ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Brand Model</b>
             </button>
         </div>

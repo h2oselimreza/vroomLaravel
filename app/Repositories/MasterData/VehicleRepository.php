@@ -55,14 +55,35 @@ class VehicleRepository
         return $query->get();
     }
 
-    public function getVehicleBrandModel($id = null){
-        $query = CommonTable::where(['type' => 'v_brand_model', 'is_active' => 1]);
+    // public function getVehicleBrandModel($id = null){
+    //     $query = CommonTable::where(['type' => 'v_brand_model', 'is_active' => 1]);
+
+    //     if ($id) {
+    //         return $query->where('id', $id)->first();
+    //     }
+    //     $query->oldest('element_order');
+    //     $query->oldest('element');
+    //     return $query->get();
+    // }
+
+    public function getVehicleBrandModel($id = null)
+    {
+        $query = CommonTable::from('common_table as models')
+            ->select('models.*', 'brands.element as brand_name')
+            ->leftJoin('common_table as brands', function($join) {
+                $join->on('models.depend_on_element', '=', 'brands.element_code')
+                    ->where('brands.type', '=', 'vehicle_brand');
+            })
+            ->where('models.type', 'v_brand_model')
+            ->where('models.is_active', 1);
 
         if ($id) {
-            return $query->where('id', $id)->first();
+            return $query->where('models.id', $id)->first();
         }
 
-        return $query->get();
+        return $query->orderBy('models.element_order', 'asc')
+                    ->orderBy('models.element', 'asc')
+                    ->get();
     }
 
     public function getVehicleColor($id = null){
