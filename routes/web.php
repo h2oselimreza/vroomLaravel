@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\MasterData\FuelController;
 use App\Http\Controllers\Admin\MasterData\PackageController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandModelController;
@@ -101,8 +102,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/vehicle-condition', VehicleConditionController::class)->names('admin.modules.master-data.vehicle-condition');
     Route::resource('master-data/vehicle-group', VehicleGroupController::class)->names('admin.modules.master-data.vehicle-group');
 
-     /*===============vehicle Route==================*/
+    /*===============vehicle Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');
+
+    /*===============Fuel Route==================*/
+    Route::resource('master-data/fuel', FuelController::class)->names('admin.module.master-data.fuel');
 
     /*===============MasterData Route end==================*/
 
