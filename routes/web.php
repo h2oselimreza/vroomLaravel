@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MasterData\CallCenterController;
+use App\Http\Controllers\Admin\MasterData\CallReasonController;
+use App\Http\Controllers\Admin\MasterData\CustomerFeedBackController;
 use App\Http\Controllers\Admin\MasterData\FuelController;
 use App\Http\Controllers\Admin\MasterData\PackageController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
@@ -109,8 +111,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===============Fuel Route==================*/
     Route::resource('master-data/fuel', FuelController::class)->names('admin.module.master-data.fuel');
 
-     /*===============Fuel Route==================*/
+     /*===============Call Center==================*/
     Route::get('master-data/call-center', [CallCenterController::class,'index'])->name('admin.module.master-data.call-center');
+    Route::resource('master-data/call-reason', CallReasonController::class)->names('admin.module.master-data.call-reason');
+    Route::resource('master-data/customer-feedback', CustomerFeedBackController::class)->names('admin.module.master-data.customer-feedback');
 
     /*===============MasterData Route end==================*/
 

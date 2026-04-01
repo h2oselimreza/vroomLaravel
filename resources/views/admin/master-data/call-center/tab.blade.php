@@ -1,20 +1,10 @@
 <script>
     function areaRoute(flag) {
         var routeFunction;
-        if (flag === 'master-data/vehicle-type') {
-            routeFunction = 'master-data/vehicle-type';
-        } else if (flag === 'master-data/vehicle-class') {
-            routeFunction = 'master-data/vehicle-class';
-        } else if (flag === 'master-data/vehicle-brand') {
-            routeFunction = 'master-data/vehicle-brand';
-        } else if (flag === 'master-data/vehicle-color'){
-            routeFunction = 'master-data/vehicle-color';
-        } else if (flag === 'master-data/vehicle-condition'){
-            routeFunction = 'master-data/vehicle-condition';
-        } else if(flag === 'master-data/vehicle-brand-model'){
-            routeFunction = 'master-data/vehicle-brand-model';
-        } else if(flag == 'master-data/vehicle-group'){
-            routeFunction = 'master-data/vehicle-group';
+        if (flag === 'master-data/call-reason') {
+            routeFunction = 'master-data/call-reason';
+        } else if (flag === 'master-data/customer-feedback') {
+            routeFunction = 'master-data/customer-feedback';
         }
         
         window.location.href = "/admin/" + routeFunction;
@@ -55,8 +45,8 @@ $btnFlag = "";
     <div class="col col-md-6">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/vehicle-type')"
-                class="btn btn-{{ (request()->is('admin/master-data/vehicle-type')) ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/call-reason')"
+                class="btn btn-{{ (request()->is('admin/master-data/call-reason')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-bars"></i> <b>Call Reason</b>
             </button>
         </div>
@@ -65,8 +55,8 @@ $btnFlag = "";
     <div class="col col-md-6">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/vehicle-class')"
-                class="btn btn-{{ (request()->is('admin/master-data/vehicle-class')) ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/customer-feedback')"
+                class="btn btn-{{ (request()->is('admin/master-data/customer-feedback')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Customer Feedback</b>
             </button>
         </div>

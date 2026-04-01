@@ -2,11 +2,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Vehicle</h1>
+    <h1 class="page-title">Call Center</h1>
     <ul class="breadcrumb">
         <li><a href="admin/Home">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="admin/MasterData/area">/ Vehicle</a></li>
+        <li><a href="admin/MasterData/area">/ Call Center</a></li>
     </ul>
 </div>
 <div class="main-content">
@@ -34,7 +34,7 @@
                                     {{ $reasonCount }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-type')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/call-reason')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -57,7 +57,7 @@
                                     {{ $customerFeedBack }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-class')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/customer-feedback')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>

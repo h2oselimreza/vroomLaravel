@@ -11,7 +11,7 @@ class CallCenterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class CallCenterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'call_type' => 'required',
+            'title' => 'required',
+            'reason_order' => 'nullable'
         ];
     }
 }
