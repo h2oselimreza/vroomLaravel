@@ -80,7 +80,7 @@
                                     {{ $areaCount['upozillaCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upazila')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>

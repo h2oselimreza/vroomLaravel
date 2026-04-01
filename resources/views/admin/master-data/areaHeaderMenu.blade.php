@@ -11,13 +11,15 @@
         window.location.href = "/admin/" + routeFunction;
     }
 </script>
-
+@php
+ $btnFlag = '';
+@endphp
 <div class="row text-center border-ccc" role="group" aria-label="...">
     <div class="col-md-4">
         <div class="btn-group" role="group">
             <button type="button"
                 onclick="areaRoute('division')"
-                class="btn btn-{{ ($btnFlag == 'division') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/divisions')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-bars"></i> <b>Division</b>
             </button>
         </div>
@@ -27,7 +29,7 @@
         <div class="btn-group" role="group">
             <button type="button"
                 onclick="areaRoute('district')"
-                class="btn btn-{{ ($btnFlag == 'district') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/districts')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>District</b>
             </button>
         </div>
@@ -37,7 +39,7 @@
         <div class="btn-group" role="group">
             <button type="button"
                 onclick="areaRoute('upazila')"
-                class="btn btn-{{ ($btnFlag == 'upazila') ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/upazila')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list-alt"></i> <b>Upazila</b>
             </button>
         </div>

@@ -287,6 +287,9 @@ table.dataTable .dt-column-header {
     margin-right: 0px;
     margin-bottom: 13px;
 }
+.border-ccc .col-md-4 {
+    padding: 0px;
+}
 
 .border-ccc .col-md-4:not(:last-child),
 .border-ccc .col:not(:last-child) {

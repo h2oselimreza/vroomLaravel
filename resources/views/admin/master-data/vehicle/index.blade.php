@@ -34,7 +34,7 @@
                                     {{ $vehicleCount['vehicleTypeCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('division')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-type')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -57,7 +57,7 @@
                                     {{ $vehicleCount['vehicleClassCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('district')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-class')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -80,7 +80,7 @@
                                     {{ $vehicleCount['vehicleBrandCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-brand')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -102,7 +102,7 @@
                                     {{ $vehicleCount['vehicleBrandModelCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-brand-model')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -124,7 +124,7 @@
                                     {{ $vehicleCount['vehicleColorCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-color')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
@@ -146,7 +146,7 @@
                                     {{ $vehicleCount['vehicleConditionCount'] }}
                                     <span id="sparklineA"></span>
                                 </div>
-                                <a href="#" class="circle-tile-footer" onclick="areaRoute('upozilla')">
+                                <a href="#" class="circle-tile-footer" onclick="areaRoute('master-data/vehicle-condition')">
                                     View <i class="fa fa-chevron-circle-right"></i>
                                 </a>
                             </div>
