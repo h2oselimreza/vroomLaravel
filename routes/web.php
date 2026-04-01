@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\MasterData\CallCenterController;
 use App\Http\Controllers\Admin\MasterData\FuelController;
 use App\Http\Controllers\Admin\MasterData\PackageController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
@@ -107,6 +108,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============Fuel Route==================*/
     Route::resource('master-data/fuel', FuelController::class)->names('admin.module.master-data.fuel');
+
+     /*===============Fuel Route==================*/
+    Route::get('master-data/call-center', [CallCenterController::class,'index'])->name('admin.module.master-data.call-center');
 
     /*===============MasterData Route end==================*/
 
