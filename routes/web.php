@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
 use App\Http\Controllers\Admin\MasterData\CallCenterController;
 use App\Http\Controllers\Admin\MasterData\CallReasonController;
 use App\Http\Controllers\Admin\MasterData\CustomerFeedBackController;
@@ -99,8 +100,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============vehicle Route==================*/
     Route::get('master-data/vehicle', [VehicleController::class, 'index'])->name('Admin.module.master-data.vehicle.index');
-
-    /*===============vehicle Route==================*/
     Route::resource('master-data/vehicle-type', VehicleTypeController::class)->names('admin.modules.master-data.vehicle-type');
     Route::resource('master-data/vehicle-class', VehicleClassController::class)->names('admin.modules.master-data.vehicle-class');
     Route::resource('master-data/vehicle-brand', VehicleBrandController::class)->names('admin.modules.master-data.vehicle-brand');
@@ -109,7 +108,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/vehicle-condition', VehicleConditionController::class)->names('admin.modules.master-data.vehicle-condition');
     Route::resource('master-data/vehicle-group', VehicleGroupController::class)->names('admin.modules.master-data.vehicle-group');
 
-    /*===============vehicle Route==================*/
+    /*===============Appointment Service Route==================*/
+    Route::get('master-data/appointment-service', [AppointmentServiceController::class, 'index'])->name('Admin.module.master-data.appointment-service.index');
+
+    /*===============package Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');
     
     /*===============Call Center==================*/
