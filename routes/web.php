@@ -114,8 +114,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
      /*===============Call Center==================*/
     Route::get('master-data/call-center', [CallCenterController::class,'index'])->name('admin.module.master-data.call-center');
     Route::resource('master-data/call-reason', CallReasonController::class)->names('admin.module.master-data.call-reason');
+    Route::post('master-data/call-reason/{code}', [CallReasonController::class, 'toggle'])->name('admin.module.master-data.call-reason.toggle');
     Route::resource('master-data/customer-feedback', CustomerFeedBackController::class)->names('admin.module.master-data.customer-feedback');
-
+    Route::post('master-data/customer-feedback/{code}', [CustomerFeedBackController::class, 'toggle'])
+    ->name('admin.module.master-data.customer-feedback.toggle');
     /*===============MasterData Route end==================*/
 
     /*===============Corporate customer Route==================*/

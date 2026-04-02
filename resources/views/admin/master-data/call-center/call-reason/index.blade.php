@@ -64,16 +64,20 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <a href="{{ route('admin.module.master-data.call-reason.edit',$value->reason_code) }}" 
+                                                    <a href="{{ $value ? route('admin.module.master-data.call-reason.edit', $value->reason_code) : '#' }}" 
                                                     class="d-block ps-3">
                                                         <span class="ui-button-text">Update</span>
-                                                    </a>
+                                                    </a>                                    
                                                 </li>
                                                 <li class="mt-2">
-                                                    <a href="{{ route('admin.module.master-data.call-reason.edit',$value->id) }}" 
-                                                    class="d-block ps-3">
-                                                        <span class="ui-button-text">{{ ($value->is_active) ? 'Active':'Inactive' }}</span>
-                                                    </a>
+                                                    <form action="{{ route('admin.module.master-data.call-reason.toggle', $value->reason_code) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="d-block ps-3 active_button">
+                                                            <span>
+                                                                {{ $value->is_active ? 'Inactive' : 'Active' }}
+                                                            </span>
+                                                        </button>
+                                                    </form>
                                                 </li>
                                             </ul>
                                         </div>

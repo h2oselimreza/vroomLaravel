@@ -328,3 +328,8 @@ table.dataTable .dt-column-header {
 .data_view .row-item:last-child {
     border-bottom: none;
 }
+.active_button {
+    border: none !important;
+    font-size: 16px !important;
+    margin-left: 4px !important;
+}

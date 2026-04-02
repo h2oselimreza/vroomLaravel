@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MasterData\CallCenterRequest;
 use App\Models\Admin\MasterData\CallReason;
 use App\Services\TokenService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -128,5 +127,13 @@ class CallReasonController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function toggle($code)
+    {
+        $feedback = CallReason::where('reason_code', $code)->firstOrFail();
+        $feedback->update(['is_active' => !$feedback->is_active]);
+
+        return back()->with('success', 'Status updated successfully!');
     }
 }
