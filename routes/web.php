@@ -115,6 +115,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===============Call Center==================*/
     Route::get('master-data/expense', [ExpenseAdminController::class,'index'])->name('admin.module.master-data.expense');
     Route::resource('master-data/cost-category', CostCategoryController::class)->names('admin.module.master-data.expense-category');
+    Route::post('master-data/cost-category/{code}', [CostCategoryController::class, 'toggle'])->name('admin.module.master-data.expense-category.toggle');
     Route::resource('master-data/cost-head', CostHeadController::class)->names('admin.module.master-data.expense-head');
 
     /*===============Fuel Route==================*/
