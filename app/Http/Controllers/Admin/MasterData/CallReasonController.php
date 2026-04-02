@@ -45,6 +45,7 @@ class CallReasonController extends Controller
                 'call_type'    => $validated['call_type'],
                 'title'    => $validated['title'],
                 'reason_order' => $validated['reason_order'],
+                'description' => $validated['description'],
             ]);
 
             DB::commit();
@@ -99,6 +100,7 @@ class CallReasonController extends Controller
                 'call_type'    => $validated['call_type'],
                 'title'    => $validated['title'],
                 'reason_order' => $validated['reason_order'],
+                'description' => $validated['description'],
             ]);
 
             DB::commit();

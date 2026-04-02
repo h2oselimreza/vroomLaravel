@@ -75,6 +75,14 @@
                             <div class="text-danger small">{{ $message }}</div>
                         @enderror
                     </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Description :</label>
+                        <textarea class="form-control" name="description" id="description" x-model="formData.description" value="{{ old('description', $data->description ?? '') }}"></textarea>
+                        @error('description')
+                            <div class="text-danger small">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="ps-0 card-footer bg-white d-flex gap-2">
@@ -99,6 +107,7 @@ function vehicleForm() {
             call_type: "{{ old('call_type', $data->call_type ?? '') }}",
             title: "{{ old('title', $data->title ?? '') }}",
             reason_order: "{{ old('reason_order', $data->reason_order ?? '') }}",
+            description: "{{ old('description', $data->description ?? '') }}",
         },
         errors: {},
         isSubmitting: false,

@@ -24,7 +24,8 @@ class CallCenterRequest extends FormRequest
         return [
             'call_type' => 'required',
             'title' => 'required',
-            'reason_order' => 'nullable'
+            'reason_order' => 'nullable',
+            'description' => 'nullable'
         ];
     }
 }
