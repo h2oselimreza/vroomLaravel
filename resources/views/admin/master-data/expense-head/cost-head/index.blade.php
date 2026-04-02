@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Expense Category</h1>
+    <h1 class="page-title">Expense Head</h1>
     <ul class="breadcrumb">
         <li><a href="{{ url('admin/Home') }}">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="#">/ Expense Category</a></li>
+        <li><a href="#">/ Expense Head</a></li>
     </ul>
 </div>
 <div class="main-content">
@@ -33,7 +33,7 @@
 
             <div class="panel panel-default"> 
                 <div class="add-button">
-                    <a href="{{ route('admin.module.master-data.expense-category.create') }}">Add Cost Category</a>
+                    <a href="{{ route('admin.module.master-data.expense-head.create') }}">Add Expense Head</a>
                 </div>
                 <div class="table-responsive">
 
@@ -41,8 +41,8 @@
                         <thead>
                             <tr class="bg-primary">
                                 <th class="text-center">SL</th>
-                                <th class="text-center">Parent Category</th>
-                                <th class="text-start">Category Name</th>
+                                <th class="text-center">Expense Category</th>
+                                <th class="text-start">Expense Head</th>
                                 <th class="text-center">Status</th>
                                 <th>Action</th>
                             </tr>
@@ -53,8 +53,8 @@
                                 @foreach ($data as $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">{{ ($value->parent_category == 1) ? '--- Parent ---' : $value->parent->category_name }}</td>
-                                        <td>{{ $value->category_name  }}</td>
+                                        <td class="text-center">{{ $value->category->category_name }}</td>
+                                        <td>{{ $value->cost_head  }}</td>
                                         <td class="text-center">{{ ($value->is_active) ? 'Active':'Inactive' }}</td>
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -63,13 +63,13 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ $value ? route('admin.module.master-data.expense-category.edit', $value->category_code ) : '#' }}" 
+                                                        <a href="{{ $value ? route('admin.module.master-data.expense-head.edit', $value->cost_head_code ) : '#' }}" 
                                                         class="d-block ps-3">
                                                             <span class="ui-button-text">Update</span>
                                                         </a>                                    
                                                     </li>
                                                     <li class="mt-2">
-                                                        <form action="#" method="POST">
+                                                        <form action="{{ route('admin.module.master-data.expense-head.toggle', $value->cost_head_code) }}" method="POST">
                                                             @csrf
                                                             <button type="submit" class="d-block ps-3 active_button">
                                                                 <span>

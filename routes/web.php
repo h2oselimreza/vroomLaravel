@@ -117,6 +117,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/cost-category', CostCategoryController::class)->names('admin.module.master-data.expense-category');
     Route::post('master-data/cost-category/{code}', [CostCategoryController::class, 'toggle'])->name('admin.module.master-data.expense-category.toggle');
     Route::resource('master-data/cost-head', CostHeadController::class)->names('admin.module.master-data.expense-head');
+    Route::post('master-data/cost-category/{code}', [CostHeadController::class, 'toggle'])->name('admin.module.master-data.expense-head.toggle');
 
     /*===============Fuel Route==================*/
     Route::resource('master-data/fuel', FuelController::class)->names('admin.module.master-data.fuel');
