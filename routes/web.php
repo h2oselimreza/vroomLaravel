@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MasterData\CallCenterController;
 use App\Http\Controllers\Admin\MasterData\CallReasonController;
 use App\Http\Controllers\Admin\MasterData\CustomerFeedBackController;
+use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\CostCategoryController;
+use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\CostHeadController;
+use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\ExpenseAdminController;
 use App\Http\Controllers\Admin\MasterData\FuelController;
 use App\Http\Controllers\Admin\MasterData\PackageController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
@@ -42,6 +45,7 @@ use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -107,6 +111,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============vehicle Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');
+    
+    /*===============Call Center==================*/
+    Route::get('master-data/expense', [ExpenseAdminController::class,'index'])->name('admin.module.master-data.expense');
+    Route::resource('master-data/cost-category', CostCategoryController::class)->names('admin.module.master-data.expense-category');
+    Route::resource('master-data/cost-head', CostHeadController::class)->names('admin.module.master-data.expense-head');
 
     /*===============Fuel Route==================*/
     Route::resource('master-data/fuel', FuelController::class)->names('admin.module.master-data.fuel');
