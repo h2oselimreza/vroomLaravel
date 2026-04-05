@@ -19,4 +19,13 @@ class Service extends BaseModel
         'updated_by',
         'updated_dt_tm',
     ];
+
+     /**
+     * Get the parent category.
+     * The 'parent_category' column points to the 'category_code' of another row.
+     */
+    public function category()
+    {
+        return $this->belongsTo(ServiceCategory::class, 'service_category', 'category_code');
+    }
 }
