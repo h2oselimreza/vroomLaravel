@@ -118,6 +118,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/service-list', ServiceListController::class)->names('admin.modules.master-data.service-list');
     Route::post('master-data/service-list/{code}', [ServiceListController::class, 'toggle'])->name('admin.modules.master-data.service-list.toggle');
     Route::resource('master-data/service-variant', ServiceVariantController::class)->names('admin.modules.master-data.service-variant');
+    Route::post('master-data/setServiceVariant', [ServiceVariantController::class, 'setServiceVariant'])->name('admin.modules.master-data.setServiceVariant');
+
 
     /*===============package Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');

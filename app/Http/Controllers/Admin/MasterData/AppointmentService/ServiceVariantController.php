@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin\MasterData\AppointmentService;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\MasterData\Service;
+use App\Models\Admin\MasterData\ServiceVariant;
+use DB;
 use Illuminate\Http\Request;
 
 class ServiceVariantController extends Controller
@@ -12,7 +15,8 @@ class ServiceVariantController extends Controller
      */
     public function index()
     {
-        //
+        $data = ServiceVariant::get();
+        return view('admin.master-data.appointment-service.service-variant.index',compact('data'));
     }
 
     /**
@@ -20,7 +24,8 @@ class ServiceVariantController extends Controller
      */
     public function create()
     {
-        //
+        $serviceListData = Service::with('category')->get();
+        return view('admin.master-data.appointment-service.service-variant.create',compact('serviceListData'));
     }
 
     /**
@@ -61,5 +66,20 @@ class ServiceVariantController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function setServiceVariant(Request $request)
+    {
+
+            $serviceCode = $request->serviceCode;
+            $variantType = $request->variantType;
+
+            $result = DB::table('service_variants')
+                ->where('service', $serviceCode)
+                ->where('variant_type', $variantType)
+                ->where('is_active', 1)
+                ->get();
+
+            return response()->json(['variants' => $result]);
     }
 }

@@ -67,7 +67,7 @@ $btnFlag = "";
         <div class="btn-group d-block" role="group">
             <button type="button"
                 onclick="areaRoute('master-data/service-variant')"
-                class="btn btn-{{ (request()->is('admin/master-data/service-variant')) ? 'success' : 'default' }} custom-button-group">
+                class="btn btn-{{ (request()->is('admin/master-data/service-variant') || request()->is('admin/master-data/service-variant/create')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Service Variant</b>
             </button>
         </div>
