@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
+use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceCategoryController;
+use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceListController;
+use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceVariantController;
 use App\Http\Controllers\Admin\MasterData\CallCenterController;
 use App\Http\Controllers\Admin\MasterData\CallReasonController;
 use App\Http\Controllers\Admin\MasterData\CustomerFeedBackController;
@@ -110,6 +113,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     /*===============Appointment Service Route==================*/
     Route::get('master-data/appointment-service', [AppointmentServiceController::class, 'index'])->name('Admin.module.master-data.appointment-service.index');
+    Route::resource('master-data/service-category', ServiceCategoryController::class)->names('admin.modules.master-data.service-category');
+    Route::post('master-data/service-category/{code}', [ServiceCategoryController::class, 'toggle'])->name('admin.modules.master-data.service-category.toggle');
+    Route::resource('master-data/service-list', ServiceListController::class)->names('admin.modules.master-data.service-list');
+    Route::resource('master-data/service-variant', ServiceVariantController::class)->names('admin.modules.master-data.service-variant');
 
     /*===============package Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');

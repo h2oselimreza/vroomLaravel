@@ -1,16 +1,17 @@
 <script>
     function areaRoute(flag) {
         var routeFunction;
-        if (flag === 'master-data/call-reason') {
-            routeFunction = 'master-data/call-reason';
-        } else if (flag === 'master-data/customer-feedback') {
-            routeFunction = 'master-data/customer-feedback';
+        if (flag === 'master-data/service-category') {
+            routeFunction = 'master-data/service-category';
+        } else if (flag === 'master-data/service-list') {
+            routeFunction = 'master-data/service-list';
+        } else if (flag === 'master-data/service-variant'){
+            routeFunction = 'master-data/service-variant';
         }
         
         window.location.href = "/admin/" + routeFunction;
     }
 </script>
-
 <style>
     /* Custom 7-column layout for laptops and desktops */
     @media (min-width: 992px) {
@@ -45,9 +46,9 @@ $btnFlag = "";
     <div class="col col-md-4">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/call-reason')"
-                class="btn btn-{{ (request()->is('admin/master-data/call-reason')) ? 'success' : 'default' }} custom-button-group">
-                <i class="fa fa-bars"></i> <b>Service Category</b>
+                onclick="areaRoute('master-data/service-category')"
+                class="btn btn-{{ (request()->is('admin/master-data/service-category')) ? 'success' : 'default' }} custom-button-group">
+                <i class="fa fa-list"></i> <b>Service Category</b>
             </button>
         </div>
     </div>
@@ -55,8 +56,8 @@ $btnFlag = "";
     <div class="col col-md-4">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/customer-feedback')"
-                class="btn btn-{{ (request()->is('admin/master-data/customer-feedback')) ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/service-list')"
+                class="btn btn-{{ (request()->is('admin/master-data/service-list')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Service List</b>
             </button>
         </div>
@@ -65,8 +66,8 @@ $btnFlag = "";
     <div class="col col-md-4">
         <div class="btn-group d-block" role="group">
             <button type="button"
-                onclick="areaRoute('master-data/customer-feedback')"
-                class="btn btn-{{ (request()->is('admin/master-data/customer-feedback')) ? 'success' : 'default' }} custom-button-group">
+                onclick="areaRoute('master-data/service-variant')"
+                class="btn btn-{{ (request()->is('admin/master-data/service-variant')) ? 'success' : 'default' }} custom-button-group">
                 <i class="fa fa-list"></i> <b>Service Variant</b>
             </button>
         </div>

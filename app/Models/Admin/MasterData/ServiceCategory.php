@@ -21,4 +21,13 @@ class ServiceCategory extends BaseModel
         'created_dt_tm',
         'updated_dt_tm',
     ];
+
+     /**
+     * Get the parent category.
+     * The 'parent_category' column points to the 'category_code' of another row.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(ServiceCategory::class, 'parent_category', 'category_code');
+    }
 }
