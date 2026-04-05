@@ -143,7 +143,6 @@ class ServiceCategoryController extends Controller
                 ->with('success', __('Cost category updated successfully!'));
 
         } catch (\Exception $e) {
-            dd($e->getMessage());
             DB::rollBack();
             Log::error("Update Failed: " . $e->getMessage());
 
