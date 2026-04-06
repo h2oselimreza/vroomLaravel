@@ -28,8 +28,8 @@ class ServiceVariant extends BaseModel
      * Get the parent category.
      * The 'parent_category' column points to the 'category_code' of another row.
      */
-    public function parent()
+    public function serviceDetails()
     {
-        return $this->belongsTo(ServiceCategory::class, 'service_category', 'category_code');
+        return $this->belongsTo(Service::class, 'service', 'service_code');
     }
 }

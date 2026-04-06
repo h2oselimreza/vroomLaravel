@@ -15,7 +15,7 @@ class ServiceVariantController extends Controller
      */
     public function index()
     {
-        $data = ServiceVariant::get();
+        $data = ServiceVariant::with('serviceDetails.category')->get();
         return view('admin.master-data.appointment-service.service-variant.index',compact('data'));
     }
 
@@ -73,7 +73,6 @@ class ServiceVariantController extends Controller
 
             $serviceCode = $request->serviceCode;
             $variantType = $request->variantType;
-
             $result = DB::table('service_variants')
                 ->where('service', $serviceCode)
                 ->where('variant_type', $variantType)

@@ -59,7 +59,7 @@
                                 <tr>
                                     @php 
                                         $serial = $loop->iteration; 
-                                        $category = $service->category_name;
+                                        $category = $service->category->category_name;
                                     @endphp
                                     <td class='td-center'>{{ $serial }}</td>
                                     <td>{{ $service->category_name }}</td>
@@ -119,7 +119,7 @@
                             <input type="hidden" id="contenCheckUpdateDtTm" name="contenCheckUpdateDtTm"> 
                             <input type="hidden" id="deleteVariant" name="deleteVariant" value=""> 
                             {{-- Assuming APPOINTMENT_SER is a constant or config --}}
-                            <input type="hidden" id="variantType" name="variantType" value="{{ defined('APPOINTMENT_SER') ? APPOINTMENT_SER : '' }}">
+                            <input type="hidden" id="variantType" name="variantType" value="APPOINMENT">
                         </form>
 
                         <span id="addVariantDiv" style="display:none">
@@ -130,18 +130,17 @@
                         <input type="hidden" id="checkFirstVariant" value="2">
 
                         <a id="updateVariantModal" data-toggle="modal" data-target="#myModalVariantUpdate"></a>
-                        <div class="modal fade" id="myModalVariantUpdate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                            <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal fade" id="myModalVariantUpdate" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="close" id="modalCloseUpdate" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel">Variant Information</h4>
+                                        <h5 class="modal-title" id="variantModalLabel">Variant Information</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label>Variant</label><span class="custom-text-danger"> *</span>
+                                                <div class="form-group mb-3"> <label class="form-label">Variant</label><span class="text-danger"> *</span>
                                                     <input type="text" id="variantNameUpdateModal" class="form-control">
                                                 </div>
                                             </div> 
@@ -149,13 +148,16 @@
                                     </div>
                                     <div class="modal-footer">
                                         <input type="hidden" id="variantSerial">
-                                        <span id="setVariantBtnDiv">
-                                            <button class="btn btn-primary" onclick="setVariantValue()"> OK </button>
-                                        </span>
-                                        <span id="setMoreVariantBtnDiv">
-                                            <button class="btn btn-primary" onclick="setMoreVariantValue()"> OK </button>
-                                        </span>
-                                        <button class="btn btn-danger" type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                        
+                                        <div id="setVariantBtnDiv">
+                                            <button type="button" class="btn btn-primary" onclick="setVariantValue()"> OK </button>
+                                        </div>
+                                        
+                                        <div id="setMoreVariantBtnDiv">
+                                            <button type="button" class="btn btn-primary" onclick="setMoreVariantValue()"> OK </button>
+                                        </div>
+                                        
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +190,7 @@
         var serviceCode = $('#serviceCode' + serial).val();
         var serviceName = $('#serviceName' + serial).val();
         var category = $('#category' + serial).val();
-        //showLoader();
+        console.log(category);
         $('#checkFirstVariant').val('2');
 
         $.ajax({
@@ -201,9 +203,7 @@
             url: "{{ url('admin/master-data/setServiceVariant') }}", // Laravel URL Helper
             success: function (result) {
                 $("#variantTable").find("tr:not(:first)").remove();
-                hideLoader();
-                
-                var jsonObj = jQuery.parseJSON(result);
+                var jsonObj = result;
 
                 for (var i = 0; i < jsonObj.variants.length; i++) {
                     var variantStr = "";
@@ -229,6 +229,7 @@
                     }
 
                     variantStr += "<td class='text-center'><span class='pointer' onclick='updateVariantModalShow(" + counter + ")'><i class='fa fa-pencil'></i></span> " + deleteSpan + " </td>";
+                    console.log(variantStr);
                     var newRow = $(document.createElement('tr')).attr("id", 'variantRow' + counter);
                     newRow.after().html(variantStr);
                     newRow.appendTo("#variantTable");
@@ -248,6 +249,9 @@
         $('#updateVariantModal').click();
         $('#variantNameUpdateModal').val($('#variantNameHidden' + serial).val());
         $('#variantSerial').val(serial);
+        const modalElement = document.getElementById('myModalVariantUpdate');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.show();
     }
 
     function setVariantValue() {
@@ -350,7 +354,6 @@
                 },
                 url: "{{ url('admin/MasterData/checkDupSerVariant') }}", // Laravel URL Helper
                 success: function (result) {
-                    hideLoader();
                     if(result === "1"){
                         $("#saveVariantForm").submit();
                     }else{

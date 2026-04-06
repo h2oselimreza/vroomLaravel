@@ -54,8 +54,9 @@
                                 @foreach ($data as $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">{{ $value->category->category_name }}</td>
-                                        <td>{{ $value->service_name  }}</td>
+                                        <td>{{ $value->serviceDetails->service_name ?? null  }}</td>
+                                        <td class="text-center">{{ $value->serviceDetails->category->category_name ?? null }}</td>
+                                        <td class="text-center">{{ $value->service_variant_name ?? null }}</td>
                                         <td class="text-center">{{ ($value->is_active) ? 'Active':'Inactive' }}</td>
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -64,13 +65,13 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ $value ? route('admin.modules.master-data.service-list.edit', $value->service_code ) : '#' }}" 
+                                                        <a href="{{ $value->service_code ? route('admin.modules.master-data.service-list.edit', $value->service_code ) : '#' }}" 
                                                         class="d-block ps-3">
                                                             <span class="ui-button-text">Update</span>
                                                         </a>                                    
                                                     </li>
                                                     <li class="mt-2">
-                                                        <form action="{{ route('admin.modules.master-data.service-list.toggle', $value->service_code) }}" method="POST">
+                                                        <form action="{{ $value->service_code ? route('admin.modules.master-data.service-list.toggle.edit', $value->service_code ) : '#' }}" method="POST">
                                                             @csrf
                                                             <button type="submit" class="d-block ps-3 active_button">
                                                                 <span>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MasterData\ServiceListRequest;
 use App\Models\Admin\MasterData\Service;
 use App\Models\Admin\MasterData\ServiceCategory;
+use App\Models\Admin\MasterData\ServiceVariant;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,17 @@ class ServiceListController extends Controller
                 'service_code'       => $serviceCode,
                 'service_type' => 'APPOINMENT',
                 'is_active'           => 1,
+            ]);
+
+            $prefix = "SRVCVR-";
+            $serviceVariantCode = $prefix . $tokenService->getTokenByCode($prefix);
+
+            ServiceVariant::create([
+                'variant_code' => $serviceVariantCode,
+                'service'  => $serviceCode,
+                'service_variant_name' => 'Default',
+                'variant_type' => 'APPOINMENT',
+                'default_variant' => 1,
             ]);
 
             DB::commit();
