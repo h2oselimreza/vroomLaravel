@@ -333,3 +333,6 @@ table.dataTable .dt-column-header {
     font-size: 16px !important;
     margin-left: 4px !important;
 }
+div.dt-container .dt-search input {
+    padding: 0px;
+}

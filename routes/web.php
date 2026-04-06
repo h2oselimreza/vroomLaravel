@@ -13,6 +13,10 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
+use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceCategoryController;
+use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceController;
+use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceListController;
+use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceVariantController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceCategoryController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceListController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\ServiceVariantController;
@@ -23,6 +27,7 @@ use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\CostCategoryController;
 use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\CostHeadController;
 use App\Http\Controllers\Admin\MasterData\ExpenseAdmin\ExpenseAdminController;
 use App\Http\Controllers\Admin\MasterData\FuelController;
+use App\Http\Controllers\Admin\MasterData\MembershipCardController;
 use App\Http\Controllers\Admin\MasterData\PackageController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleBrandModelController;
@@ -120,6 +125,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('master-data/service-variant', ServiceVariantController::class)->names('admin.modules.master-data.service-variant');
     Route::post('master-data/setServiceVariant', [ServiceVariantController::class, 'setServiceVariant'])->name('admin.modules.master-data.setServiceVariant');
 
+    /*===============Home Service Route==================*/
+    Route::get('master-data/home-service', [HomeServiceController::class, 'index'])->name('admin.module.master-data.home-service.index');
+    Route::resource('master-data/home-service-category', HomeServiceCategoryController::class)->names('admin.modules.master-data.home-service-category');
+    Route::post('master-data/home-service-category/{code}', [HomeServiceCategoryController::class, 'toggle'])->name('admin.modules.master-data.home-service-category.toggle');
+    Route::resource('master-data/home-service-list', HomeServiceListController::class)->names('admin.modules.master-data.home-service-list');
+    Route::post('master-data/home-service-list/{code}', [HomeServiceListController::class, 'toggle'])->name('admin.modules.master-data.home-service-list.toggle');
+    Route::resource('master-data/home-service-variant', HomeServiceVariantController::class)->names('admin.modules.master-data.home-service-variant');
+    Route::post('master-data/home-setServiceVariant', [HomeServiceVariantController::class, 'setServiceVariant'])->name('admin.modules.master-data.home-setServiceVariant');
+
+    /*===============MasterData Route==================*/
+    Route::resource('master-data/member-ship-card', MembershipCardController::class)->names('admin.module.master-data.member-ship-card');
 
     /*===============package Route==================*/
     Route::resource('master-data/package', PackageController::class)->names('admin.module.master-data.package');

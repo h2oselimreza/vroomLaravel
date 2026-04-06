@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Appointment Service</h1>
+    <h1 class="page-title">Home Service List</h1>
     <ul class="breadcrumb">
         <li><a href="{{ url('admin/Home') }}">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="#">/ Appointment Service</a></li>
+        <li><a href="#">/ Home Service List</a></li>
     </ul>
 </div>
 <div class="main-content">
@@ -29,11 +29,11 @@
     <div class="row">
         <div class="col-sm-12 col-md-12">
 
-            @include('admin.master-data.appointment-service.tab')
+            @include('admin.master-data.home-service.tab')
 
             <div class="panel panel-default"> 
                 <div class="add-button">
-                    <a href="{{ route('admin.modules.master-data.service-variant.create') }}">Manage Variants</a>
+                    <a href="{{ route('admin.modules.master-data.home-service-list.create') }}">Add</a>
                 </div>
                 <div class="table-responsive">
 
@@ -41,8 +41,7 @@
                         <thead>
                             <tr class="bg-primary">
                                 <th class="text-center">SL</th>
-                                <th class="text-center">Service</th>
-                                <th class="text-start">Category</th>
+                                <th class="text-center">Service Category</th>
                                 <th class="text-start">Service Name</th>
                                 <th class="text-center">Status</th>
                                 <th>Action</th>
@@ -64,13 +63,13 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ $value ? route('admin.modules.master-data.service-list.edit', $value->service_code ) : '#' }}" 
+                                                        <a href="{{ $value ? route('admin.modules.master-data.home-service-list.edit', $value->service_code ) : '#' }}" 
                                                         class="d-block ps-3">
                                                             <span class="ui-button-text">Update</span>
                                                         </a>                                    
                                                     </li>
                                                     <li class="mt-2">
-                                                        <form action="{{ route('admin.modules.master-data.service-list.toggle', $value->service_code) }}" method="POST">
+                                                        <form action="{{ route('admin.modules.master-data.home-service-list.toggle', $value->service_code) }}" method="POST">
                                                             @csrf
                                                             <button type="submit" class="d-block ps-3 active_button">
                                                                 <span>

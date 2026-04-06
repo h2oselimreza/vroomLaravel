@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Appointment Service</h1>
+    <h1 class="page-title">Home Service Category</h1>
     <ul class="breadcrumb">
         <li><a href="{{ url('admin/Home') }}">Home</a></li>
         <li><a href="#">/ Master Data</a></li>
-        <li><a href="#">/ Appointment Service</a></li>
+        <li><a href="#">/ Home Service Category</a></li>
     </ul>
 </div>
 <div class="main-content">
@@ -29,11 +29,11 @@
     <div class="row">
         <div class="col-sm-12 col-md-12">
 
-            @include('admin.master-data.appointment-service.tab')
+            @include('admin.master-data.home-service.tab')
 
             <div class="panel panel-default"> 
                 <div class="add-button">
-                    <a href="{{ route('admin.modules.master-data.service-variant.create') }}">Manage Variants</a>
+                    <a href="{{ route('admin.modules.master-data.home-service-category.create') }}">Add Service Category</a>
                 </div>
                 <div class="table-responsive">
 
@@ -41,9 +41,8 @@
                         <thead>
                             <tr class="bg-primary">
                                 <th class="text-center">SL</th>
-                                <th class="text-center">Service</th>
-                                <th class="text-start">Category</th>
-                                <th class="text-start">Service Name</th>
+                                <th class="text-center">Parent Category</th>
+                                <th class="text-start">Category Name</th>
                                 <th class="text-center">Status</th>
                                 <th>Action</th>
                             </tr>
@@ -54,8 +53,8 @@
                                 @foreach ($data as $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">{{ $value->category->category_name }}</td>
-                                        <td>{{ $value->service_name  }}</td>
+                                        <td class="text-center">{{ ($value->parent_category == 1) ? '--- Parent ---' : $value->parent->category_name ?? '' }}</td>
+                                        <td>{{ $value->category_name  }}</td>
                                         <td class="text-center">{{ ($value->is_active) ? 'Active':'Inactive' }}</td>
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -64,13 +63,13 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ $value ? route('admin.modules.master-data.service-list.edit', $value->service_code ) : '#' }}" 
+                                                        <a href="{{ $value ? route('admin.modules.master-data.home-service-category.edit', $value->category_code ) : '#' }}" 
                                                         class="d-block ps-3">
                                                             <span class="ui-button-text">Update</span>
                                                         </a>                                    
                                                     </li>
                                                     <li class="mt-2">
-                                                        <form action="{{ route('admin.modules.master-data.service-list.toggle', $value->service_code) }}" method="POST">
+                                                        <form action=" {{ $value ? route('admin.modules.master-data.home-service-category.toggle', $value->category_code ) : '#' }}" method="POST">
                                                             @csrf
                                                             <button type="submit" class="d-block ps-3 active_button">
                                                                 <span>
