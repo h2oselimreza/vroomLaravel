@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\MasterData\AppointmentService;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\MasterData\Service;
 use App\Models\Admin\MasterData\ServiceVariant;
+use App\Services\TokenService;
 use DB;
 use Illuminate\Http\Request;
 
@@ -31,9 +32,70 @@ class ServiceVariantController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function saveServiceVariant(Request $request, TokenService $tokenService) 
     {
-        //
+        if (is_string($request->variants)) {
+            $request->merge([
+                'variants' => json_decode($request->variants, true)
+            ]);
+        }
+
+        $request->validate([
+            'serviceCode' => 'required|string',
+            'variantType' => 'required|string',
+            'variants'    => 'required|array',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $serviceCode = $request->serviceCode;
+            $variantType = $request->variantType;
+
+            if ($request->filled('deleteVariant')) {
+                $idsToDelete = explode(',', $request->deleteVariant);
+                ServiceVariant::whereIn('id', $idsToDelete)->delete();
+            }
+
+            // --- FIX LOGIC START ---
+            // We collapse the array into one single associative array if they are related,
+            // or iterate carefully. 
+            
+            // If your request is ALWAYS one variant split into two array items:
+            $inputData = [];
+            foreach ($request->variants as $v) {
+                if (is_array($v)) {
+                    $inputData = array_merge($inputData, $v);
+                }
+            }
+
+            $name = $inputData['name'] ?? null;
+            $variantId = $inputData['id'] ?? null;
+
+            if ($name) {
+                $data = [
+                    'service'              => $serviceCode,
+                    'variant_type'         => $variantType,
+                    'service_variant_name' => $name,
+                ];
+
+                if ($variantId && $variantId > 0) {
+                    ServiceVariant::where('id', $variantId)->update($data);
+                } else {
+                    $prefix = "SRVCVR-";
+                    $data['variant_code'] = $prefix . $tokenService->getTokenByCode($prefix);
+                    ServiceVariant::create($data);
+                }
+            }
+            // --- FIX LOGIC END ---
+
+            DB::commit();
+            return back()->with('success', 'Successfully Saved!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 
     /**

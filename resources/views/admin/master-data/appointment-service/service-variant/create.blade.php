@@ -123,8 +123,8 @@
                         </form>
 
                         <span id="addVariantDiv" style="display:none">
-                            <button class="btn btn-primary" onclick="addVariant()">Add more variant</button>
-                            <button class="btn btn-success" onclick="saveVariant()">Save Variant</button>
+                            <button class="btn btn-primary save_button" onclick="addVariant()">Add more variant</button>
+                            <button class="btn btn-success save_button" onclick="saveVariant()">Save Variant</button>
                         </span>
                         
                         <input type="hidden" id="checkFirstVariant" value="2">
@@ -338,8 +338,16 @@
             var counter = $('#totalVariant').val();
             for (var j = 1; j < counter; j++) {
                 var variantName = $('#variantNameHidden' + j).val();
+                var variantId = $('#variantAutoIdHidden' + j).val();
                 if (typeof (variantName) !== 'undefined') {
-                    varaintNameArr.push(variantName);
+                    varaintNameArr.push({
+                        name: variantName
+                    });
+                }
+                if (typeof (variantId) !== 'undefined') {
+                    varaintNameArr.push({
+                        id: variantId ? variantId : null,
+                    });
                 }
             }
 
@@ -348,11 +356,11 @@
                 type: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}", // Added CSRF Token
-                    variantNameJson: JSON.stringify(varaintNameArr), 
+                    variants: JSON.stringify(varaintNameArr), 
                     variantType: $('#variantType').val(),
                     serviceCode: $('#hiddenService').val()
                 },
-                url: "{{ url('admin/MasterData/checkDupSerVariant') }}", // Laravel URL Helper
+                url: "{{ url('admin/master-data/appointment-variant-save') }}", // Laravel URL Helper
                 success: function (result) {
                     if(result === "1"){
                         $("#saveVariantForm").submit();
