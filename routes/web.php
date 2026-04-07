@@ -178,6 +178,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('corporate/company-list', [CompanyController::class, 'companyList'])->name('admin.company.list');
     Route::get('corporate/employee-list', [CompanyEmployeeController::class, 'index'])->name('admin.company-employee.index');
+    Route::get('customer-employee-data', [CompanyEmployeeController::class, 'getCustomerEmployeeData'])->name('admin.customer-employee-data.index');
+    Route::get('customer-employee/create', [CompanyEmployeeController::class, 'create'])->name('admin.customer-employee.create');
+    Route::post('customer-employee-store', [CompanyEmployeeController::class, 'store'])->name('admin.customer-employee.store');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

@@ -66,7 +66,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('admin.company-employee.index') }}"
+                                            <a href="{{ route('admin.company-employee.index',['company_code' => $company->company_code]) }}"
                                                 style="color: blue; text-decoration: underline;">
                                                 Employee List
                                             </a>
