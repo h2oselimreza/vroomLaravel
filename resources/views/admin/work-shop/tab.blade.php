@@ -1,7 +1,7 @@
 @php
     $segments = request()->segments();
     $lastSegment = request()->segment(count($segments));
-    $secondLastSegment = request()->segment(count($segments) - 1);
+    $secondLastSegment = request()->segment(count($segments) - 2);
     $thirdLastSegment = $segments[1];
 @endphp
 

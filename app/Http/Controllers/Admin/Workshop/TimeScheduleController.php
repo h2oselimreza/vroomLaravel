@@ -19,7 +19,8 @@ class TimeScheduleController extends Controller
         ->get();
         $commonTableElementArr = array('type' => 'week_day');
         $weekdays = $this->getCommonTableElement($commonTableElementArr);
-        return view('admin.work-shop.time-schedule.create-edit',compact('timeSchedules','weekdays','workshopCode'));
+        $data = Workshop::where('workshop_code',$workshopCode)->first();
+        return view('admin.work-shop.time-schedule.create-edit',compact('timeSchedules','weekdays','workshopCode','data'));
     }
 
     private function getCommonTableElement($commonTableElementArr)

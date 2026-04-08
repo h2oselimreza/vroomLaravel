@@ -1,14 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    /* Styling for the blurred effect */
-    .row-blurred input:not([type="checkbox"]) {
-        background-color: #eee !important;
-        cursor: not-allowed;
-    }
-    .td-center { text-align: center; vertical-align: middle !important; }
-</style>
+
 <div class="header dashboard_from">
     <h1 class="page-title">
         {{ isset($data->exists) ? 'Edit Time Schedule' : 'Add Workshop' }}
