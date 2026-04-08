@@ -68,7 +68,7 @@
                                         Personal Information
                                     </button>
                                 </h2>
-                                <input type="hidden" name="company_code" value="{{ request('company_code') ?? $data->company }}">
+                                <input type="hidden" name="company_code" value="{{ request('company_code') ?? $data->company ?? '' }}">
                                 <div id="personalInfo"
                                     class="accordion-collapse collapse show"
                                     data-bs-parent="#employeeAccordion">
