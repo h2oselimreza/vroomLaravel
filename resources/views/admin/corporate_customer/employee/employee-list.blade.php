@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="header">
+<div class="header dashboard_from">
     <h1 class="page-title">Customer Employee</h1>
     <ul class="breadcrumb">
         <li><a href="<?php /*echo base_url() */ ?>admin/Home"> Home</a></li>

@@ -17,7 +17,7 @@
     <div class="card shadow">
         <div class="card-body">
             <!-- Nav Tabs -->
-            @include('admin.employee.nav-tab')
+            @include('admin.corporate_customer.employee.tab')
             {{-- Success Message --}}
             @if(session('success'))
                 <div class="alert alert-success">
@@ -46,7 +46,7 @@
                         $isEdit = isset($data);
                     @endphp
                     <form action="{{ $isEdit 
-                        ? route('admin.customer-employee.update', $data->id) 
+                        ? route('admin.customer-employee.update', $data->employee_id) 
                         : route('admin.customer-employee.store') }}"
                         method="POST">
 
@@ -68,7 +68,7 @@
                                         Personal Information
                                     </button>
                                 </h2>
-                                <input type="hidden" name="company_code" value="{{ request('company_code') }}">
+                                <input type="hidden" name="company_code" value="{{ request('company_code') ?? $data->company }}">
                                 <div id="personalInfo"
                                     class="accordion-collapse collapse show"
                                     data-bs-parent="#employeeAccordion">

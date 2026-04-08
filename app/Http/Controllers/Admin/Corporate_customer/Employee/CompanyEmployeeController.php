@@ -42,8 +42,8 @@ class CompanyEmployeeController extends Controller
                     return $row->is_reset ? 'Yes':'No';
                 })
                 ->addColumn('action', content: function ($employee) {
-                    $editUrl   = route('admin.employee.module.edit', $employee->id);
-                    $activeInactiveUrl   = route('admin.employee.status', $employee->id);
+                    $editUrl   = route('admin.customer-employee.edit', $employee->employee_id);
+                    $activeInactiveUrl   = route('admin.customer-employee.edit', $employee->employee_id);
                     $statusText = $employee->is_active == 1 ? 'Inactive' : 'Active';
                     return '
                         <div class="dropdown">
@@ -110,5 +110,20 @@ class CompanyEmployeeController extends Controller
         return redirect()
             ->route('admin.customer-employee.create',['company_code' => $customeCompanyRequest->company_code])
             ->with('success', 'Employee created successfully.');
+    }
+
+    public function edit(String $employeeId){
+        $data = CustomerEmployee::where('employee_id',$employeeId)->first();
+        return view('admin.corporate_customer.employee.employee-create-edit', compact('data'));
+    }
+
+    public function update(CustomeCompanyRequest $request, $employeeId)
+    {
+        $customerEmployee = CustomerEmployee::where('employee_id',$employeeId)->first();
+        $customerEmployee->update($request->validated());
+
+        return redirect()
+            ->route('admin.company-employee.index', ['company_code'=> $customerEmployee->company])
+            ->with('success', 'Employee updated successfully.');
     }
 }

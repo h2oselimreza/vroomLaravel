@@ -181,6 +181,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('customer-employee-data', [CompanyEmployeeController::class, 'getCustomerEmployeeData'])->name('admin.customer-employee-data.index');
     Route::get('customer-employee/create', [CompanyEmployeeController::class, 'create'])->name('admin.customer-employee.create');
     Route::post('customer-employee-store', [CompanyEmployeeController::class, 'store'])->name('admin.customer-employee.store');
+    Route::get('customer-employee-edit/{employeeId}', [CompanyEmployeeController::class, 'edit'])->name('admin.customer-employee.edit');
+    Route::put('customer-employee-update/{employeeId}', [CompanyEmployeeController::class, 'update'])->name('admin.customer-employee.update');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

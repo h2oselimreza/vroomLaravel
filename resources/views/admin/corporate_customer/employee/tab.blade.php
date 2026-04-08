@@ -2,14 +2,14 @@
     $segments = request()->segments();
     $lastSegment = request()->segment(count($segments));
     $secondLastSegment = request()->segment(count($segments) - 1);
-    $thirdLastSegment = request()->segment(count($segments) - 2);  
+    $thirdLastSegment = $segments[1];
 @endphp
 
 <ul class="nav nav-tabs mb-4" id="employeeTab" role="tablist">
     @if(isset($data->exists))
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                        <?= $thirdLastSegment == 'employees' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.customer-employee.create.edit', $data->id) : '#' }}" id="personal-tab" role="tab"> Personal </a>
+                        <?= $thirdLastSegment == 'customer-employee-edit' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.customer-employee.edit', $data->employee_id) : '#' }}" id="personal-tab" role="tab"> Personal </a>
         </li>
     @else
         <li class="nav-item" role="presentation">

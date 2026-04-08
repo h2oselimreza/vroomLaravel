@@ -86,7 +86,15 @@ class CustomeCompanyRequest extends FormRequest
         'driving_license_no' => 'nullable|string|max:100',
         'driving_license_expiry_date' => 'nullable|date_format:Y-m-d',
         'created_type' => 'nullable',
-        'updated_type' => 'nullable'
+        'updated_type' => 'nullable',
+        'ref_one_name' => 'nullable',
+        'ref_one_mobile' => 'nullable',
+        'ref_one_email' => 'nullable',
+        'ref_one_address' => 'nullable',
+        'ref_two_name' => 'nullable',
+        'ref_two_mobile' => 'nullable',
+        'ref_two_email' => 'nullable',
+        'ref_two_address' => 'nullable',
         ];
     }
 }
