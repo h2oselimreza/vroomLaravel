@@ -25,7 +25,7 @@
     @endif
 
     <div class="add-button">
-        <a href="{{ route('admin.employee.module.create') }}">Add Workshop</a>
+        <a href="{{ route('admin.workshop-general-info.create') }}">Add Workshop</a>
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-12">

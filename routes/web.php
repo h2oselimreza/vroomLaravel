@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
+use App\Http\Controllers\Admin\Workshop\GeneralInfoController;
 use App\Http\Controllers\Admin\Workshop\WorkshopController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
@@ -201,6 +202,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     /*===============Corporate customer Route==================*/
     Route::get('workshop-list', [WorkshopController::class, 'index'])->name('admin.workshop-list.index');
     Route::get('workshop-list-data', [WorkshopController::class, 'getWorkshopData'])->name('admin.workshop-list-data.index');
+    Route::resource('workshop-general-info', GeneralInfoController::class)->names('admin.workshop-general-info');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
