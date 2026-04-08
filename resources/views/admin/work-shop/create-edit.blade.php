@@ -51,7 +51,7 @@
                         $isEdit = isset($data);
                     @endphp
                     <form action="{{ $isEdit 
-                        ? route('admin.workshop-general-info.update', $data->id) 
+                        ? route('admin.workshop-general-info.update', $data->workshop_code) 
                         : route('admin.workshop-general-info.store') }}"
                         method="POST">
 

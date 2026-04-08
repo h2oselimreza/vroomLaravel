@@ -70,7 +70,7 @@
         ajax: "{{ route('admin.workshop-list-data.index') }}",
         columns: [
             {data: 'id', name: 'id', orderable:true, searchable:true, className: 'text-center'},
-            {data: 'title ', name: 'title', orderable:true, searchable:true, className: 'text-center'},
+            {data: 'title', name: 'title', orderable:true, searchable:true, className: 'text-center'},
             {data: 'workshop_code', name: 'workshop_code', orderable:false, searchable:false, className: 'text-center'},
             {data: 'address', name: 'address', orderable:false, searchable:false, className: 'text-center'},
             {data: 'workshop_mobile', name: 'workshop_mobile', orderable:false, searchable:false, className: 'text-center'},

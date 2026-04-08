@@ -16,7 +16,6 @@ class WorkshopController extends Controller
     public function getWorkshopData(Request $request){
          if ($request->ajax()) {
             $data = Workshop::get();
-
             return DataTables::of($data)
 
                 ->addIndexColumn()
@@ -26,8 +25,8 @@ class WorkshopController extends Controller
                 })
 
                 ->addColumn('action', content: function ($data) {
-                    $editUrl   = route('admin.customer-employee.edit', $data->workshop_code);
-                    $activeInactiveUrl   = route('admin.customer-employee.edit', $data->workshop_code);
+                    $editUrl   = route('admin.workshop-general-info.edit', $data->workshop_code);
+                    $activeInactiveUrl   = route('admin.workshop-general-info.edit', $data->workshop_code);
                     $statusText = $data->is_active == 1 ? 'Inactive' : 'Active';
                     return '
                         <div class="dropdown">

@@ -9,7 +9,7 @@
     @if(isset($data->exists))
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                        <?= $thirdLastSegment == 'admin.workshop-general-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.workshop-general-info.edit', $data->workshop_code) : '#' }}" id="personal-tab" role="tab"> General Info </a>
+                        <?= $thirdLastSegment == 'workshop-general-info' ? 'active' : ''?>" href="{{ isset($data) ? route('admin.workshop-general-info.edit', $data->workshop_code) : '#' }}" id="personal-tab" role="tab"> General Info </a>
         </li>
     @else
         <li class="nav-item" role="presentation">
