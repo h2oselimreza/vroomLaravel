@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
+use App\Http\Controllers\Admin\Workshop\WorkshopController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
@@ -197,6 +198,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('customer-employee-attachment', [CompanyEmployeeAttachmentController::class, 'store'])->name('admin.customer-employee.attachment.store');
     Route::delete('customer-employee-attachment/{employeeId}', [CompanyEmployeeAttachmentController::class, 'destory'])->name('admin.customer-employee.attachment.destory');    
     
+    /*===============Corporate customer Route==================*/
+    Route::get('workshop-list', [WorkshopController::class, 'index'])->name('admin.workshop-list.index');
+    Route::get('workshop-list-data', [WorkshopController::class, 'getWorkshopData'])->name('admin.workshop-list-data.index');
+
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
     Route::get('employee-data', [EmployeeController::class, 'getEmployeeData'])->name('admin.employee.data.index');
