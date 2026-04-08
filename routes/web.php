@@ -58,6 +58,7 @@ use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\Admin\Workshop\GeneralInfoController;
 use App\Http\Controllers\Admin\Workshop\TimeScheduleController;
 use App\Http\Controllers\Admin\Workshop\WorkshopController;
+use App\Http\Controllers\Admin\Workshop\WorkshopVehicleTypeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
@@ -205,6 +206,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('workshop-list-data', [WorkshopController::class, 'getWorkshopData'])->name('admin.workshop-list-data.index');
     Route::resource('workshop-general-info', GeneralInfoController::class)->names('admin.workshop-general-info');
     Route::resource('workshop-time-schedule', TimeScheduleController::class)->names('admin.workshop-time-schedule');
+    Route::resource('workshop-vehicle-type', WorkshopVehicleTypeController::class)->names('admin.workshop-vehicle-type');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

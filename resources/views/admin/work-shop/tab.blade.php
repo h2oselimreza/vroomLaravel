@@ -23,7 +23,7 @@
     </li>
     <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'customer-employee-photo' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.photo.edit', $data->workshop_code) : '#' }}"> Photograph </a>
+                    <?= $secondLastSegment == 'workshop-vehicle-type' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.workshop-vehicle-type.edit', $data->workshop_code) : '#' }}"> Vehicle Type </a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
