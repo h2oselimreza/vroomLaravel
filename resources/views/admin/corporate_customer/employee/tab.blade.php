@@ -19,18 +19,18 @@
     @endif
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'employee-office-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.employee.office.edit', $data->id) : '#' }}"> Official </a>
+                    <?= $secondLastSegment == 'customer-employee-office' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.office.edit', $data->employee_id) : '#' }}"> Official </a>
     </li>
     <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'employee-education-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.employee.education.edit', $data->id) : '#' }}"> Education </a>
+                    <?= $secondLastSegment == 'customer-employee-photo' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.photo.edit', $data->employee_id) : '#' }}"> Photograph </a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.working.experience.edit', $data->id) : '#' }}" id="official-tab" role="tab"> Working Experience </a>
+                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.working.experience.edit', $data->employee_id) : '#' }}" id="official-tab" role="tab"> Working Experience </a>
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-            <?= $secondLastSegment == 'profile-photo-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.profile.photo.edit', $data->id) : '#' }}"> Photograph </a>
+            <?= $secondLastSegment == 'profile-photo-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.profile.photo.edit', $data->employee_id) : '#' }}"> Photograph </a>
     </li>
 </ul>

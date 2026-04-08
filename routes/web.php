@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyProfileController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeController;
+use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeOfficeController;
+use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeePhotographController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -183,7 +185,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('customer-employee-store', [CompanyEmployeeController::class, 'store'])->name('admin.customer-employee.store');
     Route::get('customer-employee-edit/{employeeId}', [CompanyEmployeeController::class, 'edit'])->name('admin.customer-employee.edit');
     Route::put('customer-employee-update/{employeeId}', [CompanyEmployeeController::class, 'update'])->name('admin.customer-employee.update');
+    
+    Route::get('customer-employee-office/{employeeId}', [CompanyEmployeeOfficeController::class, 'edit'])->name('admin.customer-employee.office.edit');
+    Route::put('customer-employee-office/{employeeId}', [CompanyEmployeeOfficeController::class, 'update'])->name('admin.customer-employee.office.update');
 
+    Route::get('customer-employee-photo/{employeeId}', [CompanyEmployeePhotographController::class, 'edit'])->name('admin.customer-employee.photo.edit');
+    Route::post('customer-employee-photo/{employeeId}', [CompanyEmployeePhotographController::class, 'update'])->name('admin.customer-employee.photo.update');
+    
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
     Route::get('employee-data', [EmployeeController::class, 'getEmployeeData'])->name('admin.employee.data.index');
