@@ -19,7 +19,7 @@
     @endif
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'customer-employee-office' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.office.edit', $data->workshop_code) : '#' }}"> Official </a>
+                    <?= $secondLastSegment == 'workshop-time-schedule' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.workshop-time-schedule.edit', $data->workshop_code) : '#' }}"> Time Schedule </a>
     </li>
     <li class="nav-item" role="presentation">
     <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
