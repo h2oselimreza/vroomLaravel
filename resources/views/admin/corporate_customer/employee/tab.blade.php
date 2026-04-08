@@ -14,7 +14,7 @@
     @else
         <li class="nav-item" role="presentation">
             <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                        <?= $lastSegment == 'create' ? 'active' : ''?>" href="{{ route('admin.customer-employee.create.create') }}" id="personal-tab" role="tab"> Personal </a>
+                        <?= $lastSegment == 'create' ? 'active' : ''?>" href="{{ route('admin.customer-employee.create') }}" id="personal-tab" role="tab"> Personal </a>
         </li>
     @endif
     <li class="nav-item" role="presentation">
@@ -27,10 +27,6 @@
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'working-experience-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.working.experience.edit', $data->employee_id) : '#' }}" id="official-tab" role="tab"> Working Experience </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-            <?= $secondLastSegment == 'profile-photo-info' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.profile.photo.edit', $data->employee_id) : '#' }}"> Photograph </a>
+                    <?= $secondLastSegment == 'customer-employee-attachment' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.attachment.edit', $data->employee_id) : '#' }}" id="official-tab" role="tab"> Attachment </a>
     </li>
 </ul>

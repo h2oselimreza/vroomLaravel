@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Corporate_customer\CompanyAttachmentController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyProfileController;
+use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeAttachmentController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeePhotographController;
@@ -191,6 +192,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('customer-employee-photo/{employeeId}', [CompanyEmployeePhotographController::class, 'edit'])->name('admin.customer-employee.photo.edit');
     Route::post('customer-employee-photo/{employeeId}', [CompanyEmployeePhotographController::class, 'update'])->name('admin.customer-employee.photo.update');
+
+    Route::get('customer-employee-attachment/{employeeId}', [CompanyEmployeeAttachmentController::class, 'edit'])->name('admin.customer-employee.attachment.edit');
+    Route::post('customer-employee-attachment', [CompanyEmployeeAttachmentController::class, 'store'])->name('admin.customer-employee.attachment.store');
+    Route::delete('customer-employee-attachment/{employeeId}', [CompanyEmployeeAttachmentController::class, 'destory'])->name('admin.customer-employee.attachment.destory');    
     
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');
