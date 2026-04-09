@@ -105,7 +105,7 @@
 
                                                             <tr>
                                                                 <td class="td-center">{{ $serial }}</td>
-                                                                <td class="text-center">{{ $vehicleType->element }}</td>
+                                                                <td>{{ $vehicleType->element }}</td>
                                                                 <td class="td-center">
                                                                     <input type="checkbox" name="vehicleTypeCheckBox{{ $serial }}" 
                                                                         id="vehicleTypeCheckBox{{ $serial }}" 

@@ -27,6 +27,6 @@
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link {{ isset($data->exists) ? '' : 'nav_item' }}
-                    <?= $secondLastSegment == 'customer-employee-attachment' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.customer-employee.attachment.edit', $data->workshop_code) : '#' }}" id="official-tab" role="tab"> Attachment </a>
+                    <?= $secondLastSegment == 'workshop-image' ? 'active' : ''?>" href="{{ isset($data->exists) ? route('admin.workshop-image.edit', $data->workshop_code) : '#' }}" id="official-tab" role="tab"> Image </a>
     </li>
 </ul>

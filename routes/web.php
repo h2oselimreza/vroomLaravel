@@ -56,6 +56,7 @@ use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
 use App\Http\Controllers\Admin\Workshop\GeneralInfoController;
+use App\Http\Controllers\Admin\Workshop\ImageController;
 use App\Http\Controllers\Admin\Workshop\TimeScheduleController;
 use App\Http\Controllers\Admin\Workshop\WorkshopController;
 use App\Http\Controllers\Admin\Workshop\WorkshopVehicleTypeController;
@@ -201,12 +202,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('customer-employee-attachment', [CompanyEmployeeAttachmentController::class, 'store'])->name('admin.customer-employee.attachment.store');
     Route::delete('customer-employee-attachment/{employeeId}', [CompanyEmployeeAttachmentController::class, 'destory'])->name('admin.customer-employee.attachment.destory');    
     
-    /*===============Corporate customer Route==================*/
+    /*===============Workshop Route==================*/
     Route::get('workshop-list', [WorkshopController::class, 'index'])->name('admin.workshop-list.index');
     Route::get('workshop-list-data', [WorkshopController::class, 'getWorkshopData'])->name('admin.workshop-list-data.index');
     Route::resource('workshop-general-info', GeneralInfoController::class)->names('admin.workshop-general-info');
     Route::resource('workshop-time-schedule', TimeScheduleController::class)->names('admin.workshop-time-schedule');
     Route::resource('workshop-vehicle-type', WorkshopVehicleTypeController::class)->names('admin.workshop-vehicle-type');
+    Route::resource('workshop-image', ImageController::class)->names('admin.workshop-image');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

@@ -1,0 +1,302 @@
+@extends('layouts.app')
+
+@section('content')
+
+<link href="{{ asset('assets/select_bo/css/dropZone.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+
+<style>
+    .gallery { display: inline-block; margin-top: 10px; width: 100%; }
+    .image_block { border-radius: 3px; padding: 5px; margin: 15px; background: #f9f9f9; border: 1px solid #ddd; transition: 0.3s; }
+    .image_block:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .image_block_inner { position: relative; margin-bottom: 5px; text-align: center; }
+    .checkbox_wrapper { position: absolute; top: 5px; left: 5px; z-index: 10; background: rgba(255,255,255,0.8); padding: 2px; border-radius: 2px; }
+    .img-container { height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #eee; }
+    .img-container img { max-height: 100%; width: auto; }
+    .gallery_image_reload { display: block; margin: 10px 0; color: #337ab7; font-weight: bold; }
+</style>
+
+<div class="header dashboard_from">
+    <h1 class="page-title">
+        {{ isset($data->exists) ? 'Edit Workshop Image' : 'Add Workshop' }}
+    </h1>
+</div>
+
+@php
+    $path = request()->path();
+    $lastPart = collect(explode('/', $path))->last();
+@endphp
+<div class="container">
+    <div class="card shadow">
+        <div class="card-body">
+            <!-- Nav Tabs -->
+            @include('admin.work-shop.tab')
+            {{-- Success Message --}}
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- Validation Errors --}}
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="employeeTabContent">
+
+                <div class="tab-pane fade show active"
+                    id="personal"
+                    role="tabpanel">
+                    @php
+                        $isEdit = isset($data);
+                    @endphp
+                    <div class="accordion" id="employeeAccordion">
+
+                        {{--  Profile Image --}}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#personalInfo"
+                                        aria-expanded="true">
+                                     Profile Image
+                                </button>
+                            </h2>
+
+                            <div id="personalInfo"
+                                class="accordion-collapse collapse show"
+                                data-bs-parent="#employeeAccordion">
+
+                                <div class="accordion-body">
+                                    <form action="{{ route('admin.workshop-image.update',$data->workshop_code) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="row g-3">
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md-4">
+                                                <div class="d-flex flex-column align-items-center text-center">
+
+                                                    <label class="mb-2">Image (300px X 300px)</label>
+
+                                                    {{-- Show Current Image --}}
+                                                    @if($data->profile_image)
+                                                        <img border="1"
+                                                            id="blah"
+                                                            src="{{ asset('assets/images/workshop/' . $data->profile_image) }}"
+                                                            class="profile-image mb-3"
+                                                            style="width: 150px; height: 150px; object-fit: cover;">
+                                                    @else
+                                                        <img border="1"
+                                                            id="blah"
+                                                            src="{{ asset('assets/images/company/no_image.jpg') }}"
+                                                            class="profile-image mb-3"
+                                                            style="width: 150px; height: 150px; object-fit: cover;">
+                                                    @endif
+
+                                                    <input type="file"
+                                                        class="form-control w-auto"
+                                                        name="image"
+                                                        id="aboutImage"
+                                                        onchange="imageShow(this, this.id);"
+                                                        required>
+
+                                                    <input type="hidden" name="old_image" value="{{ $data->profile_image }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4"></div>
+                                        </div>
+                                        <button type="submit" class="btn btn-success profile_photo save_button">
+                                            Update Photo
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#OtherImage"
+                                        aria-expanded="true">
+                                     Other Image
+                                </button>
+                            </h2>
+
+                            <div id="OtherImage"
+                                class="accordion-collapse collapse"
+                                data-bs-parent="#employeeAccordion">
+
+                                <div class="accordion-body">
+
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="panel panel-default" style="padding: 20px;">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        {{-- Dropzone Upload Form --}}
+                                                        <form action="{{ route('admin.workshop-image.store') }}" 
+                                                            enctype="multipart/form-data" 
+                                                            class="dropzone" 
+                                                            id="image-upload">
+                                                            @csrf
+                                                            <input type="hidden" name="workshopCode" value="{{ $data->workshop_code }}">
+                                                        </form>
+
+                                                        <a href="javascript:location.reload();" class="gallery_image_reload">
+                                                            <i class="fa fa-refresh"></i> Refresh page to see newly uploaded files
+                                                        </a>
+                                                        <hr>
+                                                    </div>
+                                                </div>
+
+                                                <div class="gallery">
+                                                    <div class="row">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-hover custom-table" id="datatable">
+                                                                <thead>
+                                                                    <tr class="bg-primary">
+                                                                        <th>SL</th>
+                                                                        <th>File Name</th>
+                                                                        <th>File Type</th>
+                                                                        <th>Show</th>
+                                                                        <th>Remove</th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                    @forelse ($files as $value)
+                                                                        @php
+                                                                            $filePath = asset('assets/files/workshop/' . $value->file_name);
+                                                                            $ext = strtolower($value->file_type);
+                                                                            $isImage = in_array($ext, ['jpg','jpeg','png','gif','bmp']);
+                                                                        @endphp
+
+                                                                        <tr>
+                                                                            <td class="text-center">{{ $loop->iteration }}</td>
+
+                                                                            <td class="text-center">
+                                                                                {{ $value->original_name ?? $value->file_name }}
+                                                                            </td>
+
+                                                                            <td class="text-center">
+                                                                                {{ $value->file_type }}
+                                                                            </td>
+
+                                                                            {{-- ✅ SHOW --}}
+                                                                            <td class="text-center">
+                                                                                <a href="{{ $filePath }}" target="_blank"
+                                                                                style="color: blue; text-decoration: underline;">
+                                                                                    View File
+                                                                                </a>
+                                                                            </td>
+
+                                                                            {{-- ✅ DELETE --}}
+                                                                            <td class="text-center">
+                                                                                <form action="{{ route('admin.workshop-image.destroy', $value->workshop) }}" 
+                                                                                    method="POST"
+                                                                                    onsubmit="return confirm('Are you sure you want to delete this file?')">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+
+                                                                                    <button type="submit" class="btn btn-sm">
+                                                                                        Remove
+                                                                                    </button>
+                                                                                </form>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    @empty
+                                                                        <tr>
+                                                                            <td class="text-center">No Data Found</td>
+                                                                        </tr>
+                                                                    @endforelse
+                                                                    </tbody>
+
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </tfoot>
+
+                                                            </table>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+@push('scripts')
+<script src="{{ asset('assets/select_bo/js/dropZone.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            pageLength: 10,
+            ordering: true,
+            searching: true
+        });
+
+        // Initialize Fancybox
+        $(".fancybox").fancybox({
+            openEffect: "elastic",
+            closeEffect: "elastic"
+        });
+
+        // Dropzone Config
+        Dropzone.options.imageUpload = {
+            maxFilesize: 3.5, // MB
+            acceptedFiles: ".jpeg,.jpg,.png,.gif,.pdf",
+            dictDefaultMessage: "Drop files here to upload",
+            success: function(file, response) {
+                console.log("Successfully uploaded");
+            }
+        };
+    });
+
+    function submitDelete() {
+        var selectedIds = [];
+        
+        // Find all checked checkboxes and get their data-id
+        $('.img-checkbox:checked').each(function() {
+            selectedIds.push($(this).data('id'));
+        });
+
+        if (selectedIds.length > 0) {
+            if(confirm('Are you sure you want to delete ' + selectedIds.length + ' item(s)?')) {
+                $('#imageIdPost').val(selectedIds.join(','));
+                $('#imagePostForm').submit();
+            }
+        } else {
+            alert('Please select at least one image to delete.');
+        }
+    }
+</script>
+@endpush
