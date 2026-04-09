@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
+use App\Http\Controllers\Admin\Workshop\AttachmentController;
 use App\Http\Controllers\Admin\Workshop\GeneralInfoController;
 use App\Http\Controllers\Admin\Workshop\ImageController;
 use App\Http\Controllers\Admin\Workshop\TimeScheduleController;
@@ -209,6 +210,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('workshop-time-schedule', TimeScheduleController::class)->names('admin.workshop-time-schedule');
     Route::resource('workshop-vehicle-type', WorkshopVehicleTypeController::class)->names('admin.workshop-vehicle-type');
     Route::resource('workshop-image', ImageController::class)->names('admin.workshop-image');
+    Route::resource('workshop-attachment', AttachmentController::class)->names('admin.workshop-attachment');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

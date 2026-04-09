@@ -14,7 +14,7 @@ class ImageController extends Controller
     public function edit($workshopCode){
          $files = WorkshopFile::where(
             ['workshop' => $workshopCode,
-            'file_type'=>'attachment',
+            'file_type'=>'other_image',
             'is_active'=>1
             ])
         ->orderBy('created_dt_tm', 'desc')->get();
@@ -81,7 +81,7 @@ class ImageController extends Controller
 
             $data = [
                 'original_name'   => $file->getClientOriginalName(),
-                'file_type'       => defined('ATTACHMENT_FILE') ? ATTACHMENT_FILE : 'attachment',
+                'file_type'       => defined('ATTACHMENT_FILE') ? ATTACHMENT_FILE : 'other_image',
                 'workshop'        => $workshopCode,
                 'file_name'       => $fileName,
             ];
@@ -96,8 +96,8 @@ class ImageController extends Controller
         return redirect()->route('admin.customer-employee.attachment.edit', $workshopCode);
     }
 
-    public function destroy($workshopCode){
-        $file = WorkshopFile::where('workshop',$workshopCode)->first();
+    public function destroy($id){
+        $file = WorkshopFile::where(['id'=>$id,'file_type'=>'other_image'])->first();
         // file path
         $path = public_path('assets/files/workshop' . $file->file_name);
 

@@ -65,79 +65,18 @@
                         $isEdit = isset($data);
                     @endphp
                     <div class="accordion" id="employeeAccordion">
-
-                        {{--  Profile Image --}}
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#personalInfo"
-                                        aria-expanded="true">
-                                     Profile Image
-                                </button>
-                            </h2>
-
-                            <div id="personalInfo"
-                                class="accordion-collapse collapse show"
-                                data-bs-parent="#employeeAccordion">
-
-                                <div class="accordion-body">
-                                    <form action="{{ route('admin.workshop-image.update',$data->workshop_code) }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="row g-3">
-                                            <div class="col-md-4"></div>
-                                            <div class="col-md-4">
-                                                <div class="d-flex flex-column align-items-center text-center">
-
-                                                    <label class="mb-2">Image (300px X 300px)</label>
-
-                                                    {{-- Show Current Image --}}
-                                                    @if($data->profile_image)
-                                                        <img border="1"
-                                                            id="blah"
-                                                            src="{{ asset('assets/images/workshop/' . $data->profile_image) }}"
-                                                            class="profile-image mb-3"
-                                                            style="width: 150px; height: 150px; object-fit: cover;">
-                                                    @else
-                                                        <img border="1"
-                                                            id="blah"
-                                                            src="{{ asset('assets/images/company/no_image.jpg') }}"
-                                                            class="profile-image mb-3"
-                                                            style="width: 150px; height: 150px; object-fit: cover;">
-                                                    @endif
-
-                                                    <input type="file"
-                                                        class="form-control w-auto"
-                                                        name="image"
-                                                        id="aboutImage"
-                                                        onchange="imageShow(this, this.id);"
-                                                        required>
-
-                                                    <input type="hidden" name="old_image" value="{{ $data->profile_image }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4"></div>
-                                        </div>
-                                        <button type="submit" class="btn btn-success profile_photo save_button">
-                                            Update Photo
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button" type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#OtherImage"
                                         aria-expanded="true">
-                                     Other Image
+                                    Attachment
                                 </button>
                             </h2>
 
                             <div id="OtherImage"
-                                class="accordion-collapse collapse"
+                                class="accordion-collapse collapse show"
                                 data-bs-parent="#employeeAccordion">
 
                                 <div class="accordion-body">
@@ -148,7 +87,7 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         {{-- Dropzone Upload Form --}}
-                                                        <form action="{{ route('admin.workshop-image.store') }}" 
+                                                        <form action="{{ route('admin.workshop-attachment.store') }}" 
                                                             enctype="multipart/form-data" 
                                                             class="dropzone" 
                                                             id="image-upload">
@@ -207,7 +146,7 @@
 
                                                                             {{-- ✅ DELETE --}}
                                                                             <td class="text-center">
-                                                                                <form action="{{ route('admin.workshop-image.destroy', $value->id) }}" 
+                                                                                <form action="{{ route('admin.workshop-attachment.destroy', $value->id) }}" 
                                                                                     method="POST"
                                                                                     onsubmit="return confirm('Are you sure you want to delete this file?')">
                                                                                     @csrf
