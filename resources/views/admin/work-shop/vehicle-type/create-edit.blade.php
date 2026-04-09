@@ -4,7 +4,7 @@
 
 <div class="header dashboard_from">
     <h1 class="page-title">
-        {{ isset($data->exists) ? 'Edit Time Schedule' : 'Add Workshop' }}
+        {{ isset($data->exists) ? 'Edit Vehicle Type' : 'Add Workshop' }}
     </h1>
 </div>
 
