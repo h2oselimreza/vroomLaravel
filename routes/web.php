@@ -264,8 +264,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 
-Route::get('/', function() {
-    return view('welcome');
+Route::get('/client', function() {
+    return view('client.dashboard');
 });
 
 require __DIR__.'/auth.php';
