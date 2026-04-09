@@ -42,6 +42,7 @@
             var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
             return v ? v[2] : null;
         }
+
     </script>
 
     <style>
@@ -148,7 +149,7 @@
         <script src="{{ asset('assets/select_client/js/moment.js') }}"></script>
         <script src="{{ asset('assets/select_client/js/bootstrap-material-datetimepicker1.js') }}"></script>
         @php
-            $groceryOutputFlag = 1;
+            $groceryOutputFlag = 0;
         @endphp
         @if($groceryOutputFlag == 0)
             <script src="{{ asset('assets/select_client/js/bootstrap-select.js') }}"></script>
@@ -169,5 +170,122 @@
             #cot_tl_fixed { position: fixed; bottom: 0px; right: 0px; }
         </style>
     </div>
+    <script>
+        $(document).ready(function () {
+                $('.dataTable').DataTable({
+                    //"bPaginate": false,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $('#dataTable').DataTable({
+                    //"bPaginate": false,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $('#dataTableWithoutPagging').DataTable({
+                    "bPaginate": false,
+                    "columnDefs": [{
+                            "targets": 'no-sort',
+                            "orderable": false,
+                            "order": []
+                        }],
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $('#dataTableCheckBox').DataTable({
+                    "bPaginate": true,
+                    "columnDefs": [{
+                            "targets": 'no-sort',
+                            "orderable": false,
+                            "order": []
+                        }],
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function () {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                                );
+
+                                        column
+                                                .search(val ? '^' + val + '$' : '', true, false)
+                                                .draw();
+                                    });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d + '">' + d + '</option>')
+                            });
+                        });
+                    }
+                });
+            });
+
+    </script>
+     @stack('scripts')
 </body>
 </html>

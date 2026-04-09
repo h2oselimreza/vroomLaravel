@@ -61,6 +61,7 @@ use App\Http\Controllers\Admin\Workshop\ImageController;
 use App\Http\Controllers\Admin\Workshop\TimeScheduleController;
 use App\Http\Controllers\Admin\Workshop\WorkshopController;
 use App\Http\Controllers\Admin\Workshop\WorkshopVehicleTypeController;
+use App\Http\Controllers\Client\Employee\ClientEmployeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
@@ -264,8 +265,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 
-Route::get('/client', function() {
-    return view('client.dashboard');
+Route::prefix('client')->group(function (){
+    Route::get('/', function() {
+        return view('client.dashboard');
+    });
+     Route::resource('/employee', ClientEmployeeController::class)->names('client.employee');
 });
 
 require __DIR__.'/auth.php';
