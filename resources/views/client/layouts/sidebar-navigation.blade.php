@@ -50,8 +50,8 @@
                 </li>
 
                 @php
-                    //$userGroup = session('user_group');
-                    $userGroup = 5;
+                    $userGroup = auth()->user()->user_group; 
+                    $customer_type = DB::table('customer_employee')->where('employee_id',auth()->user()->user_id)->pluck('customer_type')->first();
                     $moduleList = get_modules($userGroup);
                     $module = explode(",", $moduleList);
 

@@ -73,9 +73,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('admin.dashboard');
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+//Route::prefix('admin')->middleware('auth')->group(function () {
+Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -265,10 +266,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 
-Route::prefix('client')->group(function (){
+Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {
     Route::get('/', function() {
-        return view('client.dashboard');
-    });
+        $leftMenuModuleUrl = request()->path();
+        return view('client.dashboard',compact('leftMenuModuleUrl'));
+    })->name('client.dashboard');
     Route::resource('/employee', ClientEmployeeController::class)->names('client.employee');
     Route::get('/employee/create', [ClientEmployeeController::class,'create'])->name('client.employee.create');
 
