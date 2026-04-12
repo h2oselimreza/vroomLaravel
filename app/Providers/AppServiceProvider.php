@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Module; // assuming you have Module model
 use App\Models\ModuleGroup;
+use App\View\Composers\ClientMenuComposer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Attach sidebar data to all views or a specific view
-        View::composer('layouts.navigation', function ($view) {
+        View::composer('admin.*', function ($view) {
             $userGroup = auth()->user()->user_group; // assuming 'user_group' on users table
             $moduleList = UserGroup::findOrFail($userGroup)->modules;
             $modules = explode(",", $moduleList);
@@ -53,7 +54,12 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'moduleGroups' => $module_groups,
                 'breadcrumbModuleUrl' => request()->path(), // current route path
+                'leftMenuModuleUrl' => request()->path(),
             ]);
+        });
+
+        View::composer('client.*', function ($view) {
+            $view->with('leftMenuModuleUrl', request()->path());
         });
     }
 }
