@@ -67,9 +67,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -269,7 +269,9 @@ Route::prefix('client')->group(function (){
     Route::get('/', function() {
         return view('client.dashboard');
     });
-     Route::resource('/employee', ClientEmployeeController::class)->names('client.employee');
+    Route::resource('/employee', ClientEmployeeController::class)->names('client.employee');
+    Route::get('/employee/create', [ClientEmployeeController::class,'create'])->name('client.employee.create');
+
 });
 
 require __DIR__.'/auth.php';
