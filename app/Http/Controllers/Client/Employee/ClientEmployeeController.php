@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers\Client\Employee;
 
+use App\Http\Controllers\Client\ClientBaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Employee\ClientEmployeeRequest;
 use App\Models\CustomerEmployee;
 use App\Repositories\Client\EmployeeRepository;
+use App\Services\Client\GenerateMonthlyToken;
+use App\Services\TokenService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ClientEmployeeController extends Controller
+class ClientEmployeeController extends ClientBaseController
 {
     /**
      * Display a listing of the resource.
      */
     public function index(EmployeeRepository $employeeRepository)
     {
-        $data = $employeeRepository->getClientEmployeeProfile(null, [], null, 01);
+        $data = $employeeRepository->getClientEmployeeProfile(null, [], null, auth()->user()?->customerEmployee?->company);
         return view('client.employee.index',compact('data'));
     }
 
@@ -33,7 +36,7 @@ class ClientEmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, GenerateMonthlyToken $generateMonthlyToken, TokenService $tokenService)
     {
 
        $request->validate([
@@ -49,7 +52,7 @@ class ClientEmployeeController extends Controller
             $employeeDob = $request->dob ? Carbon::parse($request->dob)->format('Y-m-d') : null;
 
             $employee = [
-                'company' => auth()->user()->company_code ?? '01',
+                'company' => auth()->user()?->customerEmployee?->company,
 
                 'employee_name' => trim($request->employee_name),
                 'primary_mobile' => trim($request->primary_mobile),
@@ -118,7 +121,7 @@ class ClientEmployeeController extends Controller
                 'ref_two_email' => $request->ref_two_email,
                 'ref_two_address' => $request->ref_two_address,
 
-                'customer_type' => 'need_to_add',///
+                'customer_type' => auth()->user()?->customerEmployee?->customer_type,///
             ];
 
             $customerType = 'corp_customer';
@@ -150,13 +153,17 @@ class ClientEmployeeController extends Controller
             }
 
             // ✅ Generate Employee ID
-            $employee['employee_id'] = $this->generateEmployeeId($employee['customer_type']);
+            if ($employee['customer_type'] == 'indv_customer') {
+                $employee['employee_id'] = 'IE' . $generateMonthlyToken->generateMonthlyToken('IE');
+            } else {
+                $employee['employee_id'] = 'FE' . $tokenService->getTokenByCode('FE');
+            }
 
             CustomerEmployee::create($employee);
 
             DB::commit();
 
-            return redirect()->route('client.employee.edit', $employee['employee_id'])
+            return redirect()->route('client.employee.index')
                 ->with('success', 'Employee created successfully');
 
         } catch (\Exception $e) {

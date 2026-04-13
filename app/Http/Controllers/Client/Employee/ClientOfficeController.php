@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Client\Employee;
 
+use App\Http\Controllers\Client\ClientBaseController;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerEmployee;
 use Illuminate\Http\Request;
 
-class ClientOfficeController extends Controller
+class ClientOfficeController extends ClientBaseController
 {
     public function edit($id){
         $data = CustomerEmployee::findOrFail($id);

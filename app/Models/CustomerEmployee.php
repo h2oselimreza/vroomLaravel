@@ -28,4 +28,9 @@ class CustomerEmployee extends BaseModel
         'created_by', 'created_type', 'updated_by', 'updated_type', 'system_user',
         'created_dt_tm','updated_dt_tm'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'employee_id', 'user_id');
+    }
 }

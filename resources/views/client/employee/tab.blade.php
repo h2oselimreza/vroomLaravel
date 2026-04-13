@@ -9,27 +9,27 @@
 @endphp
 
 <div class="btn-group btn-group-lg hidden-xs btn-group-justified" role="group" aria-label="...">
-    @if ($thirdLastSegment == 'create')
+    @if ($thirdLastSegment == 'info')
         <div class="btn-group" role="group">
             <a href="{{ route('client.employee.create') }}">
-                <button type="submit"  class="btn btn-<?php echo ($secondLastSegment == 'create') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> Personal</b></button>
+                <button type="submit"  class="btn btn-<?php echo ($thirdLastSegment == 'info') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> Personal</b></button>
             </a>
         </div>
     @else
         <div class="btn-group" role="group">
-            <a href="{{ route('client.employee.edit', $data->id) }}">
+            <a href="{{ isset($data) ? route('client.employee.edit', $data->id) : '#' }}">
                 <button type="submit"  class="btn btn-<?php echo ($secondLastSegment == 'info') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> Personal</b></button>
             </a>
         </div>
     @endif
     
     <div class="btn-group" role="group">
-        <a href="{{ route('client.employee.office.edit', $data->id) }}">
+        <a href="{{ isset($data) ? route('client.employee.office.edit', $data->id) : '#' }}">
             <button type="button" onclick="employeeRoute('official')" class="btn btn-<?php echo ($secondLastSegment == 'office') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-home"></i><b> Official</b></button>
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="{{ route('client.employee.photograph.edit', $data->id) }}">
+        <a href="{{ isset($data) ? route('client.employee.photograph.edit', $data->id) : '#' }}">
             <button type="button" onclick="employeeRoute('photograph')" class="btn btn-<?php echo ($secondLastSegment == 'photograph') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-image"></i><b> Photograph</b></button>
         </a>
     </div>

@@ -129,7 +129,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td>Data not found</td>
+                                <td class="align-center">Data not found</td>
                             </tr>
                         @endif
                         </tbody>

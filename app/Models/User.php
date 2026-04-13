@@ -62,7 +62,12 @@ class User extends Authenticatable
         ];
     }
     public function userGroup()
-{
-    return $this->belongsTo(UserGroup::class, 'user_group', 'id');
-}
+    {
+        return $this->belongsTo(UserGroup::class, 'user_group', 'id');
+    }
+
+    public function customerEmployee()
+    {
+        return $this->hasOne(CustomerEmployee::class, 'employee_id', 'user_id');
+    }
 }

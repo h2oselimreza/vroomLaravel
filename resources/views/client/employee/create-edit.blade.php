@@ -37,7 +37,6 @@
                 <div id="errorDiv" class="alert alert-danger hidden">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </div>
-
                 <form action="{{ isset($data) ? route('client.employee.update', $data->id) : route('client.employee.store') }}" method="POST" id="insertForm">
                     @csrf
                     @if(isset($data))
