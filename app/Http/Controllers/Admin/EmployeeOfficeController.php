@@ -50,7 +50,7 @@ class EmployeeOfficeController extends Controller
                         'username'       => $employee->employee_id,
                         'password'       => Hash::make('1234'), // 🔐 secure
                         'email'          => $employeeDetails->email,
-                        'user_type_code' => 'P_ADMIN', // adjust if constant defined
+                        'user_type_code' => 'admin', // adjust if constant defined
                         'full_name'      => $employeeDetails->employee_name,
                         'contact_no'     => $employeeDetails->primary_mobile,
                         'is_active'      => 1,

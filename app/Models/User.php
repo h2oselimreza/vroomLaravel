@@ -24,13 +24,18 @@ class User extends Authenticatable
         'username',
         'password',
         'user_group',
+        'panel_type',
         'email',
         'user_type_code',
         'full_name',
         'contact_no',
         'is_reset',
+        'created_type',
         'created_by',
+        'updated_type',
         'updated_by',
+        'created_dt_tm',
+        'updated_dt_tm',
         'is_active'
     ];
 
