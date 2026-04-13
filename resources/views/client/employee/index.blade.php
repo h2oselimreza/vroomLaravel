@@ -7,13 +7,13 @@
       <br>
       <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li>
-          <a href="https://vroom24x7.com/demo/client/Home"> Home</a>
+          <a href="#"> Home</a>
         </li>
         <li>
           <a href="#"> Employee</a>
         </li>
         <li>
-          <a href="https://vroom24x7.com/demo/client/Employee/employeeList"> Employee List</a>
+          <a href="#"> Employee List</a>
         </li>
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
           <div class="body">
-            <a href="" class="btn bg-blue waves-effect">Add Employee</a>
+            <a href="{{ route('client.employee.create') }}" class="btn bg-blue waves-effect">Add Employee</a>
             <br>
             <br>
             <div class="table-custom-responsive">
@@ -60,69 +60,78 @@
                           </tr>
                         </tfoot>
                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>FE00002</td>
-                                <td>Rashik Raj</td>
-                                <td></td>
-                                <td>8801640578722</td>
-                                <td>Driver</td>
+                        @if ($data)
+                            @foreach ($data as $value)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $value->employee_id }}</td>
+                                    <td>{{ $value->employee_name }}</td>
+                                    <td>{{ $value->designation }}</td>
+                                    <td>{{ $value->primary_mobile }}</td>
+                                    <td>{{ $value->customer_type }}</td>
+                                    <td>
+                                        <span class="text-success">{{ ($value->is_active == 1) ? 'Active':'Inactive' }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button 
+                                                type="button"
+                                                class="btn btn-default btn-xs dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                            >
+                                                Action <span class="caret"></span>
+                                            </button>
 
-                                <td>
-                                    <span class="text-success">Active</span>
-                                </td>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li>
+                                                    <a href="{{ route('client.employee.edit', $value->id) }}" class="waves-effect waves-block">
+                                                        Update
+                                                    </a>
+                                                </li>
 
-                                <td>
-                                    <div class="btn-group">
-                                        <button 
-                                            type="button"
-                                            class="btn btn-default btn-xs dropdown-toggle"
-                                            data-toggle="dropdown"
-                                            aria-haspopup="true"
-                                            aria-expanded="false"
+                                                <li role="separator" class="divider"></li>
+
+                                                <li>
+                                                    @php
+                                                        $statusText = $value->is_active == 1 ? 'Inactive' : 'Active';
+                                                    @endphp
+                                                    <form action="{{ route('client.employee.edit', $value->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="_method" value="PATCH">
+                                                        <button type="submit" class="dropdown-item d-flex align-items-center">
+                                                            <i class="fa fa-toggle-on me-2"></i> {{ $statusText }}
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            id="employeeCheck"
+                                            value="{{ $value->id }}"
+                                            name="employeeCheck[]"
+                                            onclick="setCheckBox(this.value, this.id)"
+                                            class="filled-in chk-col-blue"
                                         >
-                                            Action <span class="caret"></span>
-                                        </button>
 
-                                        <ul class="dropdown-menu pull-right">
-                                            <li>
-                                                <a href="#" class="waves-effect waves-block">
-                                                    Update
-                                                </a>
-                                            </li>
-
-                                            <li role="separator" class="divider"></li>
-
-                                            <li>
-                                                <a 
-                                                    href="#"
-                                                    onclick="inactiveEmployee('33')"
-                                                    class="waves-effect waves-block"
-                                                >
-                                                    Inactive
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        id="employeeCheck"
-                                        value="33"
-                                        name="employeeCheck[]"
-                                        onclick="setCheckBox(this.value, this.id)"
-                                        class="filled-in chk-col-blue"
-                                    >
-
-                                    <label 
-                                        for="employeeCheck"
-                                        class="form-label"
-                                        style="margin-bottom: -12px"
-                                    ></label>
-                                </td>
+                                        <label 
+                                            for="employeeCheck"
+                                            class="form-label"
+                                            style="margin-bottom: -12px"
+                                        ></label>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td>Data not found</td>
                             </tr>
+                        @endif
                         </tbody>
                       </table>
                     </div>

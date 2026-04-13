@@ -35,7 +35,7 @@ class ModuleRequest extends FormRequest
                 Rule::unique('modules', 'module_url')->ignore($moduleId),
             ],
             'module_order' => 'nullable|integer',
-            'panel_type' => 'required|string|max:30',
+            'panel_type' => 'nullable|string|max:30',
         ];
     }
 }

@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Attach sidebar data to all views or a specific view
-        View::composer('admin.*', function ($view) {
+        View::composer('layouts.navigation', function ($view) {
             $userGroup = auth()->user()->user_group; // assuming 'user_group' on users table
             $moduleList = UserGroup::findOrFail($userGroup)->modules;
             $modules = explode(",", $moduleList);
