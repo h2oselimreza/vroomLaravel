@@ -18,7 +18,7 @@
     @else
         <div class="btn-group" role="group">
             <a href="{{ route('client.employee.edit', $data->id) }}">
-                <button type="submit"  class="btn btn-<?php echo ($secondLastSegment == 'employee') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> Personal</b></button>
+                <button type="submit"  class="btn btn-<?php echo ($secondLastSegment == 'info') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> Personal</b></button>
             </a>
         </div>
     @endif
@@ -29,8 +29,8 @@
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="{{ route('client.employee.edit', $data->id) }}">
-            <button type="button" onclick="employeeRoute('photograph')" class="btn btn-<?php echo ($btnFlag == 'photograph') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-image"></i><b> Photograph</b></button>
+        <a href="{{ route('client.employee.photograph.edit', $data->id) }}">
+            <button type="button" onclick="employeeRoute('photograph')" class="btn btn-<?php echo ($secondLastSegment == 'photograph') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-image"></i><b> Photograph</b></button>
         </a>
     </div>
 </div>
