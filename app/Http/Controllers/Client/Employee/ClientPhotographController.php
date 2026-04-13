@@ -16,9 +16,9 @@ class ClientPhotographController extends Controller
     public function update(Request $request, $id)
     {
     
-        // $request->validate([
-        //     'image' => 'required|image|mimes:jpg,jpeg,png|max:2048'
-        // ]);
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
         $employee = CustomerEmployee::where('id', $id)->firstOrFail();
 
         if ($request->hasFile('image')) {
