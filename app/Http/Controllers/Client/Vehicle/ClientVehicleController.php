@@ -7,6 +7,7 @@ use App\Http\Requests\Client\Vehicle\ClientVehicleRequest;
 use App\Models\Client\Vehicle;
 use App\Repositories\Client\VehicleRepository;
 use App\Repositories\CommonRepository;
+use App\Services\Client\PackageService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class ClientVehicleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(VehicleRepository $vehicleRepository)
+    public function index(VehicleRepository $vehicleRepository, PackageService $packageService)
     {
         $data = [
             'companyCode'  => auth()->user()?->customerEmployee?->company,
@@ -24,14 +25,16 @@ class ClientVehicleController extends Controller
             'isActiveFlag' => '',
         ];
         $data = $vehicleRepository->getVehicleInfo($data);
-        return view('client.vehicle.index',compact('data'));
+        $packageService = $packageService->getPackageInfo('vehicle', auth()->user()?->customerEmployee?->company);
+        return view('client.vehicle.index',compact('data','packageService'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CommonRepository $commonRepository)
+    public function create(CommonRepository $commonRepository, PackageService $packageService)
     {
+        $packageService = $packageService->getPackageInfo('vehicle', auth()->user()?->customerEmployee?->company);
         $commonTableElementArr = array('type' => 'vehicle_type');
         $vehicleTypes = $commonRepository->getCommonTableElement($commonTableElementArr);
         $commonTableElementArr = array('type' => 'vehicle_brand');
@@ -46,7 +49,7 @@ class ClientVehicleController extends Controller
         $commonTableElementArr = array('type' => 'vehicle_group','company'=> auth()->user()?->customerEmployee?->company);
         $groups = $commonRepository->getCommonTableElement($commonTableElementArr);
 
-        return view('client.vehicle.create-edit',compact('vehicleTypes','brands','vehicleClasses','colors','groups','brandModels'));
+        return view('client.vehicle.create-edit',compact('vehicleTypes','brands','vehicleClasses','colors','groups','brandModels','packageService'));
     }
 
     /**

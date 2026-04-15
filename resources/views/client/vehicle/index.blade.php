@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="table-custom-responsive">
-                    <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                    <table class="table table-bordered table-hover custom-table dataTable">
                         <thead>
                             <tr class="bg-info">
                                 <th>SL</th>
@@ -154,12 +154,11 @@
                 <span class="text-danger">
                     <small>
                         <b> 
-                            {{-- 
-                            $packageDetails = get_package_info(PACKAGE_VEHICLE_COUNT, $this->companyCode);
-                            if ($packageDetails['success'] == 1) {
-                                echo "*** You can add " . $packageDetails['vehicleCount'] . " vehicles";
-                            }
-                            ?>  --}}
+                            @php
+                                if (isset($packageService) && $packageService['success'] == 1) {
+                                    echo "*** You can add " . $packageService['vehicleCount'] . " vehicles";
+                                }
+                            @endphp
                             
                         </b>
                     </small>

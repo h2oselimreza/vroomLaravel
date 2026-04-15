@@ -9,15 +9,12 @@ class PackageService
     const PACKAGE_VEHICLE_COUNT = 'vehicle';
     const PACKAGE_USER_COUNT    = 'user';
 
-    public function check($type = null, $company = null): array
+    public function getPackageInfo($type = null, $company = null)
     {
-        // =========================
-        // Get Package Info
-        // =========================
         $data = DB::table('corporate_companies')
             ->join('package', 'package.package_code', '=', 'corporate_companies.package')
-            ->select('package.package_details', 'package.package_name')
             ->where('corporate_companies.company_code', $company)
+            ->select('package.package_details', 'package.package_name')
             ->first();
 
         if (!$data) {
@@ -26,37 +23,17 @@ class PackageService
 
         $packageDetails = json_decode($data->package_details);
 
-        // =========================
-        // VEHICLE COUNT CHECK
-        // =========================
-        if ($type === self::PACKAGE_VEHICLE_COUNT) {
-
-            $packageVehicleCount = $packageDetails->vehicle->count ?? 0;
-
-            $companyVehicle = DB::table('vehicles')
-                ->where('company', $company)
-                ->where('is_active', 1)
-                ->count();
-
+        if ($type == self::PACKAGE_VEHICLE_COUNT) {
             return [
-                'success' => $packageVehicleCount > $companyVehicle ? 1 : 0
+                'success' => 1,
+                'vehicleCount' => $packageDetails->vehicle->count ?? 0
             ];
         }
 
-        // =========================
-        // USER COUNT CHECK
-        // =========================
-        if ($type === self::PACKAGE_USER_COUNT) {
-
-            $packageUserCount = $packageDetails->user->count ?? 0;
-
-            $companyUser = DB::table('customer_employee')
-                ->where('company', $company)
-                ->where('system_user', 1)
-                ->count();
-
+        if ($type == self::PACKAGE_USER_COUNT) {
             return [
-                'success' => $packageUserCount > $companyUser ? 1 : 0
+                'success' => 1,
+                'userCount' => $packageDetails->user->count ?? 0
             ];
         }
 

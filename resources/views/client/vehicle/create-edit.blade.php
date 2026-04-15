@@ -281,6 +281,11 @@
                                 echo "*** You can add " . $packageDetails['vehicleCount'] . " vehicles";
                             }
                             ?>  --}}
+                            @php
+                                if (isset($packageService) && $packageService['success'] == 1) {
+                                    echo "*** You can add " . $packageService['vehicleCount'] . " vehicles";
+                                }
+                            @endphp
                             
                         </b>
                     </small>

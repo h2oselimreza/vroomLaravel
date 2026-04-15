@@ -50,16 +50,17 @@ class ClientVehicleDocumentationController extends Controller
      */
     public function edit(string $vehicleId, VehicleRepository $vehicleRepository)
     {
-        $data = [
+        $data = DB::table('vehicles')->where('vehicle_id', $vehicleId)->first();
+        $arr = [
             'companyCode'  => auth()->user()?->customerEmployee?->company,
             'vehicleId'    => $vehicleId,
             'vehicleIdArr' => [],
             'isActiveFlag' => 1,
             'bulkFlag' => 0
         ];
-        $vehicleDetails = $vehicleRepository->getVehicleInfo($data);
-        $vehicleFiles = $vehicleRepository->getVehicleFiles($data);
-        return view('client.vehicle.vehicle-doc-create-edit', compact('vehicleDetails','vehicleFiles','vehicleId'));
+        $vehicleDetails = $vehicleRepository->getVehicleInfo($arr);
+        $vehicleFiles = $vehicleRepository->getVehicleFiles($arr);
+        return view('client.vehicle.vehicle-doc-create-edit', compact('data','vehicleDetails','vehicleFiles','vehicleId'));
     }
 
     /**

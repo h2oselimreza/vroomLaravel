@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Client\Vehicle;
 
-use App\Services\Client\PackageService;
+use App\Services\Client\PackageCheckService;
 use DB;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -71,10 +71,10 @@ class ClientVehicleRequest extends FormRequest
             // =========================
             // ✅ PACKAGE CHECK
             // =========================
-            $packageService = app(PackageService::class);
+            $packageService = app(PackageCheckService::class);
 
             $check = $packageService->check(
-                PackageService::PACKAGE_VEHICLE_COUNT,
+                PackageCheckService::PACKAGE_VEHICLE_COUNT,
                 $companyCode
             );
 

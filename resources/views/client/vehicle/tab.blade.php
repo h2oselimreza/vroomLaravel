@@ -7,7 +7,7 @@
     $secondLastSegment = request()->segment(count($segments) - 2);
     $thirdLastSegment = $segments[2];
 @endphp
-
+{{-- @dd($data->id); --}}
 <div class="btn-group btn-group-lg hidden-xs btn-group-justified" role="group" aria-label="...">
     @if ($thirdLastSegment == 'info')
         <div class="btn-group" role="group">

@@ -100,7 +100,7 @@
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="text-center"><h4><b>Uploaded File List</b></h4></div>
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
@@ -228,7 +228,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
@@ -362,7 +362,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
@@ -528,7 +528,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
@@ -689,7 +689,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
@@ -830,7 +830,7 @@
                                     <div class="row">
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="p-l-15 p-r-15">
-                                                <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                                                <table class="table table-bordered table-hover custom-table dataTable">
                                                     <thead>
                                                         <tr class="bg-info">
                                                             <th>SL</th>
