@@ -45,4 +45,18 @@ class VehicleRepository
         return $query->get();
     }
 
+    public function getVehicleFiles(array $arr)
+    {
+        $query = DB::table('vehicle_files')
+            ->where('is_active', 1)
+            ->orderByDesc('id');
+
+        // Apply condition only when bulkFlag = 0
+        if (isset($arr['bulkFlag']) && $arr['bulkFlag'] == 0) {
+            $query->where('vehicle', $arr['vehicleId']);
+        }
+
+        return $query->get()->toArray();
+    }
+
 }

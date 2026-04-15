@@ -7,8 +7,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#"> Vehicle</a></li>
-        <li><a href="client/Vehicle/vehicleList"> Vehicle List</a></li>
-        <li><a href="client/Vehicle/addVehicleShow"> Add Vehicle</a></li>
+        <li><a href="{{ route('client.vehicle.index') }}"> Vehicle List</a></li>
+        <li><a href="{{ route('client.vehicle.create') }}"> Add Vehicle</a></li>
     </div>
 </div>
 
@@ -16,11 +16,8 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
-                <!-- for web -->
-                 {{-- $this->data['btnFlag'] = 'general';
-                $this->data['vehicleId'] = "";
-                $this->load->view('client/vehicle/vehicleHeaderMenu', $this->data); --}}
-                <!-- end for xs device -->
+                @include('client.vehicle.tab')
+                
                 <br>
                 {{-- Success Message --}}
                 @if(session('success'))
@@ -299,16 +296,36 @@
 @push('scripts')
     <script>
     var brandModelObj = @json($brandModels);
-    console.log(brandModelObj);
-    function setBrandModel(brand) {
+    $(document).ready(function () {
+        var brand = $('#brand').val();
+        var model = "{{ old('brand_model', $data->brand_model ?? '') }}";
+        if (brand) {
+            setBrandModel(brand, model);
+        }
+    });
 
+    function setBrandModel(brand, selectedModel = null) {
         var optionStr = "<option value=''>Nothing Selected</option>";
+
         for (var i = 0; i < brandModelObj.brandModelsData.length; i++) {
-            if (brandModelObj.brandModelsData[i].depend_on_element === brand) {
-                optionStr += "<option value='" + brandModelObj.brandModelsData[i].element_code + "'>" + brandModelObj.brandModelsData[i].element + "</option>";
+
+            var item = brandModelObj.brandModelsData[i];
+
+            if (item.depend_on_element === brand) {
+
+                var selected = (selectedModel && selectedModel == item.element_code) ? 'selected' : '';
+
+                optionStr += "<option value='" + item.element_code + "' " + selected + ">"
+                    + item.element +
+                    "</option>";
             }
         }
-        $('#brandModelDiv').html('<select class="form-control" name="brand_model" id="brandModel">' + optionStr + '</select>');
+
+        $('#brandModelDiv').html(
+            '<select class="form-control" name="brand_model" id="brandModel">' 
+            + optionStr + 
+            '</select>'
+        );
     }
 
 

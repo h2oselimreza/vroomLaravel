@@ -24,7 +24,7 @@ class ClientVehicleController extends Controller
             'isActiveFlag' => '',
         ];
         $data = $vehicleRepository->getVehicleInfo($data);
-        return view('client.vehicle.index');
+        return view('client.vehicle.index',compact('data'));
     }
 
     /**
@@ -65,7 +65,7 @@ class ClientVehicleController extends Controller
 
         } catch (\Exception $e) {
             return back()->withInput()
-                ->with('error', 'Something went wrong'. $e->getMessage());
+                ->with('error', 'Error'. $e->getMessage());
         }
     }
 
@@ -104,16 +104,19 @@ class ClientVehicleController extends Controller
      * Update the specified resource in storage.
      */
     public function update(ClientVehicleRequest $request, Vehicle $vehicle)
-    {
+    { 
         try {
-            $vehicle->update($request->validated());
+            $validated = $request->validated();
+            $validated['company'] = auth()->user()?->customerEmployee?->company;  
 
-            return redirect()->route('vehicle.index')
+            $vehicle->update($validated);
+
+            return redirect()->route('client.vehicle.edit',$vehicle->id)
                 ->with('success', 'Vehicle updated successfully');
 
         } catch (\Exception $e) {
             return back()->withInput()
-                ->with('error', 'Something went wrong');
+                ->with('error', 'Error'.$e->getMessage());
         }
     }
 

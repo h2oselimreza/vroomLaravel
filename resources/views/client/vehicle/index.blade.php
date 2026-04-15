@@ -81,58 +81,72 @@
                             </tr>
                         </tfoot>
                         <tbody>
-                            <?php
-                            $vehicles = [];
-                            $count = 1;
-                            foreach ($vehicles as $vehicle) {
+                            @if ($data)
+                                @foreach ($data as $vehicle)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
 
-                                echo "<tr>";
-                                echo "<td>" . $count . "</td>";
-                                echo "<td class='td-left'><a target='_blank' href='" . base_url() . "client/Home/vehicleDashboard?vehicleId=" . $vehicle['vehicle_id'] . "'>" . $vehicle['registration_no'] . "</a></td>";
-                                echo "<td class='td-left'>" . $vehicle['vehicle_type_name'] . "</td>";
-                                echo "<td class='td-left'>" . $vehicle['brand_name'] . "</td>";
-                                echo "<td class='td-left'>" . $vehicle['brand_model_name'] . "</td>";
-                                echo "<td>" . $vehicle['vehicle_class_name'] . "</td>";
-                                echo "<td>" . $vehicle['vehicle_group_name'] . "</td>";
-                                echo "<td>";
-                                if ($vehicle['is_active'] == 1) {
-                                    echo "<span class='text-success'>Active</span>";
-                                } elseif ($vehicle['is_active'] == 0) {
-                                    echo "<span class='custom-text-danger'>Inactive</span>";
-                                }
-                                echo "</td>";
-                                ?>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Action <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="<?php echo base_url() . 'client/Vehicle/updateVehicleShow/' . $vehicle['vehicle_id']; ?>">Update</a></li>
-                                        <li role="separator" class="divider"></li>
+                                        <td class="td-left">
+                                            <a target="_blank"
+                                            href="{{ url('client/Home/vehicleDashboard') }}?vehicleId={{ $vehicle->vehicle_id }}">
+                                                {{ $vehicle->registration_no }}
+                                            </a>
+                                        </td>
 
-                                        <?php
-                                        if ($vehicle['is_active'] == 1) {
-                                            ?>
-                                            <li><a href="#" onclick="inactiveVehicle('<?php echo $vehicle['id'] ?>')">Inactive</a></li>
-                                            <?php
-                                        } elseif ($vehicle['is_active'] == 0) {
-                                            ?>
+                                        <td class="td-left">{{ $vehicle->vehicle_type_name }}</td>
+                                        <td class="td-left">{{ $vehicle->brand_name }}</td>
+                                        <td class="td-left">{{ $vehicle->brand_model_name }}</td>
+                                        <td>{{ $vehicle->vehicle_class_name }}</td>
+                                        <td>{{ $vehicle->vehicle_group_name ?? '' }}</td>
 
-                                            <li><a href="#" onclick="activeVehicle('<?php echo $vehicle['id'] ?>')">Active</a></li>
-                                            <?php
-                                        }
-                                        ?>
+                                        <td>
+                                            @if ($vehicle->is_active == 1)
+                                                <span class="text-success">Active</span>
+                                            @else
+                                                <span class="custom-text-danger">Inactive</span>
+                                            @endif
+                                        </td>
 
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button"
+                                                        class="btn btn-default btn-xs dropdown-toggle"
+                                                        data-toggle="dropdown">
+                                                    Action <span class="caret"></span>
+                                                </button>
 
-                                    </ul>
-                                </div>
-                            </td>
-                            <?php
-                            echo "</tr>";
-                            $count++;
-                        }
-                        ?>
+                                                <ul class="dropdown-menu pull-right">
+                                                    <li>
+                                                        <a href="{{ route('client.vehicle.edit', $vehicle->id) }}">
+                                                            Update
+                                                        </a>
+                                                    </li>
+
+                                                    <li role="separator" class="divider"></li>
+
+                                                    @if ($vehicle->is_active == 1)
+                                                        <li>
+                                                            <a href="#" onclick="inactiveVehicle('{{ $vehicle->id }}')">
+                                                                Inactive
+                                                            </a>
+                                                        </li>
+                                                    @else
+                                                        <li>
+                                                            <a href="#" onclick="activeVehicle('{{ $vehicle->id }}')">
+                                                                Active
+                                                            </a>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="9" class="text-center">No data found</td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div> 

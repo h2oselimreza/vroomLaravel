@@ -65,6 +65,7 @@ use App\Http\Controllers\Client\Employee\ClientEmployeeController;
 use App\Http\Controllers\Client\Employee\ClientOfficeController;
 use App\Http\Controllers\Client\Employee\ClientPhotographController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
+use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
@@ -279,7 +280,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('/employee/photograph', ClientPhotographController::class)->names('client.employee.photograph');
 
     ///Vehicle Route
-    Route::resource('/vehicle', ClientVehicleController::class)->names('client.vehicle');
+    Route::resource('/vehicle/info', ClientVehicleController::class)->parameters(['info' => 'vehicle'])->names('client.vehicle');
+    Route::resource('/vehicle/documentation', ClientVehicleDocumentationController::class)->names('client.documentation');
+    Route::post('vehicle/updateRegistration', [ClientVehicleDocumentationController::class, 'updateRegistration'])->name('client.documentation.updateRegistration');
+    Route::delete('/vehicle/file/remove', [ClientVehicleDocumentationController::class, 'removeFile'])->name('client.vehicle.file.remove');
 
 });
 
