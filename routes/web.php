@@ -284,7 +284,11 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('/vehicle/documentation', ClientVehicleDocumentationController::class)->names('client.documentation');
     Route::post('vehicle/updateRegistration', [ClientVehicleDocumentationController::class, 'updateRegistration'])->name('client.documentation.updateRegistration');
     Route::delete('/vehicle/file/remove', [ClientVehicleDocumentationController::class, 'removeFile'])->name('client.vehicle.file.remove');
-
+    Route::post('vehicle/updateFitness', [ClientVehicleDocumentationController::class, 'updateFitness'])->name('client.documentation.updateFitness');
+    Route::post('vehicle/updateTaxToken', [ClientVehicleDocumentationController::class, 'updateTaxToken'])->name('client.documentation.updateTaxToken');
+    Route::post('vehicle/updateInsurance', [ClientVehicleDocumentationController::class, 'updateInsurance'])->name('client.documentation.updateInsurance');
+    Route::post('vehicle/updateRoutePermit', [ClientVehicleDocumentationController::class, 'updateRoutePermit'])->name('client.documentation.updateRoutePermit');
+    Route::post('vehicle/updateOtherInfo', [ClientVehicleDocumentationController::class, 'updateOtherInfo'])->name('client.documentation.updateOtherInfo');
 });
 
 require __DIR__.'/auth.php';
