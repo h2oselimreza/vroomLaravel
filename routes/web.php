@@ -64,6 +64,7 @@ use App\Http\Controllers\Admin\Workshop\WorkshopVehicleTypeController;
 use App\Http\Controllers\Client\Employee\ClientEmployeeController;
 use App\Http\Controllers\Client\Employee\ClientOfficeController;
 use App\Http\Controllers\Client\Employee\ClientPhotographController;
+use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Admin\MasterData\CostCategory;
@@ -276,6 +277,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('/employee/info', ClientEmployeeController::class)->names('client.employee');
     Route::resource('/employee/office', ClientOfficeController::class)->names('client.employee.office');
     Route::resource('/employee/photograph', ClientPhotographController::class)->names('client.employee.photograph');
+
+    ///Vehicle Route
+    Route::resource('/vehicle', ClientVehicleController::class)->names('client.vehicle');
 
 });
 

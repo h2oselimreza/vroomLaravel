@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Models\Client;
+
+use App\Models\BaseModel;
+
+class Vehicle extends BaseModel
+{
+    protected $table = 'vehicles';
+
+    protected $fillable = [
+        'company',
+        'registration_no',
+        'vehicle_id',
+        'vehicle_type',
+        'vehicle_group',
+        'brand',
+        'brand_model',
+        'vehicle_class',
+        'vehicle_cc',
+        'color',
+        'manufacturing_year',
+        'manufacturing_country',
+        'engine_no',
+        'chasis_no',
+        'communication_code',
+        'registration_date',
+        'seat_capacity',
+        'fitness_issue_date',
+        'fitness_validity_from_date',
+        'fitness_validity_todate',
+        'fitness_renew_fee',
+        'tax_fee_issue_date',
+        'tax_period_from_date',
+        'tax_period_to_date',
+        'tax_fee',
+        'insurance_issue_date',
+        'insurance_nature',
+        'insurance_pre_amount',
+        'insurance_company',
+        'insurance_contact_person',
+        'insurance_mobile',
+        'insurance_form_date',
+        'insurance_to_date',
+        'route_issue_date',
+        'permit_no',
+        'permit_fee',
+        'route_area',
+        'tyre_number',
+        'route_form_date',
+        'route_to_date',
+        'purchase_date',
+        'purchase_cost',
+        'dpy',
+        'driver_id',
+        'pull_emp_name',
+        'pull_designation',
+        'pull_department',
+        'pull_id_no',
+        'pull_receive_date',
+        'pull_route',
+        'route_json',
+        'pull_current_location',
+        'pull_detail_ref_no',
+        'pull_remarks',
+        'assign_type',
+        'is_active',
+        'created_by',
+        'created_dt_tm',
+        'updated_by',
+        'updated_dt_tm',
+    ];
+}
