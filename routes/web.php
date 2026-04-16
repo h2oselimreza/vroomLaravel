@@ -65,6 +65,7 @@ use App\Http\Controllers\Client\Employee\ClientEmployeeController;
 use App\Http\Controllers\Client\Employee\ClientOfficeController;
 use App\Http\Controllers\Client\Employee\ClientPhotographController;
 use App\Http\Controllers\Client\Vehicle\ClientAccidentalLogController;
+use App\Http\Controllers\Client\Vehicle\ClientDriverVehicleAssignController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
@@ -294,6 +295,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('/vehicle/accidental-log', ClientAccidentalLogController::class)->names('client.accidental-log');
     Route::post('vehicle/accidental-log-file-delete', [ClientAccidentalLogController::class, 'deleteAccidentalLogFile'])->name('client.accidental-log-file-delete');
 
+    ///Pool Route
+    Route::get('pool/driver-assign', [ClientDriverVehicleAssignController::class, 'index'])->name('client.pool.driver-assign.index');
+    Route::post('pool/driver-assign', [ClientDriverVehicleAssignController::class, 'assignDriver'])->name('client.pool.driver-assign.assignDriver');
+    Route::post('pool/remove-driver', [ClientDriverVehicleAssignController::class, 'removeDriver'])->name('client.pool.driver-assign.removeDriver');
 });
 
 require __DIR__.'/auth.php';

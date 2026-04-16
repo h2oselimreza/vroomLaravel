@@ -8,5 +8,9 @@ return [
     'TAXTOKEN_FILE' => 'taxtoken',
     'INSURANCE_FILE' => 'insurance',
     'ROUTE_FILE' => 'route',
-    'OTHER_INFO_FILE' => 'other_info_file'
+    'OTHER_INFO_FILE' => 'other_info_file',
+    //----------- pool -------------//
+    'ASSIGN_VACANT' => 'vacant',
+    'ASSIGN_PERSON' => 'person',
+    'ASSIGN_ENROUTE' => 'enroute',
 ];
