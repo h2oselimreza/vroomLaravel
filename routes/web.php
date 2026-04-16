@@ -66,6 +66,7 @@ use App\Http\Controllers\Client\Employee\ClientOfficeController;
 use App\Http\Controllers\Client\Employee\ClientPhotographController;
 use App\Http\Controllers\Client\Vehicle\ClientAccidentalLogController;
 use App\Http\Controllers\Client\Vehicle\ClientDriverVehicleAssignController;
+use App\Http\Controllers\Client\Vehicle\ClientVehicleAssignController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
@@ -299,6 +300,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::get('pool/driver-assign', [ClientDriverVehicleAssignController::class, 'index'])->name('client.pool.driver-assign.index');
     Route::post('pool/driver-assign', [ClientDriverVehicleAssignController::class, 'assignDriver'])->name('client.pool.driver-assign.assignDriver');
     Route::post('pool/remove-driver', [ClientDriverVehicleAssignController::class, 'removeDriver'])->name('client.pool.driver-assign.removeDriver');
+
+    Route::resource('/vehicle/vehicle-assign', ClientVehicleAssignController::class)->names('client.pool.vehicle-assign');
+    Route::get('/vehicle/vehicle-employee-assign', [ClientVehicleAssignController::class, 'showEmployeeAssign'])->name('client.pool.vehicle-employee-assign');
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,6 @@
 <?php
+
+use Carbon\Carbon;
 function get_common_table_name_str($elementCodeStr, $type)
 {
     return DB::table('common_table')
@@ -103,4 +105,24 @@ if (!function_exists('get_row_modules')) {
             ->get()
             ->toArray();
     }
+}
+
+
+function getDateTimeFormat($datetime = null)
+{
+    if (!empty($datetime)) {
+        return Carbon::parse($datetime)->format('F j, Y h:i A');
+    }
+
+    return '';
+}
+
+function getVehicleAssignTypeName($assignType)
+{
+    return match ($assignType) {
+        config('constants.ASSIGN_VACANT')  => 'Vacant',
+        config('constants.ASSIGN_ENROUTE')  => 'En Route',
+        config('constants.ASSIGN_PERSON')  => 'Assigned',
+        default        => '',
+    };
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Client;
 
+use App\Models\Client\Vehicle;
 use App\Models\Company;
 use App\Models\CustomerEmployee;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,22 @@ class VehicleRepository
         }
 
         return $query->get()->toArray();
+    }
+
+    public function getPullVehicleDetails($vehicleId, $company)
+    {
+        return Vehicle::where('vehicle_id', $vehicleId)
+            ->where('company', $company)
+            ->where('is_active', 1)
+            ->first();
+    }
+
+    public function getVehicleBookingSummary($bookingNo, $companyCode)
+    {
+        return DB::table('vehicle_booking_summary')
+            ->where('company', $companyCode)
+            ->where('booking_no', $bookingNo)
+            ->get();
     }
 
 }
