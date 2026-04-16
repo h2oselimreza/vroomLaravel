@@ -20,6 +20,7 @@
     <link href="{{ asset('assets/select_client/css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/select_client/css/all-themes.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/select_client/css/bootstrap-material-datetimepicker1.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/select_client/css/custom.css') }}" rel="stylesheet">
 
     <script src="{{ asset('assets/select_client/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/select_client/js/sweetalert.min.js') }}"></script>

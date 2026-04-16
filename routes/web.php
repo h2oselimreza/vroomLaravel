@@ -64,6 +64,7 @@ use App\Http\Controllers\Admin\Workshop\WorkshopVehicleTypeController;
 use App\Http\Controllers\Client\Employee\ClientEmployeeController;
 use App\Http\Controllers\Client\Employee\ClientOfficeController;
 use App\Http\Controllers\Client\Employee\ClientPhotographController;
+use App\Http\Controllers\Client\Vehicle\ClientAccidentalLogController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
@@ -289,6 +290,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle/updateInsurance', [ClientVehicleDocumentationController::class, 'updateInsurance'])->name('client.documentation.updateInsurance');
     Route::post('vehicle/updateRoutePermit', [ClientVehicleDocumentationController::class, 'updateRoutePermit'])->name('client.documentation.updateRoutePermit');
     Route::post('vehicle/updateOtherInfo', [ClientVehicleDocumentationController::class, 'updateOtherInfo'])->name('client.documentation.updateOtherInfo');
+
+    Route::resource('/vehicle/accidental-log', ClientAccidentalLogController::class)->names('client.accidental-log');
+    Route::post('vehicle/accidental-log-file-delete', [ClientAccidentalLogController::class, 'deleteAccidentalLogFile'])->name('client.accidental-log-file-delete');
+
 });
 
 require __DIR__.'/auth.php';
