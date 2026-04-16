@@ -68,13 +68,10 @@ class ClientVehicleAssignController extends Controller
             $data['leftMenuModuleUrl'] = "client/VehicleAssign/employeeVehicleAssign";
 
             $data['locationBtnFlag'] = empty($vehicleDetails->communication_code) ? 0 : 1;
-
             $data['bookingNo'] = $bookingNo;
 
-            dd($bookingNo);
             // ✅ Booking logic
             if (!empty($bookingNo)) {
-dd('ok');
                 $bookingSummary = $vehicleRepository->getVehicleBookingSummary($bookingNo, $companyCode);
 
                 $data['bookingSummary'] = $bookingSummary;

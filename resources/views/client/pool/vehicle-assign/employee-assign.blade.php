@@ -129,13 +129,12 @@
 
                                             </div>
                                             <div class="help-info">Received Location</div>
-                                            @dd($data['bookingSummary']);
-                                            <input type="hidden" name="route_json" value='{{ $data['bookingSummary'][0]['route'] }}'>
+                                            <input type="hidden" name="route_json" value='{{ $data['bookingSummary'][0]['route'] ?? '' }}'>
                                         </div>
                                     </div>
                                     <div class="col-md-1 col-sm-1 col-xs-12">
                                         <?php
-                                        if ($locationBtnFlag) {
+                                        if (isset($data['locationBtnFlag'])) {
                                             ?>
                                             <button type="button" class="btn bg-red waves-effect btn-xs" onclick="getCurrentLocation()"><i class="material-icons">location_on</i></button>
                                             <?php
@@ -143,7 +142,7 @@
                                         ?>
                                     </div>
                                     <?php
-                                    if ($assignType == config('constants.ASSIGN_ENROUTE')) {
+                                    if ($data['assignType'] == config('constants.ASSIGN_ENROUTE')) {
                                         ?>
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group form-float" >
@@ -173,9 +172,9 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="vehicle" id="vehicle" value="<?php echo $vehicleId ?>">
-                    <input type="hidden" name="assignType" value="<?php echo $assignType ?>">
-                    <input type="hidden" name="bookingNo" value="<?php echo $bookingNo ?>">
+                    <input type="hidden" name="vehicle" id="vehicle" value="{{ $vehicleId ?? '' }}">
+                    <input type="hidden" name="assignType" value="{{ $assignType ?? '' }}">
+                    <input type="hidden" name="bookingNo" value="{{ $bookingNo ?? '' }}">
                 </form>
 
                 <!--                <button class="btn bg-red waves-effect" onclick="clearAllField()">Clear</button>-->
@@ -194,4 +193,68 @@
     
 @endsection
 @push('scripts')
+<script>
+    function insertVehicle() {
+        var errorMsg = "";
+        // filed id, error div id
+        var fieldsArr = new Array("personName|personNameReq-error", "receiveDate|receiveDateReq-error");  // filed id, error div id
+        var inputFiledJsonData = getInputData(fieldsArr);
+        if (!inputFiledJsonData) {
+            errorMsg += getReuiredFiledErrorMsg();
+            showErrorMsg(errorMsg);
+            return false;  // required filed check
+        } else {
+            hideErrorDiv();
+        }
+
+        var receiveDateTime = $.trim($('#receiveDate').val());
+        if (checkDateTime(receiveDateTime) === 0) {
+            sweetAlert('Date Time is not in correct format...!');
+            return false;
+        }
+        showLoader();
+        $.ajax({
+            type: 'POST',
+            data: {receiveDateTime: receiveDateTime, vehicle: $('#vehicle').val()},
+            url: 'client/VehicleAssign/checkReceiveDateInsert',
+            success: function (result) {
+                hideLoader();
+                if (result === '1') {
+                    $('#insertForm').submit();
+                } else {
+                    sweetAlert('This vehicle was used by another person on this Receive Date Time...!');
+                }
+            }
+        });
+    }
+
+    function getCurrentLocation() {
+        var vehicleId = '{{ $data['vehicleId'] }}';
+        showLoader();
+        $.ajax({
+            type: 'POST',
+            data: {vehicleId: vehicleId},
+            url: 'client/VehicleAssign/getCurrentLocation',
+            success: function (result) {
+                hideLoader();
+                var resultObj = jQuery.parseJSON(result);
+                hideLoader();
+                if (resultObj.success === 1) {
+                    $('#location').val(resultObj.address);
+                } else if (resultObj.success === 2) {
+                    sweetAlert('No VTS APP Key found...!');
+                    return false;
+                } else if (resultObj.success === 3) {
+                    sweetAlert('No Vehicle found...!');
+                    return false;
+                }
+
+            },
+            error: function () {
+                hideLoader();
+                sweetAlert('Fail to get current location...!');
+            }
+        });
+    }
+</script>
 @endpush
