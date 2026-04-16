@@ -147,7 +147,7 @@
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group form-float" >
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" value="<?php echo $routeStr?>" name="route" id="route" >
+                                                    <input type="text" class="form-control" value="{{ $data['routeStr'] }}" name="route" id="route" >
                                                     <label class="form-label"> Route </label>
                                                 </div>
                                             </div>

@@ -114,7 +114,7 @@
 
                                                     @if($vehicle->driver_id)
                                                         <li>
-                                                            <a href="{{ url('client/VehicleAssign/showEmployeeAssign?vehicleId=' . $vehicle->vehicle_id . '&type=' . config('constants.ASSIGN_ENROUTE')) }}">
+                                                            <a href="{{ url('client/vehicle/vehicle-employee-assign?vehicleId=' . $vehicle->vehicle_id . '&type=' . config('constants.ASSIGN_ENROUTE')) }}">
                                                                 En Route
                                                             </a>
                                                         </li>
