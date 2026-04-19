@@ -14,5 +14,8 @@ return [
     'ASSIGN_PERSON' => 'person',
     'ASSIGN_ENROUTE' => 'enroute',
 
-    'TRIP_STATUS_START' => 2,
+    'TRIP_STATUS_START' => '2',
+    'BOOKING_REQ_APPROVE_STATUS' => "5",
+    'TRIP_STATUS_END' => '3'
+
 ];

@@ -152,12 +152,14 @@ class ClientVehicleAssignController extends Controller
             'booking_no'           => $request->bookingNo,
             'route_json'           => $request->route_json,
         ];
+
         // Date validation
+        $dateCheckFlag = 1;
         if ($vehicle->pull_receive_date) {
-            dd($vehicle->pull_receive_date);
-            if (Carbon::parse($vehicle->pull_receive_date)->gt($data['pull_receive_date'])) {
-                return redirect()->route('client.pool.vehicle-employee-assign')
-                    ->with('error', 'Invalid receive date');
+            $receiveDateTime = Carbon::parse($data['pull_receive_date']);
+            $pullReceiveDateTimeDb = Carbon::parse($vehicle->pull_receive_date);
+            if ($pullReceiveDateTimeDb->gt($receiveDateTime)) {
+                $dateCheckFlag = 0;
             }
         }
 
@@ -188,6 +190,138 @@ class ClientVehicleAssignController extends Controller
             DB::rollBack();
             dd($e->getMessage());
             return back()->with('error', 'Something went wrong', $e->getMessage());
+        }
+    }
+
+    public function showVehicleVacant(Request $request)
+    {
+        // 2. Get input
+        $vehicleId  = trim($request->get('vehicleId'));
+        $assignType = trim($request->get('type'));
+
+        // 3. Get vehicle details (replace model/service logic)
+        $vehicleDetails = Vehicle::where('vehicle_id', $vehicleId)
+            ->where('company', auth()->user()?->customerEmployee?->company)
+            ->first();
+
+        if (!$vehicleDetails) {
+            return redirect()->route('client.pool.vehicle-employee-assign')
+                    ->with('error', 'Invalid receive date');
+        }
+
+        // 4. Business condition logic
+        if (
+            $assignType == config('constants.ASSIGN_VACANT')  &&
+            in_array($vehicleDetails->assign_type, [config('constants.ASSIGN_ENROUTE'), config('constants.ASSIGN_PERSON')])
+        ) {
+
+            $data = [
+                'leftMenuModuleUrl' => "client/VehicleAssign/employeeVehicleAssign",
+                'vehicleDetails'    => $vehicleDetails,
+                'vehicleId'         => $vehicleId,
+                'assignType'        => $assignType,
+            ];
+
+            return view('client.pool.vehicle-assign.vehicle-vacant-view', compact('data'));
+        }
+    }
+
+    public function vacantEmpVehicle(Request $request, VehicleRepository $vehicleRepository)
+    {
+        try {
+
+            $vehicleId  = trim($request->post('vehicle'));
+            $vacantDate = $request->post('vacantDate');
+
+            if (!$vehicleId || !$vacantDate) {
+                return back()->with('error', 'Vehicle Id or vacant date not found');
+            }
+
+            $vacantDateTime = Carbon::parse($vacantDate);
+
+            // Vehicle fetch
+            $vehicleDetails = Vehicle::where('vehicle_id', $vehicleId)
+                ->where('company', auth()->user()?->customerEmployee?->company)
+                ->first();
+            
+            if (!$vehicleDetails) {
+                return back()->with('error', 'Vehicle not found');
+            }
+
+            $receiveDateTime = Carbon::parse($vehicleDetails->pull_receive_date);
+
+            // Date validation
+            if ($receiveDateTime->gt($vacantDateTime)) {
+                return back()->with('error', 'Invalid vacant date');
+            }
+
+            // Assign type validation
+            if (!in_array($vehicleDetails->assign_type, [
+                config('constants.ASSIGN_ENROUTE'),
+                config('constants.ASSIGN_PERSON')
+            ])) {
+                return back()->with('error', 'Invalid assign type');
+            }
+
+            $result = DB::transaction(function () use (
+                $request,
+                $vehicleId,
+                $vehicleDetails,
+                $vacantDateTime,
+                $vehicleRepository
+            ) {
+
+                $vehicleBookingSummary = $vehicleRepository
+                    ->updateTripStatusVacantVehicleBooking(
+                        $vehicleId,
+                        auth()->user()?->customerEmployee?->company
+                    );
+
+                $bookingNo = $vehicleBookingSummary->booking_no ?? null;
+
+                $data = [
+                    'pull_current_location' => trim($request->post('location')) ?: null,
+                    'pull_remarks'          => trim($request->post('notes')) ?: null,
+                    'pull_emp_name'         => null,
+                    'pull_designation'      => null,
+                    'pull_department'       => null,
+                    'pull_id_no'            => null,
+                    'pull_receive_date'     => $vacantDateTime,
+                    'pull_route'            => null,
+                    'route_json'            => null,
+                    'assign_type'           => config('constants.ASSIGN_VACANT'),
+                    'pull_detail_ref_no'    => reference_no(),
+                    'updated_by'            => auth()->user()->user_id,
+                    'updated_dt_tm'         => now(),
+                    'booking_no'            => $bookingNo,
+                ];
+
+                $driver = null;
+
+                if ($vehicleDetails->assign_type == config('constants.ASSIGN_ENROUTE')) {
+                    $driver = $vehicleDetails->driver_id;
+                }
+
+                $result = $vehicleRepository->assignEmployee(
+                    $data,
+                    $vehicleId,
+                    auth()->user()?->customerEmployee?->company,
+                    $driver
+                );
+
+                $vehicleRepository->updateTripStatusVacantVehicleBooking(
+                    $vehicleId,
+                    auth()->user()?->customerEmployee?->company
+                );
+
+                return $result;
+            });
+
+            return redirect()->route('client.pool.vehicle-assign.index', $result)
+                ->with('success', 'Vacant done');
+
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Something went wrong'.$e->getMessage());
         }
     }
 

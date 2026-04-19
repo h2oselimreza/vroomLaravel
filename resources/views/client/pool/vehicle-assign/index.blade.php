@@ -125,7 +125,7 @@
                                                         <a href="javascript:void(0);" onclick="showDetails('{{ $count }}')">View</a>
                                                     </li>
                                                     <li>
-                                                        <a href="{{ url('client/VehicleAssign/showVehicleVacant?vehicleId=' . $vehicle->vehicle_id . '&type=' . config('constants.ASSIGN_VACANT')) }}">
+                                                        <a href="{{ url('client/vehicle/vehicle-employee-vacant?vehicleId=' . $vehicle->vehicle_id . '&type=' . config('constants.ASSIGN_VACANT')) }}">
                                                             Vacant
                                                         </a>
                                                     </li>

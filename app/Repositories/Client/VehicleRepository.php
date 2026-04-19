@@ -4,6 +4,7 @@ namespace App\Repositories\Client;
 
 use App\Models\Client\Vehicle;
 use App\Models\Client\VehicleAssignDetail;
+use App\Models\Client\VehicleBookingSummary;
 use App\Models\Company;
 use App\Models\CustomerEmployee;
 use Illuminate\Support\Facades\DB;
@@ -127,6 +128,38 @@ class VehicleRepository
                 'updated_by'    => auth()->user_id() ?? null,
                 'updated_dt_tm' => now(),
             ]);
+    }
+
+    public function updateTripStatusVacantVehicleBooking($vehicle, $companyCode)
+    {
+        return DB::transaction(function () use ($vehicle, $companyCode) {
+
+            // 1. Find matching booking
+            $booking = VehicleBookingSummary::where('vehicle', $vehicle)
+                ->where('company', $companyCode)
+                ->where('status', config('constants.BOOKING_REQ_APPROVE_STATUS'))
+                ->where('trip_status', config('constants.TRIP_STATUS_START'))
+                ->first();
+
+            // 2. If no record found
+            if (!$booking) {
+                return false;
+            }
+
+            // 3. Update booking status
+            VehicleBookingSummary::where('vehicle', $vehicle)
+                ->where('company', $companyCode)
+                ->where('status', config('constants.BOOKING_REQ_APPROVE_STATUS'))
+                ->where('trip_status', config('constants.TRIP_STATUS_START'))
+                ->update([
+                    'trip_status'   => config('constants.TRIP_STATUS_END'),
+                    'updated_by'    => auth()->user()->user_id ?? null,
+                    'updated_dt_tm' => now(),
+                ]);
+
+            // 4. Return original record (same behavior as CI)
+            return $booking;
+        });
     }
 
 }

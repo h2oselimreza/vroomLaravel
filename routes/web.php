@@ -303,6 +303,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
 
     Route::resource('/vehicle/vehicle-assign', ClientVehicleAssignController::class)->names('client.pool.vehicle-assign');
     Route::get('/vehicle/vehicle-employee-assign', [ClientVehicleAssignController::class, 'showEmployeeAssign'])->name('client.pool.vehicle-employee-assign');
+    Route::get('/vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'showVehicleVacant'])->name('client.pool.vehicle-employee-vacant');
+    Route::post('/vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'vacantEmpVehicle'])->name('client.pool.vehicle-employee-vacant.update');
 });
 
 require __DIR__.'/auth.php';
