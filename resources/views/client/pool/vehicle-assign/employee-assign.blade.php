@@ -38,7 +38,31 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
-                <form  action="client/VehicleAssign/assignEmployee" method="POST" id="insertForm">
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
+                    </div>
+                @endif
+                {{-- Validation Errors --}}
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('error') }}</strong>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <form  action="{{ route('client.pool.vehicle-assign.store') }}" method="POST" id="insertForm">
+                    @csrf
                     <div class="panel-group">
                         <div class="panel panel-default">
                             <div class="panel-body">
@@ -147,7 +171,7 @@
                                         <div class="col-md-12 col-sm-12 col-xs-12">
                                             <div class="form-group form-float" >
                                                 <div class="form-line">
-                                                    <input type="text" class="form-control" value="{{ $data['routeStr'] }}" name="route" id="route" >
+                                                    <input type="text" class="form-control" value="{{ $data['routeStr'] ?? '' }}" name="route" id="route" >
                                                     <label class="form-label"> Route </label>
                                                 </div>
                                             </div>
@@ -172,9 +196,9 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="vehicle" id="vehicle" value="{{ $vehicleId ?? '' }}">
-                    <input type="hidden" name="assignType" value="{{ $assignType ?? '' }}">
-                    <input type="hidden" name="bookingNo" value="{{ $bookingNo ?? '' }}">
+                    <input type="hidden" name="vehicle" id="vehicle" value="{{ $data['vehicleId'] ?? '' }}">
+                    <input type="hidden" name="assignType" value="{{ $data['assignType'] ?? '' }}">
+                    <input type="hidden" name="bookingNo" value="{{ $data['bookingNo'] ?? '' }}">
                 </form>
 
                 <!--                <button class="btn bg-red waves-effect" onclick="clearAllField()">Clear</button>-->
@@ -213,7 +237,8 @@
             return false;
         }
         showLoader();
-        $.ajax({
+        $('#insertForm').submit();
+        /*$.ajax({
             type: 'POST',
             data: {receiveDateTime: receiveDateTime, vehicle: $('#vehicle').val()},
             url: 'client/VehicleAssign/checkReceiveDateInsert',
@@ -225,7 +250,7 @@
                     sweetAlert('This vehicle was used by another person on this Receive Date Time...!');
                 }
             }
-        });
+        });*/
     }
 
     function getCurrentLocation() {

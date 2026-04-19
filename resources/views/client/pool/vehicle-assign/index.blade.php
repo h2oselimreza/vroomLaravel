@@ -44,7 +44,7 @@
                 
                 <div class="table-custom-responsive">
 
-                    <table class="table table-bordered table-hover jq-option-datatable custom-table">
+                    <table class="table table-bordered table-hover custom-table dataTable">
                         <thead>
                             <tr class="bg-info">
                                 <th width="5%">SL</th>
@@ -240,5 +240,28 @@
     
 @endsection
 @push('scripts')
+<script>
 
+    function showDetails(count) {
+        $('#vehicleAssignModalShowBtn').click();
+        $('#vehicleTitle').text($('#vehicleNameHidden' + count).val());
+        $('#personNameTd').text($('#personNameHidden' + count).val());
+        $('#idNoTd').text($('#idNoHidden' + count).val());
+        $('#vehicleTd').text($('#vehicleNameHidden' + count).val());
+        $('#receiveDateTimeTd').text($('#receiveDateTimeHidden' + count).val());
+        $('#departmentTd').text($('#departmentHidden' + count).val());
+        $('#receivedLocationTd').text($('#currentLocationHidden' + count).val());
+        $('#designationTd').text($('#designationHidden' + count).val());
+        $('#noteTd').text($('#remarksHidden' + count).val());
+        $('#routeTd').text($('#routeHidden' + count).val());
+        $('#assignStatus').text($('#assignTypeHidden' + count).val());
+        if ($('#assignTypeHidden' + count).val() === 'Assigned') {
+            $('#routeTr').hide();
+        } else {
+            $('#routeTr').show();
+        }
+
+    }
+
+</script>
 @endpush

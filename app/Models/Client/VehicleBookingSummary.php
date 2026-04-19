@@ -2,9 +2,10 @@
 
 namespace App\Models\Client;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleBookingSummary extends Model
+class VehicleBookingSummary extends BaseModel
 {
      protected $table = 'vehicle_booking_summary';
 

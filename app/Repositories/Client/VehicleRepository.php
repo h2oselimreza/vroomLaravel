@@ -3,6 +3,7 @@
 namespace App\Repositories\Client;
 
 use App\Models\Client\Vehicle;
+use App\Models\Client\VehicleAssignDetail;
 use App\Models\Company;
 use App\Models\CustomerEmployee;
 use Illuminate\Support\Facades\DB;
@@ -75,6 +76,57 @@ class VehicleRepository
             ->where('company', $companyCode)
             ->where('booking_no', $bookingNo)
             ->get();
+    }
+
+    public function assignEmployee(array $data, string $vehicleId, string $company, $driver = null): bool
+    {
+        return DB::transaction(function () use ($data, $vehicleId, $company, $driver) {
+
+            $bookingNo = $data['booking_no'] ?? null;
+
+            // Remove unwanted fields
+            unset($data['booking_no']);
+
+            // 1. Update Vehicle
+            $vehicle = Vehicle::where('vehicle_id', $vehicleId)->first();
+            $vehicle->update($data);
+
+            // 2. Prepare Assign Details
+            $assignDetails = [
+                'reference_no'        => $data['pull_detail_ref_no'] ?? null,
+                'company'             => $company,
+                'vehicle'             => $vehicleId,
+                'driver'              => $driver ?? null,
+                'assign_dt_tm'        => $data['pull_receive_date'] ?? null,
+                'assign_type'         => $data['assign_type'] ?? null,
+                'emp_name'            => $data['pull_emp_name'] ?? null,
+                'emp_designation'     => $data['pull_designation'] ?? null,
+                'emp_department'      => $data['pull_department'] ?? null,
+                'emp_id_no'           => $data['pull_id_no'] ?? null,
+                'route'               => $data['pull_route'] ?? null,
+                'current_location'    => $data['pull_current_location'] ?? null,
+                'booking_no'          => $bookingNo,
+                'remarks'             => $data['pull_remarks'] ?? null,
+                'created_by'          => $data['updated_by'] ?? null,
+                'created_dt_tm'       => $data['updated_dt_tm'] ?? now(),
+            ];
+
+            // 3. Insert Assign Details
+            VehicleAssignDetail::create($assignDetails);
+
+            return true;
+        });
+    }
+
+    public function updateTripStatusVehicleBooking($bookingNo, $status)
+    {
+        DB::table('vehicle_booking_summary')
+            ->where('booking_no', $bookingNo)
+            ->update([
+                'trip_status'   => $status,
+                'updated_by'    => auth()->user_id() ?? null,
+                'updated_dt_tm' => now(),
+            ]);
     }
 
 }

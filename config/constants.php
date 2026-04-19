@@ -13,4 +13,6 @@ return [
     'ASSIGN_VACANT' => 'vacant',
     'ASSIGN_PERSON' => 'person',
     'ASSIGN_ENROUTE' => 'enroute',
+
+    'TRIP_STATUS_START' => 2,
 ];

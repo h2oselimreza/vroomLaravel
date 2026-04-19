@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Client\Vehicle;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\Pool\VehicleAssign\AssignEmployeeRequest;
+use App\Models\Client\Vehicle;
 use App\Repositories\Client\EmployeeRepository;
 use App\Repositories\Client\VehicleRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClientVehicleAssignController extends Controller
 {
@@ -115,9 +119,76 @@ class ClientVehicleAssignController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AssignEmployeeRequest $request, VehicleRepository $vehicleRepository)
     {
-        //
+        $vehicleId  = $request->vehicle;
+        $assignType = $request->assignType;
+        $vehicle = Vehicle::where('vehicle_id', $vehicleId)
+            ->where('company', auth()->user()?->customerEmployee?->company)
+            ->firstOrFail();
+    
+        // Driver validation for ENROUTE
+        if (!$vehicle->driver_id && $assignType == config('constants.ASSIGN_ENROUTE') ) {
+            return back()->with('error', 'Assign enroute not found');
+        }
+    
+        // Only allow vacant
+        if ($vehicle->assign_type != config('constants.ASSIGN_VACANT')) {
+            return back()->with('error', 'Assign vacant not found');
+        }
+        $data = [
+            'pull_emp_name'        => $request->personName,
+            'pull_designation'     => $request->designation,
+            'pull_department'      => $request->department,
+            'pull_id_no'           => $request->idNo,
+            'pull_receive_date'    => Carbon::parse($request->receiveDate),
+            'pull_route'           => $request->route,
+            'pull_current_location'=> $request->location,
+            'pull_remarks'         => $request->notes,
+            'assign_type'          => $assignType,
+            'pull_detail_ref_no'   => reference_no(),
+            'updated_by'           => auth()->user()->user_id,
+            'updated_dt_tm'        => now(),
+            'booking_no'           => $request->bookingNo,
+            'route_json'           => $request->route_json,
+        ];
+        // Date validation
+        if ($vehicle->pull_receive_date) {
+            dd($vehicle->pull_receive_date);
+            if (Carbon::parse($vehicle->pull_receive_date)->gt($data['pull_receive_date'])) {
+                return redirect()->route('client.pool.vehicle-employee-assign')
+                    ->with('error', 'Invalid receive date');
+            }
+        }
+
+        // Final validation before insert
+        if (
+            empty($data['pull_emp_name']) ||
+            empty($data['pull_receive_date']) ||
+            !in_array($assignType, [config('constants.ASSIGN_PERSON'), config('constants.ASSIGN_ENROUTE')])
+        ) {
+            return back()->with('error', 'pull_emp_name or pull_receive_date not found');
+        }
+
+        DB::beginTransaction();
+    
+        try {
+            $result = $vehicleRepository->assignEmployee($data, $vehicleId, auth()->user()?->customerEmployee?->company, $vehicle->driver_id);
+            // Update trip status
+            if (!empty($data['booking_no'])) {
+                $vehicleRepository->updateTripStatusVehicleBooking($data['booking_no'], config('constants.TRIP_STATUS_START'));
+            }
+    
+            DB::commit();
+    
+            return redirect()->route('client.pool.vehicle-assign.index', $result)
+                ->with('success', 'Employee assigned successfully');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+            return back()->with('error', 'Something went wrong', $e->getMessage());
+        }
     }
 
     /**
