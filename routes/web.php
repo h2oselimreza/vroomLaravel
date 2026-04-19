@@ -302,9 +302,12 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('pool/remove-driver', [ClientDriverVehicleAssignController::class, 'removeDriver'])->name('client.pool.driver-assign.removeDriver');
 
     Route::resource('/vehicle/vehicle-assign', ClientVehicleAssignController::class)->names('client.pool.vehicle-assign');
-    Route::get('/vehicle/vehicle-employee-assign', [ClientVehicleAssignController::class, 'showEmployeeAssign'])->name('client.pool.vehicle-employee-assign');
-    Route::get('/vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'showVehicleVacant'])->name('client.pool.vehicle-employee-vacant');
-    Route::post('/vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'vacantEmpVehicle'])->name('client.pool.vehicle-employee-vacant.update');
+    Route::get('vehicle/vehicle-employee-assign', [ClientVehicleAssignController::class, 'showEmployeeAssign'])->name('client.pool.vehicle-employee-assign');
+    Route::get('vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'showVehicleVacant'])->name('client.pool.vehicle-employee-vacant');
+    Route::post('vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'vacantEmpVehicle'])->name('client.pool.vehicle-employee-vacant.update');
+    Route::get('vehicle/current-location', [ClientVehicleAssignController::class, 'showCurrentLocation'])->name('client.pool.current-location');
+    Route::post('vehicle/single-vehicle-location-data', [ClientVehicleAssignController::class, 'getSingleVehicleLocationData'])->name('client.pool.single-vehicle-location-data');
+
 });
 
 require __DIR__.'/auth.php';

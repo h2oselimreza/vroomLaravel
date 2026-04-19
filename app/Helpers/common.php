@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 function get_common_table_name_str($elementCodeStr, $type)
 {
@@ -46,8 +46,6 @@ function reference_no(){
     return uniqid("ap", false);
 }
 
-
-use Illuminate\Support\Facades\DB;
 
 if (!function_exists('get_module_group')) {
     function get_module_group($breadcrumbModuleUrl)

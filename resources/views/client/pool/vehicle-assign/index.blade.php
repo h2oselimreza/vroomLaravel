@@ -128,11 +128,11 @@
                                                         <a href="{{ url('client/vehicle/vehicle-employee-vacant?vehicleId=' . $vehicle->vehicle_id . '&type=' . config('constants.ASSIGN_VACANT')) }}">
                                                             Vacant
                                                         </a>
-                                                    </li>
+                                                    </li>   
                                                 @endif
 
                                                 <li>
-                                                    <a href="{{ url('client/VehicleAssign/showCurrentLocation?vehicleId=' . $vehicle->vehicle_id) }}">
+                                                    <a href="{{ url('client/vehicle/current-location?vehicleId=' . $vehicle->vehicle_id) }}">
                                                         Current Location
                                                     </a>
                                                 </li>

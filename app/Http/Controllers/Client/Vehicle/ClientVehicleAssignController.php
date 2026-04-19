@@ -7,6 +7,7 @@ use App\Http\Requests\Client\Pool\VehicleAssign\AssignEmployeeRequest;
 use App\Models\Client\Vehicle;
 use App\Repositories\Client\EmployeeRepository;
 use App\Repositories\Client\VehicleRepository;
+use App\Services\VtsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -325,35 +326,124 @@ class ClientVehicleAssignController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function showCurrentLocation(Request $request, VehicleRepository $vehicleRepository)
     {
-        //
+        // 2. Get input
+        $vehicleId = $request->get('vehicleId');
+
+        // 3. Prepare params
+        $arr = [
+            'companyCode' => auth()->user()?->customerEmployee?->company,
+            'bulkFlag'    => 0,
+        ];
+
+        // 4. Get company info
+        $companyInfo = $vehicleRepository->getCompanyGeneralInfo($arr);
+        // 5. Pass data to view
+        return view('client.pool.vehicle-assign.current-location', [
+            'vehicleId'          => $vehicleId,
+            'companyInfo'        => $companyInfo,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+    public function getSingleVehicleLocationData(
+        Request $request,
+        VehicleRepository $vehicleRepository,
+        VtsService $vtsService
+    ) {
+        // 2. Input validation
+        $vehicleId = $request->post('vehicleId');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if (!$vehicleId) {
+            return response()->json(['success' => 0, 'message' => 'Vehicle ID required']);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // 3. Get company info
+        $companyInfo = $vehicleRepository->getCompanyGeneralInfo([
+            'companyCode' => auth()->user()?->customerEmployee?->company,
+            'bulkFlag'    => 0
+        ]);
+
+        if (empty($companyInfo)) {
+            return response()->json(['success' => 0, 'message' => 'Company not found']);
+        }
+
+        $company = $companyInfo[0];
+
+        if (empty($company['vts_app_key'])) {
+            return response()->json(['success' => 2]); // no vts key
+        }
+
+        // 4. Get vehicle info
+        $vehicleInfo = $vehicleRepository->getVehicleInfo([
+            'vehicleId'   => $vehicleId,
+            'companyCode' => $company['company_code'],
+            'isActiveFlag'=> 1,
+            'bulkFlag'    => 0
+        ]);
+
+        if (empty($vehicleInfo)) {
+            return response()->json(['success' => 3]); // no vehicle found
+        }
+
+        $vehicle = $vehicleInfo[0];
+
+        // 5. VTS Provider check
+        if ($company['vts_company'] === 'easy_trax') {
+
+            // Get location data
+            $response = $vtsService->getCurrentLocationETracks(
+                $vehicle['communication_code'],
+                $company['vts_app_key']
+            );
+
+            $jsonObj = json_decode($response, true);
+
+            if (!$jsonObj || empty($jsonObj)) {
+                return response()->json(['success' => 3]);
+            }
+
+            // Extract IMEI key
+            $imei = array_key_first($jsonObj);
+
+            if (!$imei) {
+                return response()->json(['success' => 3]);
+            }
+
+            $lat = $jsonObj[$imei]['lat'] ?? null;
+            $lng = $jsonObj[$imei]['lng'] ?? null;
+
+            if (!$lat || !$lng) {
+                return response()->json(['success' => 3]);
+            }
+
+            // Get address
+            $address = $vtsService->getAddressETracks($lat, $lng, $company['vts_app_key']);
+
+            // Info window HTML
+            $infoContent = [[
+                '<div class="info_content">
+                    <h5 class="text-vroom-orange">' . $vehicle['registration_no'] . '</h5>
+                    <p><b>Address:</b> ' . $address . '</p>
+                    <p><b>Latitude:</b> ' . $lat . '</p>
+                    <p><b>Longitude:</b> ' . $lng . '</p>
+                    <p><b>Vehicle ID:</b> ' . $vehicle['vehicle_id'] . '</p>
+                    <p><b>Driver:</b> ' . $vehicle['driver_name'] . '</p>
+                    <p><b>Driver Mobile:</b> ' . $vehicle['driver_mobile_no'] . '</p>
+                    <p><b>Speed:</b> ' . ($jsonObj[$imei]['speed'] ?? 0) . ' kph</p>
+                    <p><b>Vehicle Type:</b> ' . ($vehicle['vehicle_type_name'] ?? '') . '</p>
+                </div>'
+            ]];
+
+            $location = [[$lat, $lng]];
+
+            return response()->json([
+                'success'     => 1,
+                'infoContent' => $infoContent,
+                'location'    => $location
+            ]);
+        }
+
+        return response()->json(['success' => 0, 'message' => 'Unsupported VTS provider']);
     }
 }
