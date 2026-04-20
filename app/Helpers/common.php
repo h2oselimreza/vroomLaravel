@@ -115,6 +115,21 @@ function getDateTimeFormat($datetime = null)
     return '';
 }
 
+function get_date_format1($date = null)
+{
+    return $date ? Carbon::parse($date)->format('F j, Y') : '';
+}
+
+function get_time_format($time = null)
+{
+    return $time ? Carbon::parse($time)->format('h:i A') : null;
+}
+
+function get_date_time_format($datetime = null)
+{
+    return $datetime ? Carbon::parse($datetime)->format('F j, Y h:i A') : '';
+}
+
 function getVehicleAssignTypeName($assignType)
 {
     return match ($assignType) {
@@ -123,4 +138,55 @@ function getVehicleAssignTypeName($assignType)
         config('constants.ASSIGN_PERSON')  => 'Assigned',
         default        => '',
     };
+}
+
+function get_appointment_status($status = 0, $flag = 'admin')
+{
+    $statuses = [
+        config('constants.APPOINTMENT_PENDING')      => 'Pending',
+        config('constants.APPOINTMENT_PROCCESSING')  => 'Processing',
+        config('constants.APPOINTMENT_ACCEPT')       => 'Accepted',
+        config('constants.APPOINTMENT_REJECT')       => 'Rejected',
+        config('constants.APPOINTMENT_COMPLETE')     => 'Completed',
+        config('constants.APPOINTMENT_START')        => 'Start',
+        config('constants.APPOINTMENT_CASH_COLLECT') => 'Paid',
+        config('constants.APPOINTMENT_ALL')          => 'All',
+    ];
+
+    return $statuses[$status] ?? '';
+}
+
+
+function get_create_update_by_name($userId, $userType = null)
+{
+    if (empty($userId)) {
+        return '';
+    }
+
+    $userType = $userType ?? config('constants.USER_TYPE_CORP_EMP');
+
+    $corpTypes = [
+        config('constants.USER_TYPE_CORP_EMP'),
+        config('constants.USER_TYPE_INDV_EMP'),
+        config('constants.CLIENT'),
+    ];
+
+    $adminTypes = [
+        config('constants.USER_TYPE_ADMIN_EMP'),
+        config('constants.P_ADMIN'),
+    ];
+
+    if (in_array($userType, $corpTypes)) {
+        return DB::table('customer_employee')
+            ->where('employee_id', $userId)
+            ->value('employee_name') ?? '';
+    }
+
+    if (in_array($userType, $adminTypes)) {
+        return DB::table('employee')
+            ->where('employee_id', $userId)
+            ->value('employee_name') ?? '';
+    }
+
+    return '';
 }

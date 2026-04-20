@@ -26,5 +26,13 @@ return [
     'APPOINTMENT_START' => '7',
     'APPOINTMENT_CASH_COLLECT' => '8',
     'APPOINTMENT_ALL' => '19',
+    'HOME_SER' => "HOME",
+    'HOMESERVICE_NO' => 'HMAP',
+    'CLIENT' => "client",
+
+    'USER_TYPE_CORP_EMP' => "corporate_employee",
+    'USER_TYPE_INDV_EMP' => "indv_employee",
+    'USER_TYPE_ADMIN_EMP' => "admin_employee",
+    'P_ADMIN' => "admin",
 
 ];

@@ -16,8 +16,21 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
+                @if(session('success'))
+                   <div class="alert alert-success">
+                       <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                       <strong>{{ session('success') }}</strong>
+                   </div>
+               @endif
+               {{-- Validation Errors --}}
+               @if(session('error'))
+                   <div class="alert alert-danger">
+                       <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                       <strong>{{ session('error') }}</strong>
+                   </div>
+               @endif
                 <div class="table-custom-responsive">
-                    <table class="table table-bordered table-hover jq-option-datatable custom-table dataTable">
+                    <table class="table table-bordered table-hover custom-table dataTable">
                         <thead>
                             <tr class="bg-info">
                                 <th>SL</th>
@@ -93,13 +106,13 @@
                             
                                                     {{-- Show --}}
                                                     <li>
-                                                        <a href="{{ url('client/HomeService/showHomeService/' . $appointmentList->appointment_no) }}">
+                                                        <a href=" {{ route('client.vehicle-maintenance.show-home-service', $appointmentList->appointment_no) }}">
                                                             Show
                                                         </a>
                                                     </li>
                             
                                                     {{-- Remove (only if pending) --}}
-                                                    @if ($appointmentList->status == APPOINTMENT_PENDING)
+                                                    @if ($appointmentList->status == config('constants.APPOINTMENT_PENDING'))
                                                         <li>
                                                             <a href="#"
                                                             onclick="removeAppointment('{{ $appointmentList->appointment_no }}')">

@@ -2,9 +2,10 @@
 
 namespace App\Models\Client;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class HomeServiceAppSummaryGen extends Model
+class HomeServiceAppSummaryGen extends BaseModel
 {
     protected $table = 'home_service_app_summary_gen';
 

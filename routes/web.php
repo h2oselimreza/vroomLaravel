@@ -72,6 +72,7 @@ use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
+use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
 use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
@@ -310,7 +311,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle/single-vehicle-location-data', [ClientVehicleAssignController::class, 'getSingleVehicleLocationData'])->name('client.pool.single-vehicle-location-data');
 
     Route::get('vehicle-maintenance/home-service', [ClientHomeServiceController::class, 'homeServiceList'])->name('client.vehicle-maintenance.home-service.homeServiceList');
-
+    Route::get('vehicle-maintenance/show-home-service/{appointment_no}', [ClientHomeServiceController::class, 'showHomeService'])->name('client.vehicle-maintenance.show-home-service');
+    Route::post('vehicle-maintenance/home-service-update', [ClientHomeServiceController::class, 'updateHomeService'])->name('client.vehicle-maintenance.home-service-update');
+    Route::get('vehicle-maintenance/set-home-service', [SetClientHomeServiceController::class, 'setHomeService'])->name('client.vehicle-maintenance.set-home-service.setHomeService');
+    Route::post('vehicle-maintenance/add-new-home-service', [SetClientHomeServiceController::class, 'addNewHomeService'])->name('client.vehicle-maintenance.add-new-home-service');
 
 });
 
