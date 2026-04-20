@@ -237,4 +237,11 @@ class ClientHomeServiceController extends Controller
                 ->with('error', 'Something went wrong!'.$e->getMessage());
         }
     }
+
+    public function destory($appointmentNo, HomeServiceRepository $homeServiceRepository)
+    {
+        $response = $homeServiceRepository->deleteHomeService($appointmentNo, auth()->user()?->customerEmployee?->company);
+
+        return response()->json($response);
+    }
 }

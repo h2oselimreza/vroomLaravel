@@ -157,7 +157,7 @@
             showLoader();
     
             $.ajax({
-                url: "{{ url('client/HomeService/removeAppointment') }}/" + appointmentNo,
+                url: "{{ url('client/vehicle-maintenance/delete-home-service') }}/" + appointmentNo,
                 type: "DELETE",
                 data: {
                     _token: "{{ csrf_token() }}"
@@ -165,8 +165,8 @@
             })
             .done(function (data) {
                 hideLoader();
-    
-                if (data === '1') {
+                console.log(data);
+                if (data == 1) {
                     swal({
                         title: "Remove Successfully",
                         text: "This Home Service is removed now",
@@ -175,11 +175,11 @@
                         confirmButtonText: "Ok",
                         confirmButtonColor: "#A5DC86"
                     }, function () {
-                        window.location.href = "{{ url('client/HomeService/homeServiceList') }}";
+                        window.location.href = "{{ url('client/vehicle-maintenance/home-service') }}";
                     });
     
-                } else if (data === '2') {
-                    window.location.href = "{{ url('client/HomeService/homeServiceList') }}";
+                } else if (data == 2) {
+                    window.location.href = "{{ url('client/vehicle-maintenance/home-service') }}";
                 }
             })
             .error(function () {

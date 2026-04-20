@@ -3,6 +3,8 @@
 namespace App\Repositories\Client;
 
 use App\Models\Admin\MasterData\ServiceVariant;
+use App\Models\Client\HomeServiceAppDetail;
+use App\Models\Client\HomeServiceAppSummaryGen;
 use App\Models\CorporateCompany;
 use Illuminate\Support\Facades\DB;
 
@@ -71,6 +73,45 @@ class HomeServiceRepository
             return null;
         }
         return CorporateCompany::where('company_code', $companyCode)->first();
+    }
+
+    public function deleteHomeService($appointmentNo, $company)
+    {
+        if (!$appointmentNo) {
+            return 2;
+        }
+
+        $summary = HomeServiceAppSummaryGen::where('appointment_no', $appointmentNo)
+            ->where('company', $company)
+            ->first();
+
+        if (!$summary) {
+            return 2;
+        }
+
+        if ($summary->status != config('constants.APPOINTMENT_PENDING')) {
+            return 2;
+        }
+        DB::beginTransaction();
+        try {
+
+            // ✅ Delete summary
+            HomeServiceAppSummaryGen::where('appointment_no', $appointmentNo)
+                ->where('company', $company)
+                ->delete();
+
+            // ✅ Delete details
+            HomeServiceAppDetail::where('appointment_no', $appointmentNo)
+                ->delete();
+
+            DB::commit();
+
+            return 1;
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return 2;
+        }
     }
 
 }
