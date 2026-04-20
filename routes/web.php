@@ -71,6 +71,7 @@ use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
@@ -307,6 +308,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle/vehicle-employee-vacant', [ClientVehicleAssignController::class, 'vacantEmpVehicle'])->name('client.pool.vehicle-employee-vacant.update');
     Route::get('vehicle/current-location', [ClientVehicleAssignController::class, 'showCurrentLocation'])->name('client.pool.current-location');
     Route::post('vehicle/single-vehicle-location-data', [ClientVehicleAssignController::class, 'getSingleVehicleLocationData'])->name('client.pool.single-vehicle-location-data');
+
+    Route::get('vehicle-maintenance/home-service', [ClientHomeServiceController::class, 'homeServiceList'])->name('client.vehicle-maintenance.home-service.homeServiceList');
+
 
 });
 
