@@ -74,6 +74,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
+use App\Http\Controllers\Client\VehicleMaintenance\SetClientWorkshopAppointmentController;
 use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
@@ -320,6 +321,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle-maintenance/add-new-home-service', [SetClientHomeServiceController::class, 'addNewHomeService'])->name('client.vehicle-maintenance.add-new-home-service');
 
     Route::get('vehicle-maintenance/workshop-service-list', [ClientWorkshopAppointmentController::class, 'index'])->name('client.vehicle-maintenance.workshop-service-list.index');
+    Route::get('vehicle-maintenance/set-workshop-appointment', [SetClientWorkshopAppointmentController::class, 'setAppointment'])->name('client.vehicle-maintenance.set-workshop-appointment');
+
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,8 @@
 <?php
+
+use App\Models\MetaData\District;
+use App\Models\MetaData\Division;
+use App\Models\MetaData\Upozilla;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 function get_common_table_name_str($elementCodeStr, $type)
@@ -189,4 +193,51 @@ function get_create_update_by_name($userId, $userType = null)
     }
 
     return '';
+}
+
+if (!function_exists('get_division_name')) {
+    function get_division_name($divisionId = null)
+    {
+        if (!$divisionId) {
+            return "";
+        }
+
+        $division = Division::find($divisionId);
+
+        if ($division) {
+            return $division->division_en_name . ' (' . $division->division_bn_name . ')';
+        }
+
+        return "";
+    }
+}
+
+if (!function_exists('get_district_name')) {
+    function get_district_name($districtId = null)
+    {
+        if (!$districtId) {
+            return "";
+        }
+
+        $district = District::find($districtId);
+
+        return $district
+            ? $district->district_en_name . ' (' . $district->district_bn_name . ')'
+            : "";
+    }
+}
+
+if (!function_exists('get_uplozilla_name')) {
+    function get_uplozilla_name($upazilaId = null)
+    {
+        if (!$upazilaId) {
+            return "";
+        }
+
+        $upazila = Upozilla::find($upazilaId);
+
+        return $upazila
+            ? $upazila->upozilla_en_name . ' (' . $upazila->upozilla_bn_name . ')'
+            : "";
+    }
 }
