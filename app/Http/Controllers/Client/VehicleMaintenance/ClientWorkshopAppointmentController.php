@@ -8,6 +8,7 @@ use App\Repositories\Client\HomeServiceRepository;
 use App\Repositories\Client\VehicleRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Pest\Support\Str;
 
 class ClientWorkshopAppointmentController extends Controller
 {
@@ -43,6 +44,104 @@ class ClientWorkshopAppointmentController extends Controller
                 return redirect()->route('client.vehicle-maintenance.workshop-service-list.index')
                 ->with('error', 'Work shop details not found');
             }
+    }
+
+    public function addNewAppointment(Request $request, AppointmentRepository $appointmentRepository)
+    {
+        // Basic validation (important for safety)
+        $validated = $request->validate([
+            'vehicleCount' => 'required|integer|min:1',
+            'workshop'     => 'required|string',
+            'date1'        => 'required|date',
+            'timeSlot1'    => 'required|string',
+            'date2'        => 'nullable|date',
+            'timeSlot2'    => 'nullable|string',
+            'remarks'      => 'nullable|string',
+        ]);
+
+        $vehicleCount = (int) $validated['vehicleCount'];
+
+        // Summary data
+        $summaryArr = [
+            'workshop'      => $request->workshop,
+            'date_1'        => $request->date1,
+            'time_slot_1'   => $request->timeSlot1,
+            'date_2'        => $request->date2 ? $request->date2 : null,
+            'time_slot_2'   => $request->timeSlot2 ? $request->timeSlot2 : null,
+            'remarks'       => $request->remarks ? $request->remarks : null,
+        ];
+
+        // Required field check
+        if (!$summaryArr['workshop'] || !$summaryArr['date_1'] || !$summaryArr['time_slot_1'] || !$vehicleCount) {
+            return redirect('client/Appointment/setAppoinment');
+        }
+
+        // Generate appointment number (Laravel-safe alternative)
+        $appoinmentNo = 'APPT' . now()->format('Ym') . strtoupper(Str::random(5));
+
+        $detailArr = [];
+        $serviceVarCodeArr = [];
+
+        for ($i = 1; $i <= $vehicleCount; $i++) {
+
+            $vehicleId = $request->input('vehicleId' . $i);
+
+            if (!$vehicleId) {
+                return redirect('client/Appointment/setAppoinment');
+            }
+
+            $takenServiceVarCount = (int) $request->input('takenServiceVarCount' . $i, 0);
+
+            for ($j = 1; $j <= $takenServiceVarCount; $j++) {
+
+                $serviceVarCode = trim($request->input('takenServiceVarCode' . $i . $j));
+
+                if ($serviceVarCode) {
+                    $detailArr[] = [
+                        'vehicle'          => $vehicleId,
+                        'appointment_no'   => $appoinmentNo,
+                        'service_variant'  => $serviceVarCode,
+                        'created_by'       => auth()->user()?->customerEmployee?->company ?? null,
+                        'created_type'     => config('constants.CLIENT'),
+                        'created_dt_tm'    => now(),
+                        'updated_by'       => auth()->user()?->customerEmployee?->company ?? null,
+                        'updated_type'     => config('constants.CLIENT'),
+                        'updated_dt_tm'    => now(),
+                    ];
+
+                    $serviceVarCodeArr[] = $serviceVarCode;
+                }
+            }
+        }
+
+        // 🧾 Final summary
+        $summaryArr['appointment_no'] = $appoinmentNo;
+        $summaryArr['company']        = auth()->user()?->customerEmployee?->company ?? null;
+        $summaryArr['status']         = 'PENDING';
+        $summaryArr['created_by']     = auth()->user()->user_id;
+        $summaryArr['created_type']   = config('constants.CLIENT');
+        $summaryArr['created_dt_tm']  = now();
+        $summaryArr['updated_by']     = auth()->user()->user_id;
+        $summaryArr['updated_type']   = config('constants.CLIENT');
+        $summaryArr['updated_dt_tm']  = now();
+
+        // 💾 Transaction-safe insert (VERY IMPORTANT for production)
+        DB::beginTransaction();
+
+        try {
+            $result = $appointmentRepository->addNewAppointment($summaryArr, $detailArr, $serviceVarCodeArr);
+
+            DB::commit();
+
+            return redirect('client/Appointment/setAppoinment/' . $result);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->with('error', 'Appointment creation failed: ' . $e->getMessage());
+        }
     }
 
     // $arr['isActiveFlag'] = 1;

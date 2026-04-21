@@ -238,6 +238,33 @@ class AppointmentRepository
             return asset('assets/images/workshop/' . $item->file_name);
         })->toArray();
     }
-    
 
+    public function addNewAppointment($summaryArr, $detailArr, $serviceVarCodeArr)
+    {
+        return DB::transaction(function () use ($summaryArr, $detailArr, $serviceVarCodeArr) {
+
+            $dbServiceVariantArr = DB::table('workshop_service')
+                ->where('workshop', $summaryArr['workshop'])
+                ->pluck('service_variant')
+                ->toArray();
+
+            if (empty($dbServiceVariantArr)) {
+                return 2;
+            }
+
+            $diffCount = count(array_diff($serviceVarCodeArr, $dbServiceVariantArr));
+
+            if ($diffCount > 0) {
+                return 2;
+            }
+
+            DB::table('appointment_summary')->insert($summaryArr);
+
+            if (!empty($detailArr)) {
+                DB::table('appointment_detail')->insert($detailArr);
+            }
+
+            return 1;
+        });
+    }
 }
