@@ -34,5 +34,6 @@ return [
     'USER_TYPE_INDV_EMP' => "indv_employee",
     'USER_TYPE_ADMIN_EMP' => "admin_employee",
     'P_ADMIN' => "admin",
+    'OTHER_IMAGE' => "other_image"
 
 ];

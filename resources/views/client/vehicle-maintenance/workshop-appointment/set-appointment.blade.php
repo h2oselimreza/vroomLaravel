@@ -565,120 +565,153 @@
     }
 
     function showDetails(count, workshopCode) {
+
         $('#imageLimitCountHidden').val(0);
         showLoader();
-        for (var i = 1; i < 8; i++) {
+
+        for (let i = 1; i < 8; i++) {
             $('#day' + i).text('');
             $('#time' + i).text('');
         }
+
         $('#vehicleServieDiv').html("");
         $('#serviceDiv').html("");
         $('#workshopModalShowBtn').click();
+
         $.ajax({
             type: 'POST',
-            data: {workshopCode: workshopCode},
-            url: 'client/Appointment/getWorkshopInfo',
-            success: function (result) {
+            url: '/client/vehicle-maintenance/getWorkshopInfo',
+            data: {
+                workshopCode: workshopCode,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function (resultObj) {
+
                 hideLoader();
-                var resultObj = jQuery.parseJSON(result);
 
-                //console.log(resultObj);
+                // ❌ REMOVE: jQuery.parseJSON (Laravel already returns JSON)
+                // var resultObj = jQuery.parseJSON(result);
 
-                //----------  time schedule --------------//
-                var j = 1;
-                for (var i = 0; i < resultObj.timeShedule.length; i++) {
-                    $('#day' + j).text(resultObj.timeShedule[i].weekday_name);
-                    var startTime = getTimeAmPmFormat(resultObj.timeShedule[i].start_time);
-                    var endTime = getTimeAmPmFormat(resultObj.timeShedule[i].end_time);
+                /* ================= TIME SCHEDULE ================= */
+                let j = 1;
 
-                    if (resultObj.timeShedule[i].weekend_status === "1") {
+                resultObj.timeShedule.forEach(function (item) {
+
+                    $('#day' + j).text(item.weekday_name);
+
+                    let startTime = getTimeAmPmFormat(item.start_time);
+                    let endTime = getTimeAmPmFormat(item.end_time);
+
+                    if (item.weekend_status == "1") {
                         $('#time' + j).html('<span class="text-danger"><b>WEEKEND</b></span>');
                     } else {
                         $('#time' + j).text(startTime + ' To ' + endTime);
                     }
+
                     j++;
-                }
-                //-------------  vehicle type ----------------------//
+                });
 
-                var serviceVehicleStr = "<ul>";
-                j = 1;
-                for (var i = 0; i < resultObj.serviceVehicle.length; i++) {
-                    serviceVehicleStr += '<li>' + resultObj.serviceVehicle[i].vehicle_type_name + "</li>";
-                    j++;
-                }
-                $('#vehicleServieDiv').html(serviceVehicleStr + "</ul>");
+                /* ================= VEHICLE TYPE ================= */
+                let serviceVehicleStr = "<ul>";
 
+                resultObj.serviceVehicle.forEach(function (item) {
+                    serviceVehicleStr += `<li>${item.vehicle_type_name}</li>`;
+                });
 
-                //------------------ service ---------------------//
-                var serviceStr = "";
-                for (var i = 0; i < resultObj.distinctService.length; i++) {
-                    var serviceCode = resultObj.distinctService[i].service;
-                    var serviceVariantStr = "";
-                    for (var j = 0; j < resultObj.allService.length; j++) {
-                        if (serviceCode === resultObj.allService[j].service) {
-                            serviceVariantStr += "<div class='col-md-6 col-sm-6 col-xs-12 font-12 service-variant'>\n\
-                                            <li>" + resultObj.allService[j].service_variant_name + "</li>\n\
-                                                </div>";
+                serviceVehicleStr += "</ul>";
+
+                $('#vehicleServieDiv').html(serviceVehicleStr);
+
+                /* ================= SERVICES ================= */
+                let serviceStr = "";
+
+                resultObj.distinctService.forEach(function (serviceItem) {
+
+                    let serviceVariantStr = "";
+
+                    resultObj.allService.forEach(function (variantItem) {
+
+                        if (serviceItem.service == variantItem.service) {
+
+                            serviceVariantStr += `
+                                <div class='col-md-6 col-sm-6 col-xs-12 font-12 service-variant'>
+                                    <li>${variantItem.service_variant_name}</li>
+                                </div>
+                            `;
                         }
-                    }
-                    serviceStr += "<div class='row'>\n\
-                                        <div class='col-md-12 col-sm-12 col-xs-12 font-12 service'>\n\
-                                            <div class='bottom-border'>\n\
-                                                <b>" + resultObj.distinctService[i].service_name + "</b>\n\
-                                            </div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <div class='row m-b-20'>" + serviceVariantStr + "</div>";
-                }
+                    });
+
+                    serviceStr += `
+                        <div class='row'>
+                            <div class='col-md-12 font-12 service'>
+                                <div class='bottom-border'>
+                                    <b>${serviceItem.service_name}</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class='row m-b-20'>
+                            ${serviceVariantStr}
+                        </div>
+                    `;
+                });
+
                 $('#serviceDiv').html(serviceStr);
 
-                //--------------- other image ---------------------//
+                /* ================= IMAGES ================= */
+                let imageStr = "";
+                let images = resultObj.otherImage || [];
 
-                console.log(resultObj.otherImage);
-                var imageStr = "";
-                var otherImageObjLength = resultObj.otherImage.length;
-                var loopValue = otherImageObjLength;
-                if (otherImageObjLength > 3) {
-                    loopValue = otherImageObjLength - 1;
+                let loopValue = images.length > 3 ? images.length - 1 : images.length;
+
+                for (let i = 0; i < loopValue; i++) {
+
+                    let imagePath = images[i];
+
+                    imageStr += `
+                        <div class="image_block">
+                            <div class="image_block_inner">
+                                <a class="fancybox" rel="ligthbox" href="${imagePath}">
+                                    <div class="thumbnail" style="height: 200px">
+                                        <div class="thumbnail_wrapper">
+                                            <img class="img-responsive" src="${imagePath}" />
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    `;
                 }
 
-                for (var i = 0; i < loopValue; i++) {
-                    var imagePath = resultObj.otherImage[i];
-                    imageStr += '<div class="image_block">\n\
-                                    <div class="image_block_inner">\n\
-                                        <a class="fancybox" rel="ligthbox" href="' + imagePath + '">\n\
-                                            <div class="thumbnail" style="height: 200px">\n\
-                                                <div class="thumbnail_wrapper">\n\
-                                                    <img class="img-responsive" alt="" src="' + imagePath + '"  />\n\
-                                                </div>\n\
-                                            </div>\n\
-                                        </a>\n\
-                                    </div>\n\
-                                </div>';
-                }
-                var imageLimitCountHidden = $('#imageLimitCountHidden').val();
-                var newImageLimitCount = parseInt(imageLimitCountHidden) + i;
+                let imageLimitCountHidden = parseInt($('#imageLimitCountHidden').val() || 0);
+                let newImageLimitCount = imageLimitCountHidden + loopValue;
+
                 $('#imageLimitCountHidden').val(newImageLimitCount);
-                console.log(newImageLimitCount);
 
-                if (imageStr) {
+                if (imageStr.length > 0) {
                     $('#otherImagePanel').show();
                 } else {
                     $('#otherImagePanel').hide();
                 }
+
                 $('#otherImgaeGallery').html(imageStr);
-                if (otherImageObjLength > 3) {
+
+                if (images.length > 3) {
                     $('#showMoreImageLink').show();
-                    $('#showMoreImageLink').html("<button class='btn btn-xs btn-primary' onclick='showMoreImage(\"" + workshopCode + "\",\"" + newImageLimitCount + "\");'>Show More Image</button>");
-                    //  $('#showMoreImageLink').html('<a target="_blank" href="client/Appointment/showWorkshopImages?workshop=' + workshopCode + '"><div class="text-right">Show More Images</div></a>');
+
+                    $('#showMoreImageLink').html(`
+                        <button class='btn btn-xs btn-primary'
+                            onclick='showMoreImage("${workshopCode}", "${newImageLimitCount}")'>
+                            Show More Image
+                        </button>
+                    `);
                 } else {
                     $('#showMoreImageLink').hide();
                 }
-
-
             }
         });
 
+        /* ================= STATIC INFO ================= */
         $('#workshopTitle').text($('#title' + count).val());
         $('#workshopEmail').text($('#email' + count).val());
         $('#workshopWebsite').text($('#website' + count).val());
@@ -686,8 +719,6 @@
         $('#workshopDivision').text($('#division' + count).val());
         $('#workshopDistrict').text($('#district' + count).val());
         $('#workshopUpozilla').text($('#uplozilla' + count).val());
-
-
     }
 
     function showMoreImage(workshopCode, previousLimit) {

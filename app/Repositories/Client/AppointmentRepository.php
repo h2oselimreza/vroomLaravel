@@ -2,7 +2,10 @@
 
 namespace App\Repositories\Client;
 
+use App\Models\Admin\Workshop\WorkshopFile;
+use App\Models\Admin\Workshop\WorkshopVehicleType;
 use App\Models\Client\AppointmentSummary;
+use App\Models\Client\WorkshopTimeSchedule;
 use Illuminate\Support\Facades\DB;
 
 class AppointmentRepository
@@ -170,7 +173,71 @@ class AppointmentRepository
         return $query->get();
     }
 
+    public function getWorkshopInfo($workshopCode)
+    {
+        $arr = [];
 
+        /* ---------------- TIME SCHEDULE ---------------- */
+        $arr['timeShedule'] = WorkshopTimeSchedule::query()
+            ->select(
+                'workshop_time_schedule.start_time',
+                'workshop_time_schedule.end_time',
+                'workshop_time_schedule.weekend_status',
+                'workshop_time_schedule.week_day',
+                'common_table.element as weekday_name',
+                'common_table.element_order'
+            )
+            ->join('common_table', 'common_table.element_code', '=', 'workshop_time_schedule.week_day')
+            ->where('workshop_time_schedule.workshop', $workshopCode)
+            ->where('common_table.type', 'week_day')
+            ->orderBy('common_table.element_order', 'ASC')
+            ->get()
+            ->toArray();
+
+        /* ---------------- VEHICLE TYPE ---------------- */
+        $arr['serviceVehicle'] = WorkshopVehicleType::query()
+            ->select(
+                'workshop_vehicle_type.vehicle_type',
+                'common_table.element as vehicle_type_name'
+            )
+            ->join('common_table', 'common_table.element_code', '=', 'workshop_vehicle_type.vehicle_type')
+            ->where('workshop_vehicle_type.workshop', $workshopCode)
+            ->where('common_table.type', 'vehicle_type')
+            ->orderBy('common_table.element_order', 'ASC')
+            ->get()
+            ->toArray();
+
+        /* ---------------- SERVICE ---------------- */
+        $variantArr = [
+            'variantType' => config('constants.APPOINTMENT_SER'),
+            'workshopCode' => $workshopCode,
+        ];
+
+        $arr['distinctService'] = $this->getDistinctService($variantArr);
+        $arr['allService'] = $this->getWorkshopService($variantArr, 1);
+        $arr['otherImage'] = $this->getWorkshopOtherImage($workshopCode, 1, null);
+        return $arr; 
+    }
+
+    /* ---------------- WORKSHOP IMAGES ---------------- */
+    public function getWorkshopOtherImage($workshopCode, $flag, $previousLimit = null)
+    {
+        $query = WorkshopFile::query()
+            ->select('file_name')
+            ->where('workshop', $workshopCode)
+            ->where('file_type', config('constants.OTHER_IMAGE'))
+            ->where('is_active', 1);
+
+        if ($flag == 1) {
+            $query->limit(4);
+        } elseif ($flag == 2) {
+            $query->limit(4)->offset($previousLimit);
+        }
+
+        return $query->get()->map(function ($item) {
+            return asset('assets/images/workshop/' . $item->file_name);
+        })->toArray();
+    }
     
 
 }

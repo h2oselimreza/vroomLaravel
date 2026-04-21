@@ -14,4 +14,10 @@ class ClientWorkshopAppointmentController extends Controller
         $appointmentLists = $appointmentRepository->getAppointmentList($arr);
         return view('client.vehicle-maintenance.workshop-appointment.index',compact('appointmentLists'));
     }
+
+    public function getWorkshopInfo(Request $request, AppointmentRepository $appointmentRepository){
+        $workshopCode = $request->workshopCode;
+        $result = $appointmentRepository->getWorkshopInfo($workshopCode);
+        return $result;
+    }
 }
