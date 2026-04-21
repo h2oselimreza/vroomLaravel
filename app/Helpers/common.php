@@ -241,3 +241,16 @@ if (!function_exists('get_uplozilla_name')) {
             : "";
     }
 }
+
+
+if (!function_exists('get_workshop_name')) {
+
+    function get_workshop_name($workshopCode)
+    {
+        $workshop = DB::table('workshops')
+            ->where('workshop_code', $workshopCode)
+            ->first();
+
+        return $workshop->title ?? "";
+    }
+}

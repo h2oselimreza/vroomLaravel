@@ -154,7 +154,7 @@
                                             Show Detail
                                         </button>
 
-                                        <a href="{{ url('client/Appointment/newAppointment?workshop=' . $workshop->workshop_code) }}"
+                                        <a href="{{ url('client/vehicle-maintenance/create-appointment?workshop=' . $workshop->workshop_code) }}"
                                         class="btn btn-sm bg-blue waves-effect">
                                             Set Appointment
                                         </a>
