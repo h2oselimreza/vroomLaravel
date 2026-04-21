@@ -336,3 +336,6 @@ table.dataTable .dt-column-header {
 div.dt-container .dt-search input {
     padding: 0px;
 }
+.collapse {
+    visibility: unset;
+  }

@@ -7,7 +7,6 @@
         $isActiveGroup = collect($group['modules'])->contains(fn($m) => str_starts_with(request()->path(), ltrim($m['module_url'], '/')));
     @endphp
 
-            {{-- Group Header --}}
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center {{ $isActiveGroup ? '' : 'collapsed' }}"
                    data-bs-toggle="collapse"

@@ -8,6 +8,7 @@ use App\Models\Admin\MasterData\ServiceVariant;
 use App\Services\TokenService;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class ServiceVariantController extends Controller
 {
@@ -32,69 +33,66 @@ class ServiceVariantController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function saveServiceVariant(Request $request, TokenService $tokenService) 
+    public function saveServiceVariant(Request $request, TokenService $tokenService)
     {
-        if (is_string($request->variants)) {
-            $request->merge([
-                'variants' => json_decode($request->variants, true)
-            ]);
-        }
-
         $request->validate([
             'serviceCode' => 'required|string',
-            'variantType' => 'required|string',
-            'variants'    => 'required|array',
+            'variantType'  => 'required|string',
+            'variants'     => 'required',
         ]);
-
+    
+        $variants = $request->variants;
+    
+        if (is_string($variants)) {
+            $variants = json_decode($variants, true) ?? [];
+        }
+    
+        if (!is_array($variants) || empty($variants)) {
+            return response('0');
+        }
+    
         try {
-            DB::beginTransaction();
-
+            FacadesDB::beginTransaction();
+    
             $serviceCode = $request->serviceCode;
             $variantType = $request->variantType;
-
+    
             if ($request->filled('deleteVariant')) {
-                $idsToDelete = explode(',', $request->deleteVariant);
-                ServiceVariant::whereIn('id', $idsToDelete)->delete();
-            }
-
-            // --- FIX LOGIC START ---
-            // We collapse the array into one single associative array if they are related,
-            // or iterate carefully. 
-            
-            // If your request is ALWAYS one variant split into two array items:
-            $inputData = [];
-            foreach ($request->variants as $v) {
-                if (is_array($v)) {
-                    $inputData = array_merge($inputData, $v);
+                $idsToDelete = array_filter(explode(',', $request->deleteVariant));
+                if (!empty($idsToDelete)) {
+                    ServiceVariant::whereIn('id', $idsToDelete)->delete();
                 }
             }
-
-            $name = $inputData['name'] ?? null;
-            $variantId = $inputData['id'] ?? null;
-
-            if ($name) {
+    
+            foreach ($variants as $variant) {
+                $name = trim($variant['name'] ?? '');
+                $variantId = (int) ($variant['id'] ?? 0);
+    
+                if ($name === '') {
+                    continue;
+                }
+    
                 $data = [
-                    'service'              => $serviceCode,
-                    'variant_type'         => $variantType,
-                    'service_variant_name' => $name,
+                    'service'               => $serviceCode,
+                    'variant_type'          => $variantType,
+                    'service_variant_name'   => $name,
                 ];
-
-                if ($variantId && $variantId > 0) {
+    
+                if ($variantId > 0) {
                     ServiceVariant::where('id', $variantId)->update($data);
                 } else {
-                    $prefix = "SRVCVR-";
+                    $prefix = 'SRVCVR-';
                     $data['variant_code'] = $prefix . $tokenService->getTokenByCode($prefix);
                     ServiceVariant::create($data);
                 }
             }
-            // --- FIX LOGIC END ---
-
-            DB::commit();
-            return back()->with('success', 'Successfully Saved!');
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+    
+            FacadesDB::commit();
+            return response('1');
+    
+        } catch (\Throwable $e) {
+            FacadesDB::rollBack();
+            return response('0');
         }
     }
 

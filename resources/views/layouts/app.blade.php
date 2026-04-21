@@ -55,10 +55,10 @@
                 }
             }
 
-            tinyMCE.init({
-                mode: "specific_textareas",
-                editor_selector: "tinyMcTextArea"
-            });
+            // tinyMCE.init({
+            //     mode: "specific_textareas",
+            //     editor_selector: "tinyMcTextArea"
+            // });
         </script>
 
         <!---exsisting code-->
@@ -87,7 +87,7 @@
                     <a class="navbar-brand d-lg-none" href="#">{{ env('COMPANY_NAME', 'Default Company') }}</a>
 
                     <!-- Navbar content -->
-                    <div class="collapse navbar-collapse" id="mainNavbar">
+                    <div class="navbar-collapse" id="mainNavbar">
 
                         <!-- Sidebar toggle -->
                         <div id="sideNavigation" class="d-flex align-items-center me-auto">
@@ -213,6 +213,8 @@
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js"></script> -->
          <!-- Quill JS -->
         <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
         <!-- Vite -->
         @vite(['resources/js/app.js'])

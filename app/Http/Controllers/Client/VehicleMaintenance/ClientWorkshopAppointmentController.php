@@ -35,6 +35,7 @@ class ClientWorkshopAppointmentController extends Controller
             $variantArr['workshopCode'] = $workshop;
             $distinctServices = $this->getDistinctService($variantArr);
             $serviceVariants = $this->getWorkshopService($variantArr, 1);
+            dd($distinctServices);
             $workshopDetails = $this->singleWorkshopDetails($workshop);
 
             if ($workshopDetails) {
@@ -143,16 +144,6 @@ class ClientWorkshopAppointmentController extends Controller
                 ->with('error', 'Appointment creation failed: ' . $e->getMessage());
         }
     }
-
-    // $arr['isActiveFlag'] = 1;
-    //     $arr['bulkFlag'] = 2; 
-    //     $arr['companyCode'] = auth()->user()?->customerEmployee?->company;
-    //     $vehicles = $vehicleRepository->getVehicleInfo($arr);
-    //     $variantArr['variantType'] = config('constants.HOME_SER');
-
-    //     $distinctServices = $homeServiceRepository->getDistinctService($variantArr);
-    //     $serviceVariants = $homeServiceRepository->getHomeService($variantArr, 1);
-    //     $companyInfo = $homeServiceRepository->getSingleCompanyInfo($arr['companyCode']);
     
 
     function getDistinctService($variantArr)
