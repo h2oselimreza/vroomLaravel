@@ -71,6 +71,7 @@ use App\Http\Controllers\Client\Vehicle\ClientVehicleController;
 use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\Workshop\ServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -224,6 +225,7 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('workshop-vehicle-type', WorkshopVehicleTypeController::class)->names('admin.workshop-vehicle-type');
     Route::resource('workshop-image', ImageController::class)->names('admin.workshop-image');
     Route::resource('workshop-attachment', AttachmentController::class)->names('admin.workshop-attachment');
+    Route::resource('workshop-service', ServiceController::class)->names('admin.workshop-service');
 
     /*===============Employee Module Route==================*/
     Route::resource('employees', EmployeeController::class)->names('admin.employee.module');

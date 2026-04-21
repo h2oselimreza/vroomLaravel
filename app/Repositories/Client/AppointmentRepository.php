@@ -267,4 +267,48 @@ class AppointmentRepository
             return 1;
         });
     }
+
+    public function getAssignWorkshopService(array $arr, $isActiveFlag = 1)
+    {
+        $workshopCode = $arr['workshopCode'] ?? null;
+        $variantType  = $arr['variantType'] ?? null;
+
+        if (!$workshopCode || !$variantType) {
+            return [];
+        }
+
+        // Subquery instead of temporary table
+        $workshopServiceSub = DB::table('workshop_service')
+            ->select('id', 'service_variant')
+            ->where('workshop', $workshopCode);
+
+        $query = DB::table('service_variants')
+            ->select([
+                'service_variants.*',
+                'services.service_name',
+                'service_categories.category_name',
+                'service_categories.parent_category_str',
+                'ws.service_variant as workshop_ser_var',
+                'ws.id as workshop_service_id',
+            ])
+            ->leftJoinSub($workshopServiceSub, 'ws', function ($join) {
+                $join->on('ws.service_variant', '=', 'service_variants.variant_code');
+            })
+            ->join('services', 'services.service_code', '=', 'service_variants.service')
+            ->join('service_categories', 'service_categories.category_code', '=', 'services.service_category');
+
+        // Active filter
+        if ($isActiveFlag == 1) {
+            $query->where('service_variants.is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('service_variants.is_active', 0);
+        }
+
+        $query->where('services.is_active', 1)
+            ->where('service_categories.is_active', 1)
+            ->where('service_variants.variant_type', $variantType)
+            ->orderBy('service_variants.service', 'ASC');
+
+        return $query->get()->toArray();
+    }
 }
