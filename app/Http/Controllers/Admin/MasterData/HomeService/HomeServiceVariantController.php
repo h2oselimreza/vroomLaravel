@@ -15,7 +15,8 @@ class HomeServiceVariantController extends Controller
      */
     public function index()
     {
-        $data = ServiceVariant::where('variant_type','HOME')->get();
+        //$data = ServiceVariant::where('variant_type','HOME')->get();
+        $data = ServiceVariant::with('serviceDetails.category')->where('variant_type','HOME')->get();
         return view('admin.master-data.home-service.service-variant.index',compact('data'));
     }
 

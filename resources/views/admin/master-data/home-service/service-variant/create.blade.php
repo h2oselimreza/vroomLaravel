@@ -188,7 +188,6 @@
         var serviceCode = $('#serviceCode' + serial).val();
         var serviceName = $('#serviceName' + serial).val();
         var category = $('#category' + serial).val();
-        //showLoader();
         $('#checkFirstVariant').val('2');
 
         $.ajax({
@@ -201,9 +200,7 @@
             url: "{{ url('admin/master-data/setServiceVariant') }}", // Laravel URL Helper
             success: function (result) {
                 $("#variantTable").find("tr:not(:first)").remove();
-                hideLoader();
-                
-                var jsonObj = jQuery.parseJSON(result);
+                var jsonObj = result;
 
                 for (var i = 0; i < jsonObj.variants.length; i++) {
                     var variantStr = "";
@@ -229,6 +226,7 @@
                     }
 
                     variantStr += "<td class='text-center'><span class='pointer' onclick='updateVariantModalShow(" + counter + ")'><i class='fa fa-pencil'></i></span> " + deleteSpan + " </td>";
+                    console.log(variantStr);
                     var newRow = $(document.createElement('tr')).attr("id", 'variantRow' + counter);
                     newRow.after().html(variantStr);
                     newRow.appendTo("#variantTable");
@@ -248,6 +246,9 @@
         $('#updateVariantModal').click();
         $('#variantNameUpdateModal').val($('#variantNameHidden' + serial).val());
         $('#variantSerial').val(serial);
+        const modalElement = document.getElementById('myModalVariantUpdate');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.show();
     }
 
     function setVariantValue() {
@@ -271,13 +272,19 @@
         $('#modalCloseUpdate').click();
         $('#checkFirstVariant').val('1');
         $('#addVariantDiv').show();
+        const modalElement = document.getElementById('myModalVariantUpdate');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.hide();
     }
 
     function addVariant() {
         $('#setVariantBtnDiv').hide();
         $('#setMoreVariantBtnDiv').show();
         $('#variantNameUpdateModal').val("");
-        $('#updateVariantModal').click();
+
+        const modalElement = document.getElementById('myModalVariantUpdate');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.show();
     }
 
     function setMoreVariantValue() {
@@ -287,7 +294,9 @@
         var variantStr = "";
 
         if (variantName === '') {
-            $('#modalCloseUpdate').click();
+            const modalElement = document.getElementById('myModalVariantUpdate');
+            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modalInstance.hide();
             return false;
         }
 
@@ -307,13 +316,18 @@
         variantStr += "<input type='hidden' id='variantAutoIdHidden" + counter + "' name='variantAutoIdHidden" + counter + "' value='0'>";
         variantStr += "<input type='hidden' id='variantNameHidden" + counter + "' name='variantNameHidden" + counter + "' value='" + variantName + "'>";
         variantStr += "<td class='text-center'><span class='pointer' onclick='updateVariantModalShow(" + counter + ")'><i class='fa fa-pencil'></i></span> " + deleteSpan + " </td>";
-        var newRow = $(document.createElement('tr')).attr("id", 'variantRow' + counter);
 
-        newRow.after().html(variantStr);
+        var newRow = $(document.createElement('tr')).attr("id", 'variantRow' + counter);
+        newRow.html(variantStr);
         newRow.appendTo("#variantTable");
+
         counter++;
         $('#totalVariant').val(counter);
-        $('#modalCloseUpdate').click();
+
+        // ✅ CLOSE MODAL PROPERLY
+        const modalElement = document.getElementById('myModalVariantUpdate');
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalInstance.hide();
     }
 
     function remvoveVariant(counter) {
@@ -329,36 +343,51 @@
     }
 
     function saveVariant() {
-        if (confirm('Are you sure ?')) {
-            var varaintNameArr = new Array();
-            var counter = $('#totalVariant').val();
-            for (var j = 1; j < counter; j++) {
-                var variantName = $('#variantNameHidden' + j).val();
-                if (typeof (variantName) !== 'undefined') {
-                    varaintNameArr.push(variantName);
+        if (!confirm('Are you sure ?')) {
+            return;
+        }
+
+        let variants = [];
+        let counter = parseInt($('#totalVariant').val() || 1, 10);
+
+        for (let j = 1; j < counter; j++) {
+            let variantName = $.trim($('#variantNameHidden' + j).val() || '');
+            let variantId = parseInt($('#variantAutoIdHidden' + j).val() || 0, 10);
+
+            if (variantName !== '') {
+                variants.push({
+                    id: variantId > 0 ? variantId : null,
+                    name: variantName
+                });
+            }
+        }
+
+        $.ajax({
+            type: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                variants: JSON.stringify(variants),
+                variantType: $('#variantType').val(),
+                serviceCode: $('#hiddenService').val(),
+                deleteVariant: $('#deleteVariant').val()
+            },
+            url: "{{ url('admin/master-data/appointment-variant-save') }}",
+            success: function (result) {
+                if (result == 1) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Service variant added successfully!'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Service variant is duplicate!'
+                    });
                 }
             }
-
-            //showLoader();
-            $.ajax({
-                type: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}", // Added CSRF Token
-                    variantNameJson: JSON.stringify(varaintNameArr), 
-                    variantType: $('#variantType').val(),
-                    serviceCode: $('#hiddenService').val()
-                },
-                url: "{{ url('admin/MasterData/checkDupSerVariant') }}", // Laravel URL Helper
-                success: function (result) {
-                    hideLoader();
-                    if(result === "1"){
-                        $("#saveVariantForm").submit();
-                    }else{
-                        sweetAlert('Service variant is duplicate...!');
-                    }
-                }
-            });
-        }
+        });
     }
 
 

@@ -45,7 +45,6 @@
                                 <th class="text-start">Category</th>
                                 <th class="text-start">Service Name</th>
                                 <th class="text-center">Status</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -54,34 +53,10 @@
                                 @foreach ($data as $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">{{ $value->category->category_name }}</td>
-                                        <td>{{ $value->service_name  }}</td>
+                                        <td>{{ $value?->serviceDetails?->service_name ?? null  }}</td>
+                                        <td class="text-center">{{ $value?->serviceDetails?->category?->category_name ?? null }}</td>
+                                        <td class="text-center">{{ $value->service_variant_name ?? null }}</td>
                                         <td class="text-center">{{ ($value->is_active) ? 'Active':'Inactive' }}</td>
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                                                    Action
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a href="{{ $value ? route('admin.modules.master-data.home-service-list.edit', $value->service_code ) : '#' }}" 
-                                                        class="d-block ps-3">
-                                                            <span class="ui-button-text">Update</span>
-                                                        </a>                                    
-                                                    </li>
-                                                    <li class="mt-2">
-                                                        <form action="{{ route('admin.modules.master-data.home-service-list.toggle', $value->service_code) }}" method="POST">
-                                                            @csrf
-                                                            <button type="submit" class="d-block ps-3 active_button">
-                                                                <span>
-                                                                    {{ $value->is_active ? 'Inactive' : 'Active' }}
-                                                                </span>
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
                                     </tr>
                                 @endforeach
                             @else

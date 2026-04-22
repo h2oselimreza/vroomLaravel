@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MasterData\ServiceListRequest;
 use App\Models\Admin\MasterData\Service;
 use App\Models\Admin\MasterData\ServiceCategory;
+use App\Models\Admin\MasterData\ServiceVariant;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class HomeServiceListController extends Controller
 
     public function getCostCategory($isActiveFlag = 1) 
     {
-        return \DB::table('service_categories')
+        return DB::table('service_categories')
             ->when($isActiveFlag == 1, fn($q) => $q->where('is_active', 1))
             ->when($isActiveFlag == 2, fn($q) => $q->where('is_active', 0))
             // ->when($this->customerType == 'indv_customer', 
@@ -65,6 +66,17 @@ class HomeServiceListController extends Controller
                 'is_active'           => 1,
             ]);
 
+            $prefix = "SRVCVR-";
+            $serviceVariantCode = $prefix . $tokenService->getTokenByCode($prefix);
+
+            ServiceVariant::create([
+                'variant_code' => $serviceVariantCode,
+                'service'  => $serviceCode,
+                'service_variant_name' => 'Default',
+                'variant_type' => 'HOME',
+                'default_variant' => 1,
+            ]);
+
             DB::commit();
 
             return redirect()
@@ -72,7 +84,6 @@ class HomeServiceListController extends Controller
                 ->with('success', __('Home service category created successfully!'));
 
         } catch (\Exception $e) {
-            dd($e->getMessage());
             DB::rollBack();
             Log::error("Creation Failed: " . $e->getMessage());
 
