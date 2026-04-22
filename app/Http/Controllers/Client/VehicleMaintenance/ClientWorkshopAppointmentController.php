@@ -241,5 +241,80 @@ class ClientWorkshopAppointmentController extends Controller
         return response()->json(2); // Not allowed
     }
 
+    public function show($appointmentNo, AppointmentRepository $appointmentRepository){
 
+
+        // ✅ Fetch appointment summary
+        $appointmentSummary = $appointmentRepository->getAppointmentSummary($appointmentNo, Auth::user()?->customerEmployee?->company);
+
+        if (!$appointmentSummary) {
+            return redirect()->route('client.vehicle-maintenance.workshop-service-list.index')
+                ->with('error', 'Appointment summary not found');
+        }
+
+        $appointmentedVehicles = $appointmentRepository->getAppoinmentedVehicle($appointmentNo);
+
+        $appointmentDetails = $appointmentRepository->getAppoinmentDetail($appointmentNo);
+
+        // ✅ Workshop related data
+        $workshop = $appointmentSummary->workshop;
+
+        $variantArr = [
+            'variantType' => config('constants.APPOINTMENT_SER'),
+            'workshopCode' => $workshop,
+        ];
+
+        // ⚠️ Replace these with proper Repository/Model if you have
+        $distinctServices = $appointmentRepository->getDistinctService($variantArr);
+
+        $serviceVariants = $appointmentRepository->getWorkshopService($variantArr, 1);
+
+        $workshopDetails = $appointmentRepository->singleWorkshopDetails($workshop);
+
+        return view('client.vehicle-maintenance.workshop-appointment.show', 
+        compact('appointmentNo','appointmentSummary','appointmentedVehicles','appointmentDetails','distinctServices','serviceVariants','workshopDetails'));
+    }
+
+    public function changeDateTimeSlot(Request $request)
+    {
+        $appointmentNo = trim($request->input('appointmentNo'));
+
+        $summaryArr = [
+            'date_1'         => trim($request->input('date1')),
+            'time_slot_1'    => trim($request->input('timeSlot1')),
+            'date_2'         => trim($request->input('date2')) ?: null,
+            'time_slot_2'    => trim($request->input('timeSlot2')) ?: null,
+            'updated_by'     => auth()->user()?->customerEmployee?->company,
+            'updated_type'   => config('constants.CLIENT'),
+            'updated_dt_tm'  =>  now(),
+        ];
+
+        // validation like your PHP logic
+        if (!empty($summaryArr['date_1']) && !empty($summaryArr['time_slot_1'])) {
+
+            $result = DB::table('appointment_summary')
+                ->where('appointment_no', $appointmentNo)
+                ->where('company', auth()->user()?->customerEmployee?->company)
+                ->first();
+
+            if (!$result) {
+                return redirect()->route('client.vehicle-maintenance.show-workshop-details',$appointmentNo)
+                ->with('error', 'Appointment summary result not found');
+            }
+
+            if ($result->status != config('constants.APPOINTMENT_PENDING')) {
+                $resultCode = 2;
+            } else {
+                DB::table('appointment_summary')
+                    ->where('appointment_no', $appointmentNo)
+                    ->where('company', auth()->user()?->customerEmployee?->company)
+                    ->update($summaryArr);
+
+                $resultCode = 1;
+            }
+
+            return redirect()->route('client.vehicle-maintenance.show-workshop-details',$appointmentNo)
+            ->with('success', 'Appointment summary updated successfull');
+        }
+    }
 }

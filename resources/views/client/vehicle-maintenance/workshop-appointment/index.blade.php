@@ -77,7 +77,7 @@
                                             <ul class="dropdown-menu pull-right">
                         
                                                 <li>
-                                                    <a href="{{ url('client/Appointment/showAppointment?appointmentNo=' . $appointmentList->appointment_no) }}">
+                                                    <a href="{{ url('client/vehicle-maintenance/show-workshop-details/'. $appointmentList->appointment_no) }}">
                                                         Show
                                                     </a>
                                                 </li>

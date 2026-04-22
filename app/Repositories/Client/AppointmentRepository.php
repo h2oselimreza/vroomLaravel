@@ -311,4 +311,57 @@ class AppointmentRepository
 
         return $query->get()->toArray();
     }
+
+    public function singleWorkshopDetails($workshopCode)
+    {
+        $result = DB::table('workshops')
+        ->join('divisions', 'divisions.id', '=', 'workshops.division')
+        ->join('districts', 'districts.id', '=', 'workshops.district')
+        ->join('upazilas', 'upazilas.id', '=', 'workshops.upozilla')
+        ->where('workshops.workshop_code', $workshopCode)
+        ->where('workshops.is_active', 1)
+        ->select(
+            'workshops.*',
+            'divisions.division_en_name',
+            'divisions.division_bn_name',
+            'districts.district_en_name',
+            'districts.district_bn_name',
+            'upazilas.upozilla_en_name',
+            'upazilas.upozilla_bn_name'
+        )
+        ->first();
+        return $result ?? 0;        
+    }
+
+    public function getAppointmentSummary($appointmentNo, $companyCode)
+    {
+        return DB::table('appointment_summary')
+            ->join('workshops', 'workshops.workshop_code', '=', 'appointment_summary.workshop')
+            ->where('appointment_summary.company', $companyCode)
+            ->where('appointment_summary.appointment_no', $appointmentNo)
+            ->select('appointment_summary.*', 'workshops.title as workshop_name')
+            ->first();
+    }
+
+    public function getAppoinmentedVehicle($appointmentNo)
+    {
+        return DB::table('appointment_detail')
+            ->join('vehicles', 'vehicles.vehicle_id', '=', 'appointment_detail.vehicle')
+            ->where('appointment_detail.appointment_no', $appointmentNo)
+            ->distinct()
+            ->select('appointment_detail.vehicle', 'vehicles.registration_no')
+            ->get()
+            ->toArray();
+    }
+
+
+    public function getAppoinmentDetail($appointmentNo)
+    {
+        return DB::table('appointment_detail')
+            ->join('service_variants', 'service_variants.variant_code', '=', 'appointment_detail.service_variant')
+            ->where('appointment_detail.appointment_no', $appointmentNo)
+            ->select('appointment_detail.*', 'service_variants.service_variant_name')
+            ->get()
+            ->toArray();
+    }
 }

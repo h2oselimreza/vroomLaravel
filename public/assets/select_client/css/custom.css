@@ -11,3 +11,15 @@
 .alert{
     padding: 6px 9px;
 }
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+.created-updated{
+    margin-top: 30px;
+}
+.text-vroom-orange{
+    color: #F79522;
+}

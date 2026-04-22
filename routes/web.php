@@ -324,6 +324,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle-maintenance/add-new-home-service', [SetClientHomeServiceController::class, 'addNewHomeService'])->name('client.vehicle-maintenance.add-new-home-service');
 
     Route::get('vehicle-maintenance/workshop-service-list', [ClientWorkshopAppointmentController::class, 'index'])->name('client.vehicle-maintenance.workshop-service-list.index');
+    Route::get('vehicle-maintenance/show-workshop-details/{appointment_no}', [ClientWorkshopAppointmentController::class, 'show'])->name('client.vehicle-maintenance.show-workshop-details');
+    Route::post('vehicle-maintenance/changeDateTimeSlot', [ClientWorkshopAppointmentController::class, 'changeDateTimeSlot'])->name('client.vehicle-maintenance.changeDateTimeSlot');
     Route::get('vehicle-maintenance/set-workshop-appointment', [SetClientWorkshopAppointmentController::class, 'setAppointment'])->name('client.vehicle-maintenance.set-workshop-appointment');
     Route::post('vehicle-maintenance/getWorkshopInfo', [ClientWorkshopAppointmentController::class, 'getWorkshopInfo'])->name('client.vehicle-maintenance.getWorkshopInfo');
     Route::get('vehicle-maintenance/create-appointment', [ClientWorkshopAppointmentController::class, 'createAppointment'])->name('client.vehicle-maintenance.createAppointment');
