@@ -82,7 +82,7 @@
                                                     </a>
                                                 </li>
                         
-                                                @if ($appointmentList->status == APPOINTMENT_PENDING)
+                                                @if ($appointmentList->status == config('constants.APPOINTMENT_PENDING'))
                                                     <li>
                                                         <a href="#"
                                                            onclick="removeAppointment('{{ $appointmentList->appointment_no }}')">

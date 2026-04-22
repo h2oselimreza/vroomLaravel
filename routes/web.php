@@ -327,6 +327,7 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::get('vehicle-maintenance/set-workshop-appointment', [SetClientWorkshopAppointmentController::class, 'setAppointment'])->name('client.vehicle-maintenance.set-workshop-appointment');
     Route::post('vehicle-maintenance/getWorkshopInfo', [ClientWorkshopAppointmentController::class, 'getWorkshopInfo'])->name('client.vehicle-maintenance.getWorkshopInfo');
     Route::get('vehicle-maintenance/create-appointment', [ClientWorkshopAppointmentController::class, 'createAppointment'])->name('client.vehicle-maintenance.createAppointment');
+    Route::post('vehicle-maintenance/add-new-appointment', [ClientWorkshopAppointmentController::class, 'addNewAppointment'])->name('client.vehicle-maintenance.addNewAppointment');
 
 });
 

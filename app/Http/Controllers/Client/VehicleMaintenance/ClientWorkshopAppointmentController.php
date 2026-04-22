@@ -35,7 +35,6 @@ class ClientWorkshopAppointmentController extends Controller
             $variantArr['workshopCode'] = $workshop;
             $distinctServices = $this->getDistinctService($variantArr);
             $serviceVariants = $this->getWorkshopService($variantArr, 1);
-            dd($distinctServices);
             $workshopDetails = $this->singleWorkshopDetails($workshop);
 
             if ($workshopDetails) {
@@ -74,11 +73,12 @@ class ClientWorkshopAppointmentController extends Controller
 
         // Required field check
         if (!$summaryArr['workshop'] || !$summaryArr['date_1'] || !$summaryArr['time_slot_1'] || !$vehicleCount) {
-            return redirect('client/Appointment/setAppoinment');
+            return redirect()->route('client.vehicle-maintenance.createAppointment')
+                ->with('error', 'Work shop or date_1 or time_slot_1 not found');
         }
 
         // Generate appointment number (Laravel-safe alternative)
-        $appoinmentNo = 'APPT' . now()->format('Ym') . strtoupper(Str::random(5));
+        $appoinmentNo = config('constants.APPOINTMENT_NO') . now()->format('Ym') . strtoupper(Str::random(5));
 
         $detailArr = [];
         $serviceVarCodeArr = [];
@@ -88,7 +88,8 @@ class ClientWorkshopAppointmentController extends Controller
             $vehicleId = $request->input('vehicleId' . $i);
 
             if (!$vehicleId) {
-                return redirect('client/Appointment/setAppoinment');
+                return redirect()->route('client.vehicle-maintenance.createAppointment')
+                ->with('error', 'Vehicle id not found');
             }
 
             $takenServiceVarCount = (int) $request->input('takenServiceVarCount' . $i, 0);
@@ -118,7 +119,7 @@ class ClientWorkshopAppointmentController extends Controller
         // 🧾 Final summary
         $summaryArr['appointment_no'] = $appoinmentNo;
         $summaryArr['company']        = auth()->user()?->customerEmployee?->company ?? null;
-        $summaryArr['status']         = 'PENDING';
+        $summaryArr['status']         = config('constants.APPOINTMENT_PENDING');
         $summaryArr['created_by']     = auth()->user()->user_id;
         $summaryArr['created_type']   = config('constants.CLIENT');
         $summaryArr['created_dt_tm']  = now();
@@ -134,7 +135,8 @@ class ClientWorkshopAppointmentController extends Controller
 
             DB::commit();
 
-            return redirect('client/Appointment/setAppoinment/' . $result);
+            return redirect()->route('client.vehicle-maintenance.set-workshop-appointment')
+                ->with('success', 'Appointment set successfully');
 
         } catch (\Exception $e) {
             DB::rollBack();

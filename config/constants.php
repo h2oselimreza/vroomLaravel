@@ -35,6 +35,7 @@ return [
     'USER_TYPE_ADMIN_EMP' => "admin_employee",
     'P_ADMIN' => "admin",
     'OTHER_IMAGE' => "other_image",
-    'APPOINTMENT_SER' => "APPOINMENT"
+    'APPOINTMENT_SER' => "APPOINMENT",
+    'APPOINTMENT_NO' => 'APP'
 
 ];

@@ -82,6 +82,20 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
+                {{-- Success Message --}}
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
+                    </div>
+                @endif
+                {{-- Validation Errors --}}
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('error') }}</strong>
+                    </div>
+                @endif
                 <button class="btn bg-blue btn-sm waves-effect" data-toggle="modal" data-target="#serviceModal" id="serviceModalShowBtn">Advanced Search</button>
 
                 <div class="row m-t-20">
@@ -424,12 +438,12 @@
                                             <div class="panel panel1 panel-default">
                                                 <div class="panel-heading custom-panel-heading" role="tab" id="headingOne">
                                                     <p class="panel-title custom-panel-title1 p-t-0 p-b-0">
-                                                        <a role="button" data-toggle="collapse" data-parent="#" href="#generalCollapseOne<?php echo $distinctService['service'] ?>" aria-expanded="true" aria-controls="generalCollapseOne<?php echo $distinctService['service'] ?>">
-                                                            <i class="fa fa-tags"></i> <?php echo $distinctService['service_name'] ?>
+                                                        <a role="button" data-toggle="collapse" data-parent="#" href="#generalCollapseOne{{$distinctService->service}}" aria-expanded="true" aria-controls="generalCollapseOne{{$distinctService->service}}">
+                                                            <i class="fa fa-tags"></i> <?php echo $distinctService->service_name ?>
                                                         </a>
                                                     </p>
                                                 </div>
-                                                <div id="generalCollapseOne<?php echo $distinctService['service'] ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                                <div id="generalCollapseOne{{$distinctService->service}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                                     <div class="panel-body">
                                                         <table class="table table-striped custom-table">
                                                             @php
@@ -438,17 +452,17 @@
                                                             @endphp
                                                             @foreach ($serviceVariants as $serviceVariant)
                                                         
-                                                                @if ($serviceVariant['service'] == $distinctService['service'])
+                                                                @if ($serviceVariant->service == $distinctService->service)
                                                         
                                                                     @php
-                                                                        $checked = in_array($serviceVariant['variant_code'], $searchVariantArr) ? 'checked' : '';
+                                                                        $checked = in_array($serviceVariant->variant_code, $searchVariantArr) ? 'checked' : '';
                                                                     @endphp
                                                         
                                                                     <tr>
                                                                         <td>{{ $serviceVarSerial }}</td>
                                                         
                                                                         <td class="td-left" style="width:80%">
-                                                                            {{ $serviceVariant['service_variant_name'] }}
+                                                                            {{ $serviceVariant->service_variant_name }}
                                                                         </td>
                                                         
                                                                         <td class="td-left">
@@ -468,11 +482,11 @@
                                                         
                                                                         <input type="hidden"
                                                                             name="serviceVariantCode{{ $serviceCount }}"
-                                                                            value="{{ $serviceVariant['variant_code'] }}">
+                                                                            value="{{ $serviceVariant->variant_code }}">
                                                         
                                                                         <input type="hidden"
                                                                             id="serviceVariantName{{ $serviceCount }}"
-                                                                            value="{{ $serviceVariant['service_variant_name'] }}">
+                                                                            value="{{ $serviceVariant->service_variant_name }}">
                                                                     </tr>
                                                         
                                                                     @php

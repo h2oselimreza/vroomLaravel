@@ -1,38 +1,15 @@
 @extends('client.layouts.app')
 
 @section('content')
-<style>
-    .form-group{margin-bottom: 0px; }
-    .panel-group{margin-bottom: 0px;}
 
-    .card .header{ padding: 10px;}
-    .table-td-info
-    {	
-        background:#FFFFFF;
-        font-size:11px;
-        font-family:Verdana, Geneva, sans-serif;    
-        font-weight:normal;
-        padding-left:7px;
-        padding-top:2px;
-        padding-bottom:2px;
-    }
-    .bottom-border{border-bottom: 1px solid #ddd;} 
-    .card .body .service-variant{
-        margin-bottom: 1px;
-        margin-top: 2px;
-    }
-    .card .body .service{
-        margin-bottom: 1px;
-    }
-</style>
 
 <div class="block-header">
     <h2>SET NEW WORKSHOP APPOINTMENT</h2><br>
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#"> Vehicle Maintenance</a></li>
-        <li><a href="client/Appointment/setAppoinment"> Set Workshop Appointment</a></li>
-        <li><a href="client/Appointment/newAppointment?workshop=<?php echo $workshop ?>"> Set New Workshop Appointment</a></li>
+        <li><a href="{{ route('client.vehicle-maintenance.set-workshop-appointment') }}"> Set Workshop Appointment</a></li>
+        <li><a href="{{route('client.vehicle-maintenance.createAppointment')}}?workshop=<?php echo $workshop ?>"> Set New Workshop Appointment</a></li>
     </div>
 </div>
 
@@ -40,7 +17,23 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
-                <form action="client/Appointment/addNewAppointment" method="post" id="appointmentForm">
+                {{-- Success Message --}}
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
+                    </div>
+                @endif
+                {{-- Validation Errors --}}
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('error') }}</strong>
+                    </div>
+                @endif
+
+                <form action="{{ route('client.vehicle-maintenance.addNewAppointment') }}" method="post" id="appointmentForm">
+                    @csrf
                     <div class="text-center font-17 m-b-10">
                         <b>Set Appointment to <span class="pointer text-vroom-orange" onclick="showDetails('<?php echo $workshop ?>')"><?php echo get_workshop_name($workshop) ?></span></b>
                     </div>
@@ -219,123 +212,85 @@
                                 <h4 class="modal-title" id="largeModalLabel">Service</h4>
                             </div>
                             <div class="modal-body">
-
                                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                            
                                     @php
+                                        $flag = 1;
                                         $serviceCount = 1;
-                                        $hasService = false;
                                     @endphp
                             
                                     @foreach ($distinctServices as $distinctService)
-                            
-                                        @php
-                                            $hasService = true;
-                                        @endphp
-                            
                                         <div class="panel panel1 panel-default">
-                            
-                                            {{-- HEADER --}}
-                                            <div class="panel-heading custom-panel-heading" role="tab">
-                            
+                                            <div class="panel-heading custom-panel-heading" role="tab" id="headingOne">
                                                 <p class="panel-title custom-panel-title1 p-t-0 p-b-0">
-                            
                                                     <a role="button"
                                                        data-toggle="collapse"
-                                                       data-parent="#accordion"
-                                                       href="#generalCollapseOne{{ $distinctService['service'] }}"
+                                                       data-parent="#"
+                                                       href="#generalCollapseOne{{ $distinctService->service }}"
                                                        aria-expanded="true"
-                                                       aria-controls="generalCollapseOne{{ $distinctService['service'] }}">
-                            
-                                                        <i class="fa fa-tags"></i>
-                                                        {{ $distinctService['service_name'] }}
-                            
+                                                       aria-controls="generalCollapseOne{{ $distinctService->service }}">
+                                                        <i class="fa fa-tags"></i> {{ $distinctService->service_name }}
                                                     </a>
-                            
                                                 </p>
-                            
                                             </div>
                             
-                                            {{-- BODY --}}
-                                            <div id="generalCollapseOne{{ $distinctService['service'] }}"
+                                            <div id="generalCollapseOne{{ $distinctService->service }}"
                                                  class="panel-collapse collapse"
-                                                 role="tabpanel">
-                            
+                                                 role="tabpanel"
+                                                 aria-labelledby="headingOne">
                                                 <div class="panel-body">
-                            
                                                     <table class="table table-striped custom-table">
-                            
                                                         @php
                                                             $serviceVarSerial = 1;
                                                         @endphp
                             
                                                         @foreach ($serviceVariants as $serviceVariant)
-                            
-                                                            @if ($serviceVariant['service'] == $distinctService['service'])
+                                                            @if ($serviceVariant->service == $distinctService->service)
+                                                                @php
+                                                                    $flag = 0;
+                                                                @endphp
                             
                                                                 <tr>
                                                                     <td>{{ $serviceVarSerial }}</td>
-                            
                                                                     <td class="td-left" style="width:80%">
-                                                                        {{ $serviceVariant['service_variant_name'] }}
+                                                                        {{ $serviceVariant->service_variant_name }}
                                                                     </td>
-                            
                                                                     <td class="td-left">
                                                                         <input type="checkbox"
                                                                                name="serviceVarCheckBox{{ $serviceCount }}"
                                                                                id="serviceVarCheckBox{{ $serviceCount }}"
                                                                                class="filled-in chk-col-blue">
-                                                                    </td>
-                            
-                                                                    <td>
                                                                         <label for="serviceVarCheckBox{{ $serviceCount }}"
                                                                                class="form-label"
-                                                                               style="margin-bottom: -12px">
-                                                                        </label>
+                                                                               style="margin-bottom: -12px"></label>
                                                                     </td>
                             
                                                                     <input type="hidden"
                                                                            id="serviceVariantCode{{ $serviceCount }}"
-                                                                           value="{{ $serviceVariant['variant_code'] }}">
+                                                                           value="{{ $serviceVariant->variant_code }}">
                             
                                                                     <input type="hidden"
                                                                            id="serviceVariantName{{ $serviceCount }}"
-                                                                           value="{{ $serviceVariant['service_variant_name'] }}">
+                                                                           value="{{ $serviceVariant->service_variant_name }}">
                             
+                                                                    @php
+                                                                        $serviceVarSerial++;
+                                                                        $serviceCount++;
+                                                                    @endphp
                                                                 </tr>
-                            
-                                                                @php
-                                                                    $serviceVarSerial++;
-                                                                    $serviceCount++;
-                                                                @endphp
-                            
                                                             @endif
-                            
                                                         @endforeach
-                            
                                                     </table>
-                            
                                                 </div>
-                            
                                             </div>
-                            
                                         </div>
-                            
                                     @endforeach
                             
-                                    <input type="hidden"
-                                           id="serviceVariantCount"
-                                           value="{{ $serviceCount }}">
-                            
+                                    <input type="hidden" id="serviceVariantCount" value="{{ $serviceCount }}">
                                 </div>
                             
-                                {{-- EMPTY STATE --}}
-                                @if (!$hasService)
-                                    <span class="text-danger">
-                                        No service has been added to this workshop
-                                    </span>
+                                @if ($flag)
+                                    <span class="text-danger">No service has been add to this workshop</span>
                                 @endif
-                            
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-link waves-effect" id="serviceModalSelectBtn" onclick="setAddService()">SELECT</button>
