@@ -127,50 +127,6 @@
                     </div>
                 </form>
                 <!-- ------------- ----------------- ----------------- -->
-
-                @php
-                    $distinctServices = [
-                        (object)[
-                            'service' => 'S1',
-                            'service_name' => 'Home Cleaning'
-                        ],
-                        (object)[
-                            'service' => 'S2',
-                            'service_name' => 'AC Service'
-                        ],
-                    ];
-
-                    $serviceVariants = [
-                        (object)[
-                            'service' => 'S1',
-                            'variant_code' => 'HC001',
-                            'service_variant_name' => 'Basic Cleaning',
-                            'unit_price' => 500,
-                            'unit_name' => 'Per Room'
-                        ],
-                        (object)[
-                            'service' => 'S1',
-                            'variant_code' => 'HC002',
-                            'service_variant_name' => 'Deep Cleaning',
-                            'unit_price' => 1200,
-                            'unit_name' => 'Per Room'
-                        ],
-                        (object)[
-                            'service' => 'S2',
-                            'variant_code' => 'AC001',
-                            'service_variant_name' => 'AC General Service',
-                            'unit_price' => 800,
-                            'unit_name' => 'Per Unit'
-                        ],
-                        (object)[
-                            'service' => 'S2',
-                            'variant_code' => 'AC002',
-                            'service_variant_name' => 'AC Deep Cleaning',
-                            'unit_price' => 1500,
-                            'unit_name' => 'Per Unit'
-                        ],
-                    ];
-                    @endphp
                 <!-- --------------- service modal -------------------- -->
                 <button class="btn btn-default btn-sm waves-effect hidden" data-toggle="modal" data-target="#serviceModal" id="serviceModalShowBtn">Add service</button>
                 <div class="modal fade" id="serviceModal" tabindex="-1" role="dialog">

@@ -185,8 +185,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#">Vehicle Maintenance</a></li>
-        <li><a href="client/GenHomeService/homeServiceList">Home Service List</a></li>
-        <li><a href="client/GenHomeService/showHomeService?appointmentNo=<?php echo $data['appointmentNo'] ?>">Home Service Details</a></li>
+        <li><a href="/client/vehicle-maintenance/home-service">Home Service List</a></li>
+        <li><a href="/client/vehicle-maintenance/show-home-service/{{ $data['appointmentNo'] }}">Home Service Details</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -454,12 +454,12 @@
                                         <div class="panel panel1 panel-default">
                                             <div class="panel-heading custom-panel-heading" role="tab" id="headingOne">
                                                 <p class="panel-title custom-panel-title1 p-t-0 p-b-0">
-                                                    <a role="button" data-toggle="collapse" data-parent="#" href="#generalCollapseOne<?php echo $distinctService['service'] ?>" aria-expanded="true" aria-controls="generalCollapseOne<?php echo $distinctService['service'] ?>">
-                                                        <i class="fa fa-tags"></i> <?php echo $distinctService['service_name'] ?>
+                                                    <a role="button" data-toggle="collapse" data-parent="#" href="#generalCollapseOne{{ $distinctService->service }}" aria-expanded="true" aria-controls="generalCollapseOne{{ $distinctService->service }}">
+                                                        <i class="fa fa-tags"></i> {{ $distinctService->service_name }}
                                                     </a>
                                                 </p>
                                             </div>
-                                            <div id="generalCollapseOne<?php echo $distinctService['service'] ?>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                            <div id="generalCollapseOne{{ $distinctService->service }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                                 <div class="panel-body">
                                                     <table class="table table-striped custom-table">
 
@@ -467,7 +467,7 @@
                                                             $serviceVarSerial = 1;
                                                         @endphp
                                                     
-                                                        @foreach ($serviceVariants as $serviceVariant)
+                                                        @foreach ($data['serviceVariants'] as $serviceVariant)
                                                     
                                                             @if ($serviceVariant->service == $distinctService->service)
                                                     

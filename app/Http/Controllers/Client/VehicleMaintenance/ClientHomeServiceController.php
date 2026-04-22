@@ -73,7 +73,7 @@ class ClientHomeServiceController extends Controller
             return view('client.vehicle-maintenance.home-service.edit-home-service', compact('data'));
         }
 
-        return view('client.genHomeService.showHomeServiceView', $data);
+        //return view('client.genHomeService.showHomeServiceView', $data);
     }
 
 

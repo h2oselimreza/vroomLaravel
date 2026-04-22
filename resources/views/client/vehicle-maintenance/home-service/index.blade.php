@@ -7,7 +7,7 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#"> Vehicle Maintenance</a></li>
-        <li><a href="client/HomeService/homeServiceList">Home Service List</a></li>
+        <li><a href="/client/vehicle-maintenance/home-service">Home Service List</a></li>
 
     </div>
 </div>
