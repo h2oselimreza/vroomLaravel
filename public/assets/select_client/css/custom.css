@@ -1,3 +1,10 @@
 .pointer {
     cursor: pointer;
 }
+.invalid-feedback{
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+    color: #F44336;
+}

@@ -448,7 +448,6 @@
                                                         <table class="table table-striped custom-table">
                                                             @php
                                                                 $serviceVarSerial = 1;
-                                                                $serviceCount = 1;
                                                             @endphp
                                                             @foreach ($serviceVariants as $serviceVariant)
                                                         
@@ -471,15 +470,12 @@
                                                                                 id="serviceVarCheckBox{{ $serviceCount }}"
                                                                                 class="filled-in chk-col-blue"
                                                                                 {{ $checked }}>
-                                                                        </td>
-                                                        
-                                                                        <td>
                                                                             <label for="serviceVarCheckBox{{ $serviceCount }}"
                                                                                 class="form-label"
                                                                                 style="margin-bottom: -12px">
                                                                             </label>
                                                                         </td>
-                                                        
+
                                                                         <input type="hidden"
                                                                             name="serviceVariantCode{{ $serviceCount }}"
                                                                             value="{{ $serviceVariant->variant_code }}">
@@ -504,7 +500,7 @@
                                             <?php
                                         }
                                         ?>
-                                        <input type="hidden" name="serviceVariantCount" value="<?php echo $serviceCount ?>" >
+                                        <input type="hidden" name="serviceVariantCount" value="{{$serviceCount}}" >
                                     </div>
                                 </div>
                                 <div class="modal-footer">

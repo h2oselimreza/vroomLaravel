@@ -49,7 +49,6 @@ class SetClientWorkshopAppointmentController extends Controller
                 $serviceVarArr[] = $request->input("serviceVariantCode$i");
             }
         }
-
         // ==============================
         // 5. Workshop List
         // ==============================
