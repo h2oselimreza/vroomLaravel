@@ -626,80 +626,93 @@
     }
 
     function showDetails(workshopCode) {
-        showLoader();
-        for (var i = 1; i < 8; i++) {
-            $('#day' + i).text('');
-            $('#time' + i).text('');
-        }
-        $('#vehicleServieDiv').html("");
-        $('#serviceDiv').html("");
-        $('#workshopModalShowBtn').click();
-        $.ajax({
-            type: 'POST',
-            data: {workshopCode: workshopCode},
-            url: '/client/Appointment/getWorkshopInfo',
-            success: function (result) {
-                hideLoader();
-                var resultObj = jQuery.parseJSON(result);
-                //----------  time schedule --------------//
-                var j = 1;
-                for (var i = 0; i < resultObj.timeShedule.length; i++) {
-                    $('#day' + j).text(resultObj.timeShedule[i].weekday_name);
-                    var startTime = getTimeAmPmFormat(resultObj.timeShedule[i].start_time);
-                    var endTime = getTimeAmPmFormat(resultObj.timeShedule[i].end_time);
+    showLoader();
 
-                    if (resultObj.timeShedule[i].weekend_status === "1") {
-                        $('#time' + j).html('<span class="text-danger"><b>WEEKEND</b></span>');
-                    } else {
-                        $('#time' + j).text(startTime + ' To ' + endTime);
-                    }
-                    j++;
-                }
-                //-------------  vehicle type ----------------------//
-
-                var serviceVehicleStr = "<ul>";
-                j = 1;
-                for (var i = 0; i < resultObj.serviceVehicle.length; i++) {
-                    serviceVehicleStr += '<li>' + resultObj.serviceVehicle[i].vehicle_type_name + "</li>";
-                    j++;
-                }
-                $('#vehicleServieDiv').html(serviceVehicleStr + "</ul>");
-
-
-                //------------------ service ---------------------//
-                var serviceStr = "";
-                for (var i = 0; i < resultObj.distinctService.length; i++) {
-                    var serviceCode = resultObj.distinctService[i].service;
-                    var serviceVariantStr = "";
-                    for (var j = 0; j < resultObj.allService.length; j++) {
-                        if (serviceCode === resultObj.allService[j].service) {
-                            serviceVariantStr += "<div class='col-md-6 col-sm-6 col-xs-12 font-12 service-variant'>\n\
-                                            <li>" + resultObj.allService[j].service_variant_name + "</li>\n\
-                                                </div>";
-                        }
-                    }
-                    serviceStr += "<div class='row'>\n\
-                                        <div class='col-md-12 col-sm-12 col-xs-12 font-12 service'>\n\
-                                            <div class='bottom-border'>\n\
-                                                <b>" + resultObj.distinctService[i].service_name + "</b>\n\
-                                            </div>\n\
-                                        </div>\n\
-                                    </div>\n\
-                                    <div class='row m-b-20'>" + serviceVariantStr + "</div>";
-                }
-                $('#serviceDiv').html(serviceStr);
-            }
-        });
-
-        $('#workshopTitle').text($('#title').val());
-        $('#workshopEmail').text($('#email').val());
-        $('#workshopWebsite').text($('#website').val());
-        $('#workshopAddress').text($('#address').val());
-        $('#workshopDivision').text($('#division').val());
-        $('#workshopDistrict').text($('#district').val());
-        $('#workshopUpozilla').text($('#uplozilla').val());
-
-
+    for (var i = 1; i < 8; i++) {
+        $('#day' + i).text('');
+        $('#time' + i).text('');
     }
+
+    $('#vehicleServieDiv').html("");
+    $('#serviceDiv').html("");
+    $('#workshopModalShowBtn').click();
+
+    $.ajax({
+        type: 'POST',
+        url: '/client/vehicle-maintenance/getWorkshopInfo',
+        data: {
+            workshopCode: workshopCode,
+            _token: "{{ csrf_token() }}"// ✅ IMPORTANT for Laravel
+        },
+        dataType: 'json', // ✅ no need for parseJSON
+        success: function (resultObj) {
+            hideLoader();
+
+            var j = 1;
+
+            // -------- time schedule --------
+            for (var i = 0; i < resultObj.timeShedule.length; i++) {
+                $('#day' + j).text(resultObj.timeShedule[i].weekday_name);
+
+                var startTime = getTimeAmPmFormat(resultObj.timeShedule[i].start_time);
+                var endTime = getTimeAmPmFormat(resultObj.timeShedule[i].end_time);
+
+                if (resultObj.timeShedule[i].weekend_status === "1") {
+                    $('#time' + j).html('<span class="text-danger"><b>WEEKEND</b></span>');
+                } else {
+                    $('#time' + j).text(startTime + ' To ' + endTime);
+                }
+                j++;
+            }
+
+            // -------- vehicle services --------
+            var serviceVehicleStr = "<ul>";
+            for (var i = 0; i < resultObj.serviceVehicle.length; i++) {
+                serviceVehicleStr += '<li>' + resultObj.serviceVehicle[i].vehicle_type_name + "</li>";
+            }
+            $('#vehicleServieDiv').html(serviceVehicleStr + "</ul>");
+
+            // -------- services --------
+            var serviceStr = "";
+
+            for (var i = 0; i < resultObj.distinctService.length; i++) {
+                var serviceCode = resultObj.distinctService[i].service;
+                var serviceVariantStr = "";
+
+                for (var j = 0; j < resultObj.allService.length; j++) {
+                    if (serviceCode === resultObj.allService[j].service) {
+                        serviceVariantStr += "<div class='col-md-6 col-sm-6 col-xs-12 font-12 service-variant'>" +
+                            "<li>" + resultObj.allService[j].service_variant_name + "</li>" +
+                            "</div>";
+                    }
+                }
+
+                serviceStr += "<div class='row'>" +
+                    "<div class='col-md-12 col-sm-12 col-xs-12 font-12 service'>" +
+                    "<div class='bottom-border'>" +
+                    "<b>" + resultObj.distinctService[i].service_name + "</b>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='row m-b-20'>" + serviceVariantStr + "</div>";
+            }
+
+            $('#serviceDiv').html(serviceStr);
+        },
+        error: function () {
+            hideLoader();
+            alert('Something went wrong!');
+        }
+    });
+
+    // -------- static data --------
+    $('#workshopTitle').text($('#title').val());
+    $('#workshopEmail').text($('#email').val());
+    $('#workshopWebsite').text($('#website').val());
+    $('#workshopAddress').text($('#address').val());
+    $('#workshopDivision').text($('#division').val());
+    $('#workshopDistrict').text($('#district').val());
+    $('#workshopUpozilla').text($('#uplozilla').val());
+}
 </script>
 @endpush

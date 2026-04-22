@@ -37,7 +37,6 @@ class ClientWorkshopAppointmentController extends Controller
             $distinctServices = $this->getDistinctService($variantArr);
             $serviceVariants = $this->getWorkshopService($variantArr, 1);
             $workshopDetails = $this->singleWorkshopDetails($workshop);
-
             if ($workshopDetails) {
                 $workshop = $workshop;
                 return view('client.vehicle-maintenance.workshop-appointment.create',compact('workshop','vehicles','distinctServices','serviceVariants','workshopDetails'));

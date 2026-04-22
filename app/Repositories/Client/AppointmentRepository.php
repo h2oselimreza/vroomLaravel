@@ -53,31 +53,38 @@ class AppointmentRepository
     }
 
 
-    public function getWorkshopService($arr, $isActiveFlag = 1)
+    public function getWorkshopService(array $arr, $isActiveFlag = 1): array
     {
-        $query = DB::table('service_variants')
-            ->select(
-                'service_variants.*',
-                'services.service_name',
-                'service_categories.category_name',
-                'service_categories.parent_category_str'
-            )
+        $query = DB::table('workshop_service')
+            ->join('service_variants', 'service_variants.variant_code', '=', 'workshop_service.service_variant')
             ->join('services', 'services.service_code', '=', 'service_variants.service')
-            ->join('service_categories', 'service_categories.category_code', '=', 'services.service_category')
-            ->where('service_variants.variant_type', $arr['variantType'])
-            ->where('services.is_active', 1)
-            ->where('service_categories.is_active', 1);
+            ->select([
+                'workshop_service.workshop',
+                DB::raw('workshop_service.service_variant as variant_code'),
+                'service_variants.service_variant_name',
+                'service_variants.variant_type',
+                'service_variants.default_variant',
+                'service_variants.service',
+                'services.service_name',
+            ])
+            ->orderBy('service_variants.service', 'ASC');
 
-        if ($isActiveFlag == 1) {
-            $query->where('service_variants.is_active', 1);
-        } elseif ($isActiveFlag == 2) {
-            $query->where('service_variants.is_active', 0);
+        // Conditional filters (prevents undefined index issues)
+        if (!empty($arr['workshopCode'] ?? null)) {
+            $query->where('workshop_service.workshop', $arr['workshopCode']);
         }
 
-        return $query
-            ->orderBy('service_variants.service', 'ASC')
-            ->get()
-            ->toArray();
+        if (!empty($arr['variantType'] ?? null)) {
+            $query->where('service_variants.variant_type', $arr['variantType']);
+        }
+
+        // Active flags (kept same logic, but flexible)
+        if ($isActiveFlag !== null) {
+            $query->where('service_variants.is_active', $isActiveFlag)
+                ->where('services.is_active', $isActiveFlag);
+        }
+
+        return $query->get()->toArray(); // same as CI result_array()
     }
 
     public function getWorkshopList($searchArr, $serviceVarArr)
