@@ -34,7 +34,7 @@ class ServiceListController extends Controller
 
     public function getCostCategory($isActiveFlag = 1) 
     {
-        return \DB::table('service_categories')
+        return DB::table('service_categories')
             ->when($isActiveFlag == 1, fn($q) => $q->where('is_active', 1))
             ->when($isActiveFlag == 2, fn($q) => $q->where('is_active', 0))
             // ->when($this->customerType == 'indv_customer', 

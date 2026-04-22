@@ -59,14 +59,14 @@
                                 <tr>
                                     @php 
                                         $serial = $loop->iteration; 
-                                        $category = $service->category_name;
+                                        $category = $service->category->category_name;
                                     @endphp
                                     <td class='td-center'>{{ $serial }}</td>
                                     <td>{{ $service->category_name }}</td>
                                     <td>{{ $service->service_name }}</td>
                                     <td class='td-center'>
                                         <button class='btn btn-primary btn-circle-vairant' onclick="setServiceVariant('{{ $serial }}')">
-                                            <i class='glyphicon glyphicon-chevron-right'></i>
+                                            <i class="fa fa-chevron-right"></i>
                                         </button>
                                         <input type="hidden" id="serviceCode{{ $serial }}" value="{{ $service->service_code }}">
                                         <input type="hidden" id="serviceName{{ $serial }}" value="{{ $service->service_name }}">
@@ -83,26 +83,27 @@
 
         <div class="col-sm-12 col-md-6 col-xs-12">
             <div class="panel panel-default"> 
-                <div class="row mb-3">
-                    <div class="text-center"><h4><b>Variants</b></h4></div><br>
-                    <div class="col-sm-12 col-md-6 col-xs-12">
-                        <div class="form-group">
-                            <label class="form-label">Service Name</label>
-                            <input type="text" class="form-control" id="service" disabled>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-xs-12">
-                        <div class="form-group">
-                            <label class="form-label">Category</label>
-                            <input type="text" class="form-control" id="category" disabled>
-                        </div>
-                    </div>
-                </div>
+                <div class="row mb-3 g-3">
 
+                    <div class="col-12 text-center">
+                        <h4 class="mb-0"><b>Variants</b></h4>
+                    </div>
+                
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Service Name</label>
+                        <input type="text" class="form-control" id="service" disabled>
+                    </div>
+                
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category" disabled>
+                    </div>
+                
+                </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-xs-12">
                         {{-- Laravel requires @csrf for POST forms --}}
-                        <form id="saveVariantForm" action="{{ url('admin/MasterData/saveServiceVariant') }}" method="post"> 
+                        <form id="saveVariantForm"> 
                             @csrf
                             <table class="table table-bordered table-hover custom-table" id="variantTable">
                                 <tr class="bg-info">
@@ -119,29 +120,28 @@
                             <input type="hidden" id="contenCheckUpdateDtTm" name="contenCheckUpdateDtTm"> 
                             <input type="hidden" id="deleteVariant" name="deleteVariant" value=""> 
                             {{-- Assuming APPOINTMENT_SER is a constant or config --}}
-                            <input type="hidden" id="variantType" name="variantType" value="{{ defined('APPOINTMENT_SER') ? APPOINTMENT_SER : '' }}">
+                            <input type="hidden" id="variantType" name="variantType" value="HOME">
                         </form>
 
                         <span id="addVariantDiv" style="display:none">
-                            <button class="btn btn-primary" onclick="addVariant()">Add more variant</button>
-                            <button class="btn btn-success" onclick="saveVariant()">Save Variant</button>
+                            <button class="btn btn-primary save_button" onclick="addVariant()">Add more variant</button>
+                            <button class="btn btn-success save_button" onclick="saveVariant()">Save Variant</button>
                         </span>
                         
                         <input type="hidden" id="checkFirstVariant" value="2">
 
                         <a id="updateVariantModal" data-toggle="modal" data-target="#myModalVariantUpdate"></a>
-                        <div class="modal fade" id="myModalVariantUpdate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                            <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal fade" id="myModalVariantUpdate" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="close" id="modalCloseUpdate" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel">Variant Information</h4>
+                                        <h5 class="modal-title" id="variantModalLabel">Variant Information</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label>Variant</label><span class="custom-text-danger"> *</span>
+                                                <div class="form-group mb-3"> <label class="form-label">Variant</label><span class="text-danger"> *</span>
                                                     <input type="text" id="variantNameUpdateModal" class="form-control">
                                                 </div>
                                             </div> 
@@ -149,13 +149,16 @@
                                     </div>
                                     <div class="modal-footer">
                                         <input type="hidden" id="variantSerial">
-                                        <span id="setVariantBtnDiv">
-                                            <button class="btn btn-primary" onclick="setVariantValue()"> OK </button>
-                                        </span>
-                                        <span id="setMoreVariantBtnDiv">
-                                            <button class="btn btn-primary" onclick="setMoreVariantValue()"> OK </button>
-                                        </span>
-                                        <button class="btn btn-danger" type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
+                                        
+                                        <div id="setVariantBtnDiv">
+                                            <button type="button" class="btn btn-primary save_button" onclick="setVariantValue()"> OK </button>
+                                        </div>
+                                        
+                                        <div id="setMoreVariantBtnDiv">
+                                            <button type="button" class="btn btn-primary save_button" onclick="setMoreVariantValue()"> OK </button>
+                                        </div>
+                                        
+                                        <button type="button" class="btn btn-danger save_button" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -197,7 +200,7 @@
                 serviceCode: serviceCode, 
                 variantType: $('#variantType').val()
             },
-            url: "{{ url('admin/master-data/setServiceVariant') }}", // Laravel URL Helper
+            url: "{{ url('admin/master-data/home-setServiceVariant') }}", // Laravel URL Helper
             success: function (result) {
                 $("#variantTable").find("tr:not(:first)").remove();
                 var jsonObj = result;
@@ -371,7 +374,7 @@
                 serviceCode: $('#hiddenService').val(),
                 deleteVariant: $('#deleteVariant').val()
             },
-            url: "{{ url('admin/master-data/appointment-variant-save') }}",
+            url: "{{ url('admin/master-data/home-variant-save') }}",
             success: function (result) {
                 if (result == 1) {
                     Swal.fire({

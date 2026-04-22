@@ -157,6 +157,7 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('master-data/home-service-list/{code}', [HomeServiceListController::class, 'toggle'])->name('admin.modules.master-data.home-service-list.toggle');
     Route::resource('master-data/home-service-variant', HomeServiceVariantController::class)->names('admin.modules.master-data.home-service-variant');
     Route::post('master-data/home-setServiceVariant', [HomeServiceVariantController::class, 'setServiceVariant'])->name('admin.modules.master-data.home-setServiceVariant');
+    Route::post('master-data/home-variant-save', [HomeServiceVariantController::class, 'saveServiceVariant'])->name('admin.modules.master-data.home-variant-save');
 
     /*===============MasterData Route==================*/
     Route::resource('master-data/member-ship-card', MembershipCardController::class)->names('admin.module.master-data.member-ship-card');
