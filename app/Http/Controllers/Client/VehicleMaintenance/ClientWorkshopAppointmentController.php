@@ -7,6 +7,7 @@ use App\Repositories\Client\AppointmentRepository;
 use App\Repositories\Client\HomeServiceRepository;
 use App\Repositories\Client\VehicleRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Pest\Support\Str;
 
@@ -205,4 +206,40 @@ class ClientWorkshopAppointmentController extends Controller
             ->where('workshops.is_active', 1)
             ->first();
     }
+
+    public function destory($appointmentNo)
+    {
+
+        $company = Auth::user()?->customerEmployee?->company ?? null;
+
+        // Find appointment
+        $appointment = DB::table('appointment_summary')
+            ->where('appointment_no', $appointmentNo)
+            ->where('company', $company)
+            ->first();
+
+        if (!$appointment) {
+            return response()->json(2); // Not found
+        }
+
+        // Only allow delete if pending
+        if ($appointment->status == config('constants.APPOINTMENT_PENDING')) {
+
+            DB::transaction(function () use ($appointmentNo) {
+                DB::table('appointment_summary')
+                    ->where('appointment_no', $appointmentNo)
+                    ->delete();
+
+                DB::table('appointment_detail')
+                    ->where('appointment_no', $appointmentNo)
+                    ->delete();
+            });
+
+            return response()->json(1); // Deleted
+        }
+
+        return response()->json(2); // Not allowed
+    }
+
+
 }

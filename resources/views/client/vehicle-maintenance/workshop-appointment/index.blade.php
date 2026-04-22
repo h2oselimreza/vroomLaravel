@@ -124,12 +124,15 @@
         }, function () {
             showLoader();
             $.ajax({
-                url: "client/Appointment/removeAppointment?appointmentNo=" + appointmentNo,
-                type: "DELETE"
+                url: "/client/vehicle-maintenance/delete-appointment-service/" + appointmentNo,
+                type: "DELETE",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                }
             })
                     .done(function (data) {
                         hideLoader();
-                        if (data === '1') {
+                        if (data == 1) {
                             swal({
                                 title: "Remove Successfully",
                                 text: "This Appointment is removed now",
@@ -138,10 +141,10 @@
                                 confirmButtonText: "Ok",
                                 confirmButtonColor: "#A5DC86"
                             }, function () {
-                                window.location.href = "client/Appointment/appointmentList";
+                                window.location.href = "/client/vehicle-maintenance/workshop-service-list";
                             });
                         } else if (data === '2') {
-                            window.location.href = "client/Appointment/appointmentList";
+                            window.location.href = "/client/vehicle-maintenance/workshop-service-list";
                         }
                     })
                     .error(function (data) {
