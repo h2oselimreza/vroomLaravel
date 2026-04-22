@@ -133,7 +133,7 @@ class ServiceVariantController extends Controller
 
             $serviceCode = $request->serviceCode;
             $variantType = $request->variantType;
-            $result = DB::table('service_variants')
+            $result = FacadesDB::table('service_variants')
                 ->where('service', $serviceCode)
                 ->where('variant_type', $variantType)
                 ->where('is_active', 1)

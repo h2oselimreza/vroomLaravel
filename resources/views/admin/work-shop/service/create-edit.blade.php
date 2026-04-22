@@ -237,7 +237,7 @@
             $('#removeServiceVarIdStr').val(removeArr.join());
             $('#serviceForm').submit();
         } else {
-            hideLoader();
+            //hideLoader();
             sweetAlert('Please select at least one service...!');
         }
     }

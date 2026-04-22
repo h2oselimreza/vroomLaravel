@@ -30,7 +30,6 @@ class ServiceController extends Controller
         $workshopCode = $request->input('workshopCode');
         $count = (int) $request->input('serviceVariantCount');
         $removeIds = $request->input('removeServiceVarIdStr');
-    
         if (!$workshopCode) {
             return back()->with('error', 'Invalid workshop code');
         }
