@@ -6,15 +6,15 @@ use App\Models\Admin\Workshop\WorkshopFile;
 use App\Models\Admin\Workshop\WorkshopVehicleType;
 use App\Models\Client\AppointmentSummary;
 use App\Models\Client\WorkshopTimeSchedule;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AppointmentRepository
 {
 
-   
-    public function getAppointmentList($arr)
+    public function getAppointmentList(array $arr)
     {
-        $query = AppointmentSummary::query()
+        return DB::table('appointment_summary')
             ->select(
                 'appointment_summary.*',
                 'workshops.title as workshop_name',
@@ -22,21 +22,19 @@ class AppointmentRepository
                 'corporate_companies.company_type'
             )
             ->join('workshops', 'workshops.workshop_code', '=', 'appointment_summary.workshop')
-            ->join('corporate_companies', 'corporate_companies.company_code', '=', 'appointment_summary.company');
+            ->join('corporate_companies', 'corporate_companies.company_code', '=', 'appointment_summary.company')
+            
+            ->when(!empty($arr['companyCode']), function ($query) use ($arr) {
+                $query->where('appointment_summary.company', $arr['companyCode']);
+            })
 
-        // ✅ company filter
-        if (!empty($arr['companyCode'])) {
-            $query->where('appointment_summary.company', $arr['companyCode']);
-        }
+            ->when(isset($arr['status']) && $arr['status'] != config('constants.APPOINTMENT_ALL'), function ($query) use ($arr) {
+                $query->where('appointment_summary.status', $arr['status']);
+            })
 
-        // ✅ status filter
-        if (!empty($arr['status']) && $arr['status'] != config('constants.APPOINTMENT_ALL')) {
-            $query->where('appointment_summary.status', $arr['status']);
-        }
-
-        return $query
-            ->orderBy('appointment_summary.created_dt_tm', 'DESC')
-            ->get();
+            ->orderByDesc('appointment_summary.created_dt_tm')
+            ->get()
+            ->toArray();
     }
 
     public function getDistinctService(array $variantArr)
@@ -370,5 +368,81 @@ class AppointmentRepository
             ->select('appointment_detail.*', 'service_variants.service_variant_name')
             ->get()
             ->toArray();
+    }
+
+    public function appointmentChangeStatus(string $appointmentNo, string $status): int
+    {
+        $appointment = DB::table('appointment_summary')
+            ->where('appointment_no', $appointmentNo)
+            ->first();
+
+        if (!$appointment) {
+            return 2;
+        }
+
+        $dbStatus = $appointment->status;
+
+        if ($status == config('constants.APPOINTMENT_PROCCESSING')) {
+            if ($dbStatus != config('constants.APPOINTMENT_PENDING')) {
+                return 2;
+            }
+        }
+
+        if ($status == config('constants.APPOINTMENT_COMPLETE')) {
+            if ($dbStatus != config('constants.APPOINTMENT_ACCEPT')) {
+                return 2;
+            }
+        }
+        
+        if ($status == config('constants.APPOINTMENT_ACCEPT')) {
+            if ($dbStatus != config('constants.APPOINTMENT_PROCCESSING')) {
+                return 2;
+            }
+
+            if ($appointment->final_date === null || $appointment->appointment_time === null) {
+                return 3;
+            }
+        }
+
+        DB::table('appointment_summary')
+            ->where('appointment_no', $appointmentNo)
+            ->update([
+                'status'       => $status,
+                'updated_type' => config('constants.P_ADMIN'),
+            ]);
+
+        return 1;
+    }
+
+    public function setConfirmDateTime($appointmentNo, $confirmDate, $confirmTime): int
+    {
+        // Fetch appointment
+        $appointment = DB::table('appointment_summary')
+            ->where('appointment_no', $appointmentNo)
+            ->first();
+
+        // Not found
+        if (!$appointment) {
+            return 2;
+        }
+
+        // Status validation (must be processing)
+        if ($appointment->status != config('constants.APPOINTMENT_PROCCESSING')) {
+            return 2;
+        }
+
+        // Update data
+        $data = [
+            'final_date'       => $confirmDate,
+            'appointment_time' => $confirmTime,
+            'updated_type'     => config('constants.P_ADMIN'),
+        ];
+
+        // Update query
+        DB::table('appointment_summary')
+            ->where('appointment_no', $appointmentNo)
+            ->update($data);
+
+        return 1;
     }
 }

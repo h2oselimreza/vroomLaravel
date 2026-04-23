@@ -254,3 +254,30 @@ if (!function_exists('get_workshop_name')) {
         return $workshop->title ?? "";
     }
 }
+
+if (!function_exists('get_account_type_name')) {
+    function get_account_type_name($accType): string
+    {
+        return match ($accType) {
+            config('constants.CORPORATE_CUST')   => 'Corporate',
+            config('constants.INDIVIDUAL_CUST')  => 'Individual',
+            'all'            => 'All',
+            default          => '',
+        };
+    }
+}
+
+if (!function_exists('get_company_name')) {
+    function get_company_name($companyCode): string
+    {
+        if (!$companyCode) {
+            return '';
+        }
+
+        $company = DB::table('corporate_companies')
+            ->where('company_code', $companyCode)
+            ->value('title');
+
+        return $company ?? '';
+    }
+}

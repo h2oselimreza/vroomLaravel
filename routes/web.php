@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AnniversaryOrBirthdayCardController;
+use App\Http\Controllers\Admin\Appointment\AppointmentController;
 use App\Http\Controllers\Admin\BlockController;
 use App\Http\Controllers\Admin\BlockRoadController;
 use App\Http\Controllers\Admin\Corporate_customer\CompanyAttachmentController;
@@ -277,6 +278,12 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::get('member-id-card', [MemberIdCardController::class,'index'])->name('member.id.card.index');
     Route::get('member-id-card-data', [MemberIdCardController::class, 'getMemberIdCardData'])->name('admin.memberIdCard.data.index');
     Route::post('print-member-id-card', [MemberIdCardController::class, 'PrintMemberIdCard'])->name('print.member.id.card');
+
+    /*===============Appointment Route==================*/
+    Route::resource('/appointment/appointment-list', AppointmentController::class)->names('client.appointment.module');
+    Route::get('appointment/appointment-list/{appointmentNo}/{companyCode}',[AppointmentController::class, 'show'])->name('client.appointment.module.details');
+    Route::get('appointment/appointment-change-status',[AppointmentController::class, 'appointmentChangeStatus'])->name('client.appointment.module.appointment-change-status');
+    Route::post('appointment/appointment-date-update',[AppointmentController::class, 'setConfirmDateTime'])->name('client.appointment.module.appointment-date-update');
 
 });
 

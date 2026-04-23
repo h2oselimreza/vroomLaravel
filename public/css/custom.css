@@ -339,3 +339,13 @@ div.dt-container .dt-search input {
 .collapse {
     visibility: unset;
   }
+.table-responsive .dropdown-menu {
+    transform: none !important;
+}
+.vehicleServicelist{
+    margin-left: 14px;
+    line-height: 24px;
+}
+.text-dark-blue{
+    color: #428bca
+}
