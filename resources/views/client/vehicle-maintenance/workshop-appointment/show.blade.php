@@ -414,7 +414,7 @@
                 var startTime = getTimeAmPmFormat(resultObj.timeShedule[i].start_time);
                 var endTime = getTimeAmPmFormat(resultObj.timeShedule[i].end_time);
 
-                if (resultObj.timeShedule[i].weekend_status === "1") {
+                if (resultObj.timeShedule[i].weekend_status == 1) {
                     $('#time' + j).html('<span class="text-danger"><b>WEEKEND</b></span>');
                 } else {
                     $('#time' + j).text(startTime + ' To ' + endTime);
