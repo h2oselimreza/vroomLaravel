@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\HomeService\HomeServiceController as HomeServiceHomeServiceController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceCategoryController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceController;
@@ -285,6 +286,11 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::get('appointment/appointment-change-status',[AppointmentController::class, 'appointmentChangeStatus'])->name('client.appointment.module.appointment-change-status');
     Route::post('appointment/appointment-date-update',[AppointmentController::class, 'setConfirmDateTime'])->name('client.appointment.module.appointment-date-update');
 
+    /*===============Home service Route==================*/
+    Route::resource('home/home-service-list', HomeServiceHomeServiceController::class)->names('admin.home-service.module');
+    Route::get('home/home-service-list/{appointmentNo}/{companyCode}',[HomeServiceHomeServiceController::class, 'show'])->name('admin.home-service.details');
+    Route::post('home/home-service-process',[HomeServiceHomeServiceController::class, 'proccessHomeService'])->name('admin.home-service.proccessHomeService');
+    Route::post('home/update-home-service',[HomeServiceHomeServiceController::class, 'updateHomeService'])->name('admin.update-home-service');
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {

@@ -349,3 +349,15 @@ div.dt-container .dt-search input {
 .text-dark-blue{
     color: #428bca
 }
+.table-td-info td {
+    font-size: 12px;
+}
+#serviceTableDiv .bg-info th{
+    background-color: #d9edf7;
+}
+.swal-footer{
+    text-align: center;
+}
+.accordion-button{
+    padding: 11px;
+}

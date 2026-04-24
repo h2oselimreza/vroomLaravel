@@ -36,6 +36,9 @@ return [
     'P_ADMIN' => "admin",
     'OTHER_IMAGE' => "other_image",
     'APPOINTMENT_SER' => "APPOINMENT",
-    'APPOINTMENT_NO' => 'APP'
+    'APPOINTMENT_NO' => 'APP',
+
+    'APPOINTMENT_START' => '7',
+    'APPOINTMENT_CASH_COLLECT' => '8',
 
 ];
