@@ -6,33 +6,49 @@ use App\Models\Admin\MasterData\ServiceVariant;
 use App\Models\Client\HomeServiceAppDetail;
 use App\Models\Client\HomeServiceAppSummaryGen;
 use App\Models\CorporateCompany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeServiceRepository
 {
-    public function getHomeServiceList($arr)
+    public function getHomeServiceList(array $arr)
     {
-        return DB::table('home_service_app_summary_gen as hs')
+        $query = DB::table('home_service_app_summary_gen as hs')
             ->select(
                 'hs.*',
                 'cc.title as company_name',
-                'cc.company_type'
+                'cc.company_type',
+                'e.employee_name as assigned_employee_name',
+                'e.primary_mobile as assigned_employee_mobile'
             )
             ->join('corporate_companies as cc', 'cc.company_code', '=', 'hs.company')
+            ->leftJoin('employee as e', 'e.employee_id', '=', 'hs.assign_emp');
 
-            // company filter
-            ->when(!empty($arr['companyCode']), function ($query) use ($arr) {
-                $query->where('hs.company', $arr['companyCode']);
-            })
+        // Filter by company
+        if (!empty($arr['companyCode'])) {
+            $query->where('hs.company', $arr['companyCode']);
+        }
 
-            // status filter
-            ->when($arr['status'] != config('constants.APPOINTMENT_ALL'), function ($query) use ($arr) {
-                $query->where('hs.status', $arr['status']);
-            })
+        // Filter by status
+        if (isset($arr['status']) && $arr['status'] != config('constants.APPOINTMENT_ALL')) {
+            $query->where('hs.status', $arr['status']);
+        }
 
-            ->orderBy('hs.created_dt_tm', 'DESC')
-            ->get()
-            ->toArray();
+        // Assign employee filter
+        if (isset($arr['assignEmpFlag'])) {
+            if ($arr['assignEmpFlag'] == 2) {
+                // Not assigned
+                $query->whereNull('hs.assign_emp');
+            } elseif ($arr['assignEmpFlag'] == 3) {
+                // Assigned
+                $query->whereNotNull('hs.assign_emp');
+            }
+        }
+
+        // Order
+        $query->orderBy('hs.created_dt_tm', 'DESC');
+
+        return $query->get()->toArray();
     }
 
     public function getDistinctService($variantArr)
@@ -112,6 +128,54 @@ class HomeServiceRepository
             DB::rollBack();
             return 2;
         }
+    }
+
+    public function getHomeServiceEmployee($employeeId = null, array $employeeIdArr = [], $flag = null)
+    {
+        $query = DB::table('employee')
+            ->select([
+                'employee.*',
+                'occupation_father_tb.element as father_occupation_name',
+                'occupation_mother_tb.element as mother_occupation_name',
+                'occupation_spouse_tb.element as spouse_occupation_name',
+                'emer_con_rel_tb.element as emer_contact_relation_name',
+                'guardian_rel_tb.element_code as guardian_relation_name',
+                'designation_tb.element as designation_name',
+                'user_group.group_name'
+            ])
+            ->leftJoin('common_table as occupation_father_tb', 'occupation_father_tb.element_code', '=', 'employee.father_occupation')
+            ->leftJoin('common_table as occupation_mother_tb', 'occupation_mother_tb.element_code', '=', 'employee.mother_occupation')
+            ->leftJoin('common_table as occupation_spouse_tb', 'occupation_spouse_tb.element_code', '=', 'employee.spouse_occupation')
+            ->leftJoin('common_table as emer_con_rel_tb', 'emer_con_rel_tb.element_code', '=', 'employee.emer_contact_relation')
+            ->leftJoin('common_table as guardian_rel_tb', 'guardian_rel_tb.element_code', '=', 'employee.guardian_relation')
+            ->leftJoin('common_table as designation_tb', 'designation_tb.element_code', '=', 'employee.designation')
+            ->leftJoin('users', 'users.user_id', '=', 'employee.employee_id')
+            ->leftJoin('user_group', 'user_group.id', '=', 'users.user_group');
+
+        $userGroupBlockListArr = unserialize(config('constants.USERGROUP_BLOCKLIST'));
+
+        $currentUserGroup = Auth::user()->user_group ?? null;
+
+        if (!in_array($currentUserGroup, $userGroupBlockListArr)) {
+            $query->whereNotIn('user_group.id', $userGroupBlockListArr);
+        }
+
+        // Flag check for active status
+        if ($flag === null) {
+            $query->where('employee.is_active', 1);
+        }
+
+        // Employee filtering logic
+        if ($employeeId) {
+            $query->where('employee.employee_id', $employeeId);
+        } elseif (!empty($employeeIdArr)) {
+            $query->whereIn('employee.employee_id', $employeeIdArr);
+        }
+
+        // Result returning as array to maintain compatibility
+        return $query->get()->map(function ($item) {
+            return (array) $item;
+        })->all();
     }
 
 }

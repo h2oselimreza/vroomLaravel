@@ -220,50 +220,51 @@
         @vite(['resources/js/app.js'])
         {{-- PAGE-SPECIFIC SCRIPTS --}}
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
-            var quill = new Quill('#editor', {
-            theme: 'snow',
-            placeholder: 'Write something...',
-            modules: {
-                toolbar: [
-                    [{ 'font': [] }],
-                    [{ 'size': ['small', false, 'large', 'huge'] }],
+            //=========Comment for some time it will open after some time=========
+        //     document.addEventListener("DOMContentLoaded", function() {
+        //     var quill = new Quill('#editor', {
+        //     theme: 'snow',
+        //     placeholder: 'Write something...',
+        //     modules: {
+        //         toolbar: [
+        //             [{ 'font': [] }],
+        //             [{ 'size': ['small', false, 'large', 'huge'] }],
 
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        //             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-                    ['bold', 'italic', 'underline', 'strike'],
+        //             ['bold', 'italic', 'underline', 'strike'],
 
-                    [{ 'color': [] }, { 'background': [] }],
+        //             [{ 'color': [] }, { 'background': [] }],
 
-                    [{ 'script': 'sub'}, { 'script': 'super' }],
+        //             [{ 'script': 'sub'}, { 'script': 'super' }],
 
-                    [{ 'header': 1 }, { 'header': 2 }, 'blockquote', 'code-block'],
+        //             [{ 'header': 1 }, { 'header': 2 }, 'blockquote', 'code-block'],
 
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+        //             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        //             [{ 'indent': '-1'}, { 'indent': '+1' }],
 
-                    [{ 'direction': 'rtl' }],
+        //             [{ 'direction': 'rtl' }],
 
-                    [{ 'align': [] }],
+        //             [{ 'align': [] }],
 
-                    ['link', 'image', 'video'],
+        //             ['link', 'image', 'video'],
 
-                    ['clean']
-                ]
-            }
-        });
+        //             ['clean']
+        //         ]
+        //     }
+        // });
 
-        // ✅ Load existing content
-        var oldData = document.getElementById('description').value;
-        if(oldData){
-            quill.root.innerHTML = oldData;
-        }
+        // // ✅ Load existing content
+        // var oldData = document.getElementById('description').value;
+        // if(oldData){
+        //     quill.root.innerHTML = oldData;
+        // }
 
-        // Save editor data to hidden input
-        quill.on('text-change', function() {
-            document.getElementById('description').value = quill.root.innerHTML;
-        });
-            })
+        // // Save editor data to hidden input
+        // quill.on('text-change', function() {
+        //     document.getElementById('description').value = quill.root.innerHTML;
+        // });
+        //     })
         </script>
         @stack('scripts')
     </body>

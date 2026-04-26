@@ -41,4 +41,6 @@ return [
     'APPOINTMENT_START' => '7',
     'APPOINTMENT_CASH_COLLECT' => '8',
 
+    'USERGROUP_BLOCKLIST' => serialize(['1']),
+
 ];

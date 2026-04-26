@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\HomeService\HomeServiceAssignToEmployeeController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceController as HomeServiceHomeServiceController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceCategoryController;
@@ -293,6 +294,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('home/update-home-service',[HomeServiceHomeServiceController::class, 'updateHomeService'])->name('admin.update-home-service');
     Route::post('home/home-service-accept',[HomeServiceHomeServiceController::class, 'acceptHomeService'])->name('admin.home-service-accept');
     Route::post('home/home-service-reject',[HomeServiceHomeServiceController::class, 'rejectHomeService'])->name('admin.home-service-reject');
+
+    Route::resource('home/service-assign-employee', HomeServiceAssignToEmployeeController::class)->names('admin.home-service.assign-employee');
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {
