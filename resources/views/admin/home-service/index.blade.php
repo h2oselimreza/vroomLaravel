@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="header dashboard_from">
-    <h1 class="page-title">Appointment List</h1>
+    <h1 class="page-title">Home Service List</h1>
     <ul class="breadcrumb">
         <li><a href="#">Home</a></li>
-        <li><a href="#">/ Appointment</a></li>
-        <li><a href="#">/ Appointment List</a></li>
+        <li><a href="/admin/home/home-service-list">/ Home Service</a></li>
+        <li><a href="/admin/home/home-service-list">/ Home Service List</a></li>
     </ul>
 </div>
 <div class="main-content">

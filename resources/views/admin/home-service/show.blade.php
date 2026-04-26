@@ -6,7 +6,7 @@
     <h1 class="page-title">Show Home Service</h1>
     <ul class="breadcrumb">
         <li><a href="#">Home</a> / </li>
-        <li><a href="#">Home Service</a> / </li>
+        <li><a href="/admin/home/home-service-list">Home Service</a> / </li>
         <li><a href="/admin/home/home-service-list">Home Service List</a> / </li>
         <li><a href="/admin/home/home-service-list/<?php echo $appointmentNo ?>/<?php echo $companyCode ?>">Show Home Service</a></li>
     </ul>
@@ -25,6 +25,15 @@
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Error!</strong> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
     <div class="row">
@@ -335,15 +344,18 @@
             <?php
             } else if ($appointmentSummary->status == config('constants.APPOINTMENT_PROCCESSING') && $appointmentSummary->final_date && $appointmentSummary->appointment_time) {
             ?>
-                <a onclick="homeServiceAccept('<?php echo $appointmentNo; ?>');
-                            return false;" href="#" class="btn btn-success">Accept This Home Service</a>
+                <a
+                onclick="homeServiceAccept('{{ $appointmentNo }}'); return false;" 
+                class="btn btn-success save_button mt-3">
+                Accept This Home Service
+                </a>
                 <a onclick="homeServiceReject('<?php echo $appointmentNo; ?>');
-                            return false;" href="#" class="btn btn-primary btn-danger save_button mt-3">Reject This Home Service</a>
+                            return false;" class="btn btn-primary btn-danger save_button mt-3">Reject This Home Service</a>
             <?php
             } else if ($appointmentSummary->status == config('constants.APPOINTMENT_PROCCESSING') || $appointmentSummary->status == config('constants.APPOINTMENT_ACCEPT')) {
             ?>
                 <a onclick="homeServiceReject('<?php echo $appointmentNo; ?>');
-                            return false;" href="#" class="btn btn-primary btn-danger save_button mt-3">Reject This Home Service</a>
+                            return false;" class="btn btn-primary btn-danger save_button mt-3">Reject This Home Service</a>
             <?php } ?>
             <br><br>
 
@@ -553,83 +565,160 @@
 
     //accept
     function homeServiceAccept(appointmentNo) {
-        var comment = $.trim($('#homeServiceComment').val());
-        var inputFieldJson = {};
-        inputFieldJson['appointmentNo'] = appointmentNo;
-        if (!comment) {
-            comment = null;
-        }
-        inputFieldJson['comment'] = comment;
-        swal({
+        // কমেন্ট ভ্যালু নেওয়া হচ্ছে
+        let comment = $.trim($('#homeServiceComment').val());
+        
+        let inputFieldJson = {
+            appointmentNo: appointmentNo,
+            comment: comment ? comment : null
+        };
+
+        // SweetAlert নিশ্চিতকরণ ধাপ
+        Swal.fire({
             title: "Are you sure?",
-            text: "",
-            type: "warning",
+            text: "You want to accept this home service request!",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonText: "Yes, Accept Home Service Request...!",
-            confirmButtonColor: "#62ec6f"
-        }, function() {
-            swal.close();
-            //showLoader();
-            $.ajax({
+            confirmButtonColor: "#62ec6f",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Accept it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+                // showLoader(); // আপনার লোডার থাকলে এটি আনকমেন্ট করুন
+
+                $.ajax({
                     type: 'POST',
-                    data: inputFieldJson,
-                    url: 'admin/AdminHomeService/acceptHomeService'
-                })
-                .done(function(data) {
-                    hideLoader();
-                    if (data === '2') {
-                        successAlert("Home Service Request is accepted...!", "admin/AdminHomeService/homeServiceList");
-                    } else if (data === '3') {
-                        failAlert('You can not accept this...!', "admin/AdminHomeService/homeServiceList");
-                    } else if (data === '4') {
-                        failAlert('No data found...!', "admin/AdminHomeService/homeServiceList");
+                    url: '/admin/home/home-service-accept',
+                    data: {
+                        ...inputFieldJson,
+                        _token: "{{ csrf_token() }}"
                     }
                 })
-                .error(function(data) {
-                    failAlert('error!!!', "admin/hr/PromotionApplication/promotionRaisedByOthers");
+                .done(function(data) {
+                    // hideLoader();
+                    
+                    if (data == '2') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Accepted!',
+                            text: 'Home Service Request is accepted...!',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    } 
+                    else if (data == '3') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Allowed!',
+                            text: 'You can not accept this...!'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    } 
+                    else if (data == '4') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Found!',
+                            text: 'No data found...!'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    }
+                })
+                .fail(function() {
+                    // hideLoader();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong while accepting the request!'
+                    });
                 });
+            }
         });
     }
+
     //reject
     function homeServiceReject(appointmentNo) {
-        var comment = $.trim($('#homeServiceComment').val());
-        var inputFieldJson = {};
-        inputFieldJson['appointmentNo'] = appointmentNo;
+        let comment = $.trim($('#homeServiceComment').val());
+        
         if (!comment) {
-            sweetAlert('Please enter a comment...!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Required!',
+                text: 'Please enter a comment before rejecting...!'
+            });
             return false;
         }
-        inputFieldJson['comment'] = comment;
-        swal({
+
+        let inputFieldJson = {
+            appointmentNo: appointmentNo,
+            comment: comment
+        };
+
+        Swal.fire({
             title: "Are you sure?",
-            text: "",
-            type: "warning",
+            text: "You want to reject this home service request!",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonText: "Yes, Reject Home Service Request...!",
-            confirmButtonColor: "#ec6c62"
-        }, function() {
-            swal.close();
-            showLoader();
-            $.ajax({
+            confirmButtonColor: "#ec6c62",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Reject it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+                // showLoader();
+
+                $.ajax({
                     type: 'POST',
-                    data: inputFieldJson,
-                    url: 'admin/AdminHomeService/rejectHomeService'
-                })
-                .done(function(data) {
-                    hideLoader();
-                    if (data === '2') {
-                        successAlert("Home Service Request is rejected...!", "admin/AdminHomeService/homeServiceList");
-                    } else if (data === '3') {
-                        failAlert('Due to this request is not in processing status, you can not reject this...!', "admin/AdminHomeService/homeServiceList");
-                    } else if (data === '4') {
-                        failAlert('No data found...!', "admin/AdminHomeService/homeServiceList");
+                    url: '/admin/home/home-service-reject',
+                    data: {
+                        ...inputFieldJson,
+                        _token: "{{ csrf_token() }}"
                     }
                 })
-                .error(function(data) {
-                    failAlert('error!!!', "admin/hr/PromotionApplication/promotionRaisedByOthers");
+                .done(function(data) {
+                    // hideLoader();
+                    
+                    if (data == '2') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Rejected!',
+                            text: 'Home Service Request is rejected...!',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    } 
+                    else if (data == '3') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Allowed!',
+                            text: 'Due to this request is not in processing status, you can not reject this...!'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    } 
+                    else if (data == '4') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Found!',
+                            text: 'No data found...!'
+                        }).then(() => {
+                            window.location.href = "/admin/home/home-service-list";
+                        });
+                    }
+                })
+                .fail(function() {
+                    // hideLoader();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong while rejecting the request!'
+                    });
                 });
+            }
         });
     }
     //-- magic begins

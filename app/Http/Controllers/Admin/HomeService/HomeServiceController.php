@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin\HomeService;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client\HomeServiceAppSummaryGen;
 use App\Repositories\Client\GenHomeServiceRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeServiceController extends Controller
 {
@@ -220,5 +222,89 @@ class HomeServiceController extends Controller
             'appointmentNo' => $appointmentNo,
             'companyCode'   => $finalArr['company'],
         ])->with('msg', 1);
+    }
+
+    public function acceptHomeService(Request $request)
+    {
+        $request->validate([
+            'appointmentNo' => 'required',
+        ]);
+
+        $appointmentNo = trim($request->post('appointmentNo'));
+        $comment = $request->post('comment') ? trim($request->post('comment')) : null;
+
+        $homeServiceSummary = HomeServiceAppSummaryGen::where('appointment_no', $appointmentNo)->first();
+
+        if ($homeServiceSummary) {
+            if ($homeServiceSummary->status == config('constants.APPOINTMENT_PROCCESSING') && 
+                !empty($homeServiceSummary->final_date) && 
+                !empty($homeServiceSummary->appointment_time)) {
+
+                try {
+                    DB::beginTransaction();
+
+                    $homeServiceSummary->update([
+                        'admin_remarks' => $comment,
+                        'updated_type'  => config('constants.P_ADMIN'),
+                        'status'        => config('constants.APPOINTMENT_ACCEPT'),
+                    ]);
+
+                    DB::commit();
+                    return 2; // Success
+
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return response()->json(['error' => $e->getMessage()], 500);
+                }
+
+            } else {
+                return 3; // Not in processing status or missing date/time
+            }
+        } else {
+            return 4; // No data found
+        }
+    }
+
+    public function rejectHomeService(Request $request)
+    {
+
+        $request->validate([
+            'appointmentNo' => 'required',
+            'comment' => 'required|string|min:1'
+        ]);
+
+        $appointmentNo = trim($request->post('appointmentNo'));
+        $rejectReason = trim($request->post('comment'));
+
+        $homeServiceSummary = HomeServiceAppSummaryGen::where('appointment_no', $appointmentNo)->first();
+
+        if ($homeServiceSummary) {
+
+            if (($homeServiceSummary->status == config('constants.APPOINTMENT_PROCCESSING') || $homeServiceSummary->status == config('constants.APPOINTMENT_ACCEPT')) 
+                && !empty($rejectReason)) {
+
+                try {
+                    DB::beginTransaction();
+
+                    $homeServiceSummary->update([
+                        'reject_reason' => $rejectReason,
+                        'updated_type'  => config('constants.P_ADMIN'),
+                        'status'        => config('constants.APPOINTMENT_REJECT'),
+                    ]);
+
+                    DB::commit();
+                    return 2; // Success
+
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Something went wrong'], 500);
+                }
+
+            } else {
+                return 3; // Status mismatch or empty reason
+            }
+        } else {
+            return 4; // No record found
+        }
     }
 }
