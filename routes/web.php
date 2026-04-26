@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
 use App\Http\Controllers\Admin\EmployeeOfficeController;
+use App\Http\Controllers\Admin\HomeService\EmployeeHomeServiceController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceAssignToEmployeeController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceController as HomeServiceHomeServiceController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
@@ -296,6 +297,9 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('home/home-service-reject',[HomeServiceHomeServiceController::class, 'rejectHomeService'])->name('admin.home-service-reject');
 
     Route::resource('home/service-assign-employee', HomeServiceAssignToEmployeeController::class)->names('admin.home-service.assign-employee');
+    Route::resource('home/employee-home-service', EmployeeHomeServiceController::class)->names('admin.home-service.employee-home-service');
+    Route::get('home/employee-home-service-details/{appointment_no}/{employee_id}',[EmployeeHomeServiceController::class, 'empHomeServiceDetails'])->name('admin.employee-home-service-details');
+    Route::post('home/start-home-service',[EmployeeHomeServiceController::class, 'startEmpHomeService'])->name('admin.start-home-service');
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {

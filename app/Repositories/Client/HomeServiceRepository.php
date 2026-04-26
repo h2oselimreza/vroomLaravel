@@ -173,9 +173,91 @@ class HomeServiceRepository
         }
 
         // Result returning as array to maintain compatibility
-        return $query->get()->map(function ($item) {
-            return (array) $item;
-        })->all();
+        return $query->get();
+    }
+
+    public function getEmpPerInfo(array $whereArr)
+    {
+        if (empty($whereArr['empId'])) {
+            return [];
+        }
+
+        $result = DB::table('employee')
+            ->select('employee_id', 'employee_name')
+            ->where('employee_id', $whereArr['empId'])
+            ->first();
+
+        return $result;
+    }
+
+    public function getEmpHomeServiceList(array $arr)
+    {
+        if (empty($arr['empId'])) {
+            return [];
+        }
+
+        $result = DB::table('home_service_app_summary_gen as hs')
+            ->select(
+                'hs.*',
+                'cc.title as company_name',
+                'cc.company_type'
+            )
+            ->join('corporate_companies as cc', 'cc.company_code', '=', 'hs.company')
+            ->where('hs.assign_emp', $arr['empId'])
+            ->orderBy('hs.created_dt_tm', 'DESC')
+            ->get();
+
+        return $result;
+    }
+
+    public function getEmpAppointmentSummary(array $whereArr)
+    {
+        if (empty($whereArr['empId']) || empty($whereArr['appointmentNo'])) {
+            return 0;
+        }
+
+        $result = DB::table('home_service_app_summary_gen as hs')
+            ->select(
+                'hs.*',
+                'e.employee_name as assigned_employee_name',
+                'e.primary_mobile as assigned_employee_mobile'
+            )
+            ->leftJoin('employee as e', 'e.employee_id', '=', 'hs.assign_emp')
+            ->where('hs.assign_emp', $whereArr['empId'])
+            ->where('hs.appointment_no', $whereArr['appointmentNo'])
+            ->first();
+
+        return $result ? $result : 0;
+    }
+
+    public function getAppoinmentDetail($appointmentNo)
+    {
+        if (empty($appointmentNo)) {
+            return [];
+        }
+
+        $result = DB::table('home_service_app_detail_gen as hd')
+            ->select(
+                'hd.*',
+                'sv.service_variant_name',
+                'sv.unit_name'
+            )
+            ->join('service_variants as sv', 'sv.variant_code', '=', 'hd.service_variant')
+            ->where('hd.appointment_no', $appointmentNo)
+            ->get();
+
+        return $result;
+    }
+
+    public function startEmpHomeService(array $updateArr, array $whereArr)
+    {
+        if (empty($whereArr['appointmentNo'])) {
+            return false;
+        }
+
+        return DB::table('home_service_app_summary_gen')
+            ->where('appointment_no', $whereArr['appointmentNo'])
+            ->update($updateArr);
     }
 
 }
