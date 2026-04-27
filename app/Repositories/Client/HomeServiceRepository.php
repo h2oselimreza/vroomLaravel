@@ -336,4 +336,20 @@ class HomeServiceRepository
             ->update($updateArr);
     }
 
+    public function getHomeServiceCalendarValue($arr)
+    {
+        $query = DB::table('home_service_app_summary_gen')
+            ->selectRaw("
+                CONCAT(appointment_no, ' ', name, ' (', mobile, ')') as title,
+                '#964545' as color,
+                final_date as start,
+                (final_date + INTERVAL 1 DAY) as end
+            ")
+            ->where('status', config('constants.APPOINTMENT_ACCEPT'))
+            ->where('final_date', '>=', $arr['fromDate'])
+            ->where('final_date', '<=', $arr['toDate']);
+
+        return $query->get();
+    }
+
 }

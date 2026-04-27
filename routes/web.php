@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\EmployeeOfficeController;
 use App\Http\Controllers\Admin\HomeService\EmployeeHomeServiceController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceAssignToEmployeeController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceController as HomeServiceHomeServiceController;
+use App\Http\Controllers\Admin\HomeService\RaiseHomeServiceController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceCategoryController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceController;
@@ -304,6 +305,7 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('home/reject-employee-service',[EmployeeHomeServiceController::class, 'rejectEmpHomeService'])->name('admin.reject-employee-service');
     Route::post('home/complete-emp-home-service',[EmployeeHomeServiceController::class, 'completeEmpHomeService'])->name('admin.complete-emp-home-service');
     Route::post('home/cash-collect-emp-home-service',[EmployeeHomeServiceController::class, 'cashCollectEmpHomeService'])->name('admin.cash-collect-emp-home-service');
+    Route::resource('home/raise-home-service', RaiseHomeServiceController::class)->names('admin.home-service.raise-home-service');
 
 });
 
