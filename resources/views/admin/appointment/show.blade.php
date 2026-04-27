@@ -234,14 +234,12 @@
             orientation: 'bottom'  // show below the input
         });
 
-        // $('.timepicker').timepicker({
-        //     showMeridian: true,   // ✅ AM/PM format (12:00 AM)
-        //     defaultTime: false,
-        // });
         $('.timepicker').timepicker({
-            showMeridian: true,
+            // showMeridian: true,
+            // defaultTime: false,
+            // explicitMode: true   // ✅ IMPORTANT FIX
             defaultTime: false,
-            explicitMode: true   // ✅ IMPORTANT FIX
+            disableFocus: true
         });
     });
 </script>

@@ -1005,9 +1005,11 @@
     });
 
     $('.timepicker').timepicker({
-        showMeridian: true,
+        // showMeridian: true,
+        // defaultTime: false,
+        // explicitMode: true   // ✅ IMPORTANT FIX
         defaultTime: false,
-        explicitMode: true   // ✅ IMPORTANT FIX
+        disableFocus: true
     });
 </script>
 @endpush

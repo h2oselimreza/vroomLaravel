@@ -67,7 +67,8 @@
                 <div id="errorDiv" class="alert alert-danger hidden">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </div>
-                <form action="admin/AdminHomeService/addRaiseHomeService" id="submitForm" method="post">
+                <form action="{{ route('admin.home-service.add-raise-home-service') }}" id="submitForm" method="post">
+                    @csrf
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="form-group" >
@@ -621,7 +622,9 @@ $(document).ready(function () {
         $('#name').val(clientName);
         $('#mobile').val(clientMbl);
         $('#address').val(clientAddress);
-        $('#clientListPanelCloseBtn').click();
+        var modalEl = document.getElementById('clientList');
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.hide();
         return false;
     }
 
@@ -799,57 +802,177 @@ $(document).ready(function () {
     }
 
     function raiseHomeService() {
+
         var errorMsg = "";
-        // filed id, error div id
-        var fieldsArr = new Array("clientId|clientIdReq-error", "name|nameReq-error", "mobile|mobileReq-error", "address|addressReq-error", "confirmDate|confirmDateReq-error", "confirmTime|confirmTimeReq-error", "leadsBy|leadsByReq-error");  // filed id, error div id
+
+        // field id | error div id
+        var fieldsArr = [
+            "clientId|clientIdReq-error",
+            "name|nameReq-error",
+            "mobile|mobileReq-error",
+            "address|addressReq-error",
+            "confirmDate|confirmDateReq-error",
+            "confirmTime|confirmTimeReq-error",
+            "leadsBy|leadsByReq-error"
+        ];
+
         var inputFiledJsonData = getInputData(fieldsArr);
+
         if (!inputFiledJsonData) {
             errorMsg += getReuiredFiledErrorMsg();
             showErrorMsg(errorMsg);
-            return false;  // required filed check
+            return false;
         } else {
-            hideErrorDiv();
+            //hideErrorDiv();
         }
-        
+
         var confirmDate = $.trim($('#confirmDate').val());
         var confirmTime = $.trim($('#confirmTime').val());
         var confirmDtTm = confirmDate + " " + confirmTime;
+
         var checkDtTm = checkDateTime(confirmDtTm);
+
         if (checkDtTm !== 3) {
-            sweetAlert('Please input correct date and time...!');
+            Swal.fire('Error', 'Please input correct date and time...!', 'error');
             return false;
         }
-        
-        if (checkTime($.trim($('#serviceTime').val())) === 0) {
-            sweetAlert('Time is not in correct format...!');
-            return false;
-        }
-        
-        var takenServiceVarCount;
-        var serviceProductFlag;
-        serviceProductFlag = 0;
-        //--------- service check ------------//
-        takenServiceVarCount = $("#takenServiceVarCount").val();
+
+        //it will consider next time
+        // if (checkTime($.trim($('#serviceTime').val())) === 0) {
+        //     Swal.fire('Error', 'Time is not in correct format...!', 'error');
+        //     return false;
+        // }
+
+        var takenServiceVarCount = $("#takenServiceVarCount").val();
+        var serviceProductFlag = 0;
+
         for (var j = 1; j <= takenServiceVarCount; j++) {
+
             var takenServiceVarCode = $("#takenServiceVarCode" + j).val();
-            if (typeof takenServiceVarCode !== 'undefined') {
+
+            if (typeof takenServiceVarCode !== 'undefined' && takenServiceVarCode !== '') {
                 serviceProductFlag = 1;
             }
+
             var quantity = $("#quantity" + j).val();
+
             if (quantity <= 0) {
-                sweetAlert('Amount must be greater than 1');
+                Swal.fire('Error', 'Amount must be greater than 1', 'error');
                 return false;
             }
         }
 
         if (serviceProductFlag === 0) {
-            sweetAlert('Please take at least one service...!');
+            Swal.fire('Error', 'Please take at least one service...!', 'error');
             return false;
         }
+
         $("#submitForm").submit();
     }
+
+    function checkTime(time) {
+        var regex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        if (!time) {
+            return 0;
+        }
+        return regex.test(time) ? 1 : 0;
+    }
+
+    function checkDateTime(dateTime) {
+
+        // Convert to Date object
+        var dt = new Date(dateTime);
+
+        // If invalid date
+        if (isNaN(dt.getTime())) {
+            return 0;
+        }
+
+        // Optional: prevent past date (uncomment if needed)
+        // var now = new Date();
+        // if (dt < now) return 1;
+
+        // Your original logic expects 3 as valid
+        return 3;
+    }
+
+    function getInputData(fieldsArr) {
+
+        var data = {};
+        var isValid = true;
+
+        fieldsArr.forEach(function (field) {
+
+            var parts = field.split('|');
+            var fieldId = parts[0];
+            var errorId = parts[1];
+
+            var value = $.trim($('#' + fieldId).val());
+
+            if (!value) {
+                $('#' + errorId).show();
+                isValid = false;
+            } else {
+                $('#' + errorId).hide();
+                data[fieldId] = value;
+            }
+
+        });
+
+        return isValid ? data : false;
+    }
+
     function getSchedule() {
         $("#scheduleForm").submit();
     }
+
+    $('.timepicker').timepicker({
+        defaultTime: false,
+        disableFocus: true
+    });
+
+    $('.dateInput').datepicker({
+        format: 'yyyy-mm-dd',  // format compatible with Laravel date column
+        autoclose: true,       // close picker after selecting a date
+        todayHighlight: true,  // highlight today
+        clearBtn: true,        // optional clear button
+        orientation: 'bottom'  // show below the input
+    });
+
+    $(document).ready(function () {
+
+        $('#clientListTable').DataTable({
+            bDestroy: true,
+            ajax: "{{ route('admin.home-service.get-client-list') }}",
+            deferRender: true,
+            responsive: true,
+
+            initComplete: function () {
+
+                this.api().columns().every(function () {
+
+                    var column = this;
+
+                    var select = $('<select class="form-select"><option value=""></option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function () {
+
+                            var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d) {
+                        select.append('<option value="' + d + '">' + d + '</option>');
+                    });
+
+                });
+            }
+        });
+
+    });
 </script>
+
 @endpush

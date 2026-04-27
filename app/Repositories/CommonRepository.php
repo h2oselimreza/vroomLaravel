@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Company;
 use App\Models\CustomerEmployee;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class CommonRepository
 {
@@ -19,6 +19,32 @@ class CommonRepository
                 $q->where('depend_on_element', $commonTableElementArr['depend_on_element']);
             })
             ->get();
+    }
+
+    public function getCompanyList($isActiveFlag = 1, $companyType = null)
+    {
+        $query = DB::table('corporate_companies')
+            ->select(
+                'corporate_companies.*',
+                'employee.employee_name as rm_name',
+                'package.package_name'
+            )
+            ->leftJoin('employee', 'employee.employee_id', '=', 'corporate_companies.rm_id')
+            ->leftJoin('package', 'package.package_code', '=', 'corporate_companies.package');
+
+        // ACTIVE FILTER (same logic)
+        if ($isActiveFlag == 1) {
+            $query->where('corporate_companies.is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('corporate_companies.is_active', 0);
+        }
+
+        // COMPANY TYPE FILTER (same logic)
+        if ($companyType) {
+            $query->where('corporate_companies.company_type', $companyType);
+        }
+
+        return $query->get();
     }
       
 
