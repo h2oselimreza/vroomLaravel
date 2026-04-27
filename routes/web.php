@@ -300,6 +300,11 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('home/employee-home-service', EmployeeHomeServiceController::class)->names('admin.home-service.employee-home-service');
     Route::get('home/employee-home-service-details/{appointment_no}/{employee_id}',[EmployeeHomeServiceController::class, 'empHomeServiceDetails'])->name('admin.employee-home-service-details');
     Route::post('home/start-home-service',[EmployeeHomeServiceController::class, 'startEmpHomeService'])->name('admin.start-home-service');
+    Route::post('home/update-home-service-details',[EmployeeHomeServiceController::class, 'updateHomeService'])->name('admin.update-home-service-details');
+    Route::post('home/reject-employee-service',[EmployeeHomeServiceController::class, 'rejectEmpHomeService'])->name('admin.reject-employee-service');
+    Route::post('home/complete-emp-home-service',[EmployeeHomeServiceController::class, 'completeEmpHomeService'])->name('admin.complete-emp-home-service');
+    Route::post('home/cash-collect-emp-home-service',[EmployeeHomeServiceController::class, 'cashCollectEmpHomeService'])->name('admin.cash-collect-emp-home-service');
+
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {

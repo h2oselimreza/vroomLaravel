@@ -260,4 +260,80 @@ class HomeServiceRepository
             ->update($updateArr);
     }
 
+    public function getAppointmentSummary($appointmentNo, $companyCode = null)
+    {
+        $query = DB::table('home_service_app_summary_gen')
+            ->select(
+                'home_service_app_summary_gen.*',
+                'employee.employee_name as assigned_employee_name',
+                'employee.primary_mobile as assigned_employee_mobile'
+            )
+            ->leftJoin('employee', 'employee.employee_id', '=', 'home_service_app_summary_gen.assign_emp')
+            ->where('home_service_app_summary_gen.appointment_no', $appointmentNo);
+
+        if ($companyCode) {
+            $query->where('home_service_app_summary_gen.company', $companyCode);
+        }
+
+        $result = $query->first();
+
+        if ($result) {
+            return $result;
+        }
+
+        return 0;
+    }
+
+
+    public function editHomeService(array $finalArr)
+    {
+        DB::transaction(function () use ($finalArr) {
+
+            // Update summary
+            DB::table('home_service_app_summary_gen')
+                ->where('appointment_no', $finalArr['appointmentNo'])
+                ->where('company', $finalArr['company'])
+                ->update($finalArr['summaryArr']);
+
+            // Insert batch
+            if (!empty($finalArr['insertDetailArr'])) {
+                DB::table('home_service_app_detail_gen')
+                    ->insert($finalArr['insertDetailArr']);
+            }
+
+            // Update batch (no direct updateBatch in Laravel → loop)
+            if (!empty($finalArr['updateDetailArr'])) {
+                foreach ($finalArr['updateDetailArr'] as $row) {
+                    DB::table('home_service_app_detail_gen')
+                        ->where('id', $row['id'])
+                        ->update($row);
+                }
+            }
+
+            // Delete records
+            if (!empty($finalArr['deleteDetailArr'])) {
+                DB::table('home_service_app_detail_gen')
+                    ->where('appointment_no', $finalArr['appointmentNo'])
+                    ->whereIn('service_variant', $finalArr['deleteDetailArr'])
+                    ->delete();
+            }
+
+        });
+    }
+
+    public function rejectEmpHomeService(array $updateArr, array $whereArr)
+    {
+        DB::table('home_service_app_summary_gen')
+            ->where('appointment_no', $whereArr['appointmentNo'])
+            ->update($updateArr);
+    }
+
+
+    public function completeEmpHomeService(array $updateArr, array $whereArr)
+    {
+        DB::table('home_service_app_summary_gen')
+            ->where('appointment_no', $whereArr['appointmentNo'])
+            ->update($updateArr);
+    }
+
 }

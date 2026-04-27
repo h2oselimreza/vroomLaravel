@@ -45,13 +45,29 @@
 </div>
 
 <div class="main-content">
+    <!-- Success Message -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <!-- Error Message -->
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default"> 
                 <div class="text-center mb-3">
                     <span class="font-20"><b><?php echo $appointmentSummary->assigned_employee_name ?></b><small><i> (<?php echo $appointmentSummary->assigned_employee_mobile ?>)</i></small></span>
                 </div>
-                <form action="admin/EmpHomeService/updateHomeService" id="submitForm" method="post">
+                <form action="{{ route('admin.update-home-service-details') }}" id="submitForm" method="post">
+                    @csrf
                     <table class="m-t-10" border="0" cellpadding="0" cellspacing="0" align="center" width="100%">
                         <tr class="table-td-info">
                             <td width="20%" align="left" class="content-table-td"><b>Home Service No</b></td>
@@ -313,24 +329,24 @@
                            }
                            ?>
                            <?php if ($appointmentSummary->status == config('constants.APPOINTMENT_COMPLETE')) { ?>
-                            <div class="row">
+                            <div class="row mt-3">
                                 <div class="col-md-2">
-                                    <label>Transaction Channel</label>
+                                    <label class="form-label">Transaction Channel</label>
                                 </div>
                                 <div class="col-md-3">
                                     <select class="form-control" id="transactionChannel">
                                         <?php
                                             foreach ($transactionChannels as $transactionChannel) {
                                                 ?>
-                                                <option value="<?php echo $transactionChannel['element_code'] ?>"><?php echo $transactionChannel['element'] ?></option>
+                                                <option value="<?php echo $transactionChannel->element_code ?>"><?php echo $transactionChannel->element ?></option>
                                         <?php
                                             }
                                         ?>
                                     </select>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <a onclick="empHomeServiceCashCollect();
-                                        return false;" href="#" class="btn btn-primary">Payment Collect</a>
+                                        return false;" href="#" class="btn btn-primary save_button">Payment Collect</a>
                                 </div>
                             </div>
                            <div class="clear"></div>
@@ -511,13 +527,13 @@
                 <h4 class="modal-title" id="largeModalLabel">Add a comment </h4>
             </div>
             <div style="padding: 30px">
-                <label data-error="wrong" data-success="right" for="commentReject">Comment</label><span class="text-danger">*</span><small class="custom-text-danger" style="display: none;" id="commentReject-error"> Comment is Required</small>
+                <label class="form-label" data-error="wrong" data-success="right" for="commentReject">Comment</label><span class="text-danger">*</span><small class="custom-text-danger" style="display: none;" id="commentReject-error"> Comment is Required</small>
                 <textarea id="commentReject" class="form-control validate" rows="3"></textarea>   
             </div>
             <div class="modal-footer">
                 <button onclick="empHomeServiceReject();
-                        return false;" type="button" class="btn btn-link waves-effect" id="commentReject">Reject</button>
-                <button type="button" class="btn btn-link waves-effect" id="modalCloseBtn" data-dismiss="modal">Close</button>
+                        return false;" type="button" class="btn btn-link waves-effect save_button" id="commentReject">Reject</button>
+                <button type="button" class="btn btn-link waves-effect save_button" id="modalCloseBtn" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -626,81 +642,160 @@
     }
 
     function empHomeServiceReject() {
+
         var comment = $.trim($('#commentReject').val());
+
         if (!comment) {
             showRejectCommentModal();
             $("#commentReject-error").show();
             return false;
         }
-        $('#rejectCommentModal').modal('hide');
-        var inputFieldJson = {};
-        inputFieldJson['appointmentNo'] = $.trim($('#appointmentNo').val());
-        inputFieldJson['comment'] = comment;
 
-        swal({
+        $('#rejectCommentModal').modal('hide');
+
+        let appointmentNo = $.trim($('#appointmentNo').val());
+        let empId = "{{ $empId }}";
+
+        Swal.fire({
             title: "Are you sure?",
             text: "",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
             confirmButtonText: "Yes, Reject Home Service Request...!",
             confirmButtonColor: "#ec6c62"
-        }, function () {
-            swal.close();
-            showLoader();
-            $.ajax({
-                type: 'POST',
-                data: inputFieldJson,
-                url: 'admin/EmpHomeService/rejectEmpHomeService'
-            })
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '2') {
-                            alertRedirect("Home Service Request is rejected...!", "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
-                        } else if (data === '4') {
-                            failAlert('No data found...!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
-                        }
-                    })
-                    .error(function (data) {
-                        failAlert('error!!!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                //showLoader();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.reject-employee-service') }}",
+                    data: {
+                        appointmentNo: appointmentNo,
+                        comment: comment
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    }
+                })
+                .done(function (data) {
+
+                    //hideLoader();
+
+                    if (data == '2') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Home Service Request is rejected...!'
+                        }).then(() => {
+                            window.location.href =
+                                "{{ url('/admin/home/employee-home-service-details') }}/"
+                                + appointmentNo + "/" + empId;
+                        });
+
+                    } else if (data == '4') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'No data found...!'
+                        }).then(() => {
+                            window.location.href =
+                                "{{ url('/admin/home/employee-home-service-details') }}/"
+                                + appointmentNo + "/" + empId;
+                        });
+                    }
+                })
+                .fail(function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong!'
+                    }).then(() => {
+                        window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + appointmentNo + "/" + empId;
                     });
+                });
+
+            }
         });
     }
     //-- reject end
     //complete
 
     function empHomeServiceComplete() {
-        var inputFieldJson = {};
-        var homeServiceNo = $.trim($('#appointmentNo').val());
-        inputFieldJson['appointmentNo'] = homeServiceNo;
 
-        swal({
+        let homeServiceNo = $.trim($('#appointmentNo').val());
+        let appointmentNumber = $.trim($('#appointmentNo').val());
+        let empId = "{{ $empId }}";
+
+        Swal.fire({
             title: "Are you sure?",
             text: "",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
             confirmButtonText: "Yes, Complete Home Service...!",
             confirmButtonColor: "#62ec6f"
-        }, function () {
-            swal.close();
-            showLoader();
-            $.ajax({
-                type: 'POST',
-                data: inputFieldJson,
-                url: 'admin/EmpHomeService/completeEmpHomeService'
-            })
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '2') {
-                            alertRedirect("Home Service Request is completed...!", "admin/EmpHomeService/showEmpHomeSerDetailInfo?appointmentNo=" + homeServiceNo + "&empId=<?php echo $empId; ?>");
-                        } else if (data === '4') {
-                            failAlert('No data found...!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
-                        }
-                    })
-                    .error(function (data) {
-                        failAlert('error!!!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                //showLoader();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.complete-emp-home-service') }}",
+                    data: {
+                        appointmentNo: homeServiceNo
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    }
+                })
+                .done(function (data) {
+
+                    //hideLoader();
+
+                    if (data == '2') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Home Service Request is completed...!'
+                        }).then(() => {
+                             window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + appointmentNumber + "/" + empId;
+                        });
+
+                    } else if (data == '4') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'No data found...!'
+                        }).then(() => {
+                             window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + appointmentNumber + "/" + empId;
+                        });
+                    }
+                })
+                .fail(function () {
+
+                    //hideLoader();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong!'
+                    }).then(() => {
+                         window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + appointmentNumber + "/" + empId;
                     });
+                });
+            }
         });
     }
     //-- complete end
@@ -708,39 +803,77 @@
 
 
     function empHomeServiceCashCollect() {
-        var inputFieldJson = {};
-        var homeServiceNo = $.trim($('#appointmentNo').val());
-        var transactionChannel = $.trim($('#transactionChannel').val());
-        inputFieldJson['appointmentNo'] = homeServiceNo;
-        inputFieldJson['transactionChannel'] = transactionChannel;
 
-        swal({
+        let homeServiceNo = $.trim($('#appointmentNo').val());
+        let transactionChannel = $.trim($('#transactionChannel').val());
+        let empId = "{{ $empId }}";
+
+        Swal.fire({
             title: "Are you sure?",
             text: "",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
             confirmButtonText: "Yes, Payment Collection is completed...!",
             confirmButtonColor: "#62ec6f"
-        }, function () {
-            swal.close();
-            showLoader();
-            $.ajax({
-                type: 'POST',
-                data: inputFieldJson,
-                url: 'admin/EmpHomeService/cashCollectEmpHomeService'
-            })
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '2') {
-                            alertRedirect("Cash Collect is completed...!", "admin/EmpHomeService/showEmpHomeSerDetailInfo?appointmentNo=" + homeServiceNo + "&empId=<?php echo $empId; ?>");
-                        } else if (data === '4') {
-                            failAlert('No data found...!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
-                        }
-                    })
-                    .error(function (data) {
-                        failAlert('error!!!', "admin/EmpHomeService/showEmpHomeSerDetails?empId=<?php echo $empId; ?>");
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                //showLoader();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.cash-collect-emp-home-service') }}",
+                    data: {
+                        appointmentNo: homeServiceNo,
+                        transactionChannel: transactionChannel
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    }
+                })
+                .done(function (data) {
+
+                    //hideLoader();
+
+                    if (data == '2') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Cash Collect is completed...!'
+                        }).then(() => {
+                            window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + homeServiceNo + "/" + empId;
+                        });
+
+                    } else if (data == '4') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'No data found...!'
+                        }).then(() => {
+                            window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + homeServiceNo + "/" + empId;
+                        });
+                    }
+                })
+                .fail(function () {
+
+                    //hideLoader();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong!'
+                    }).then(() => {
+                        window.location.href =
+                            "{{ url('/admin/home/employee-home-service-details') }}/"
+                            + homeServiceNo + "/" + empId;
                     });
+                });
+            }
         });
     }
     //-- cash collect end
@@ -959,11 +1092,12 @@
         //     sweetAlert('Time is not in correct format...!');
         //     return false;
         // }
-        let time = $.trim($('#serviceTime').val());
-        if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(time)) {
-            sweetAlert('Time is not in correct format...!');
-            return false;
-        }
+        // let time = $.trim($('#serviceTime').val());
+        // console.log(time);
+        // if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(time)) {
+        //     sweetAlert('Time is not in correct format...!');
+        //     return false;
+        // }
 
         let additionalServiceCount = parseInt($('#additionalServiceCount').val());
 

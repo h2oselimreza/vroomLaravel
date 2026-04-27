@@ -168,17 +168,17 @@
                                                         <tr>
                                                             <td class="td-center">{{ $loop->iteration }}</td>
 
-                                                            <td>{{ $employee['employee_id'] }}</td>
-                                                            <td>{{ $employee['employee_name'] }}</td>
-                                                            <td>{{ $employee['designation_name'] }}</td>
-                                                            <td>{{ $employee['primary_mobile'] }}</td>
-                                                            <td>{{ $employee['email'] }}</td>
+                                                            <td>{{ $employee->employee_id }}</td>
+                                                            <td>{{ $employee->employee_name }}</td>
+                                                            <td>{{ $employee->designation_name }}</td>
+                                                            <td>{{ $employee->primary_mobile }}</td>
+                                                            <td>{{ $employee->email }}</td>
 
                                                             <td class="td-center">
                                                                 <button 
                                                                     type="button"
                                                                     class="btn btn-primary btn-xs btn-circle-puchase"
-                                                                    onclick="assignEmployee('{{ $employee['employee_id'] }}')">
+                                                                    onclick="assignEmployee('{{ $employee->employee_id }}')">
                                                                     <i class="fa fa-arrow-down"></i>
                                                                 </button>
                                                             </td>
