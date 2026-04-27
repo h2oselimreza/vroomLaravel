@@ -222,4 +222,17 @@ class RaiseHomeServiceController extends Controller
                 ->with('error', 'Something went wrong. Please try again.');
             }
     }
+
+    public function myHomeServiceList(HomeServiceRepository $homeServiceRepository)
+    {
+
+        $empId = Auth::user()->user_id ?? null;
+
+        $data = [
+            'empPersonalInfo'     => $homeServiceRepository->getEmpPerInfo(['empId' => $empId]),
+            'empHomeSerLists'     => $homeServiceRepository->getEmpHomeServiceList(['empId' => $empId]),
+        ];
+
+        return view('admin.home-service.my-home-service.index', compact('data','empId'));
+    }
 }

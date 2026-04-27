@@ -308,6 +308,7 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('home/raise-home-service', RaiseHomeServiceController::class)->names('admin.home-service.raise-home-service');
     Route::get('home/get-client-list',[RaiseHomeServiceController::class, 'getClientList'])->name('admin.home-service.get-client-list');
     Route::post('home/add-raise-home-service',[RaiseHomeServiceController::class, 'addRaiseHomeService'])->name('admin.home-service.add-raise-home-service');
+    Route::get('home/my-home-service-list',[RaiseHomeServiceController::class, 'MyHomeServiceList'])->name('admin.home-service.my-home-service-list');
 
 
 });

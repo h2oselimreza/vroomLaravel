@@ -36,7 +36,6 @@ class EmployeeHomeServiceController extends Controller
 
     public function empHomeServiceDetails($appointmentNo, $empId, HomeServiceRepository $homeServiceRepository, CommonRepository $commonRepository)
     {
-
             $reqArr = [];
             $reqArr['appointmentNo'] = $appointmentNo;
             $reqArr['empId'] = $empId;
@@ -65,6 +64,9 @@ class EmployeeHomeServiceController extends Controller
                     'transactionChannels'
                 ));
             }
+
+            return redirect()->route('admin.home-service.my-home-service-list')
+            ->with('error','Data not found');
     }
 
     public function startEmpHomeService(Request $request, HomeServiceRepository $homeServiceRepository)
@@ -300,7 +302,6 @@ class EmployeeHomeServiceController extends Controller
 
         $homeServiceSummary = $homeServiceRepository
             ->getAppointmentSummary($reqArr['appointmentNo']);
-
         if ($homeServiceSummary && $homeServiceSummary->status == config('constants.APPOINTMENT_COMPLETE')) {
 
             $inputArr['updated_by'] = Auth::user()->user_id;
