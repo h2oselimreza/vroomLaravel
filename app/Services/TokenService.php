@@ -19,7 +19,7 @@ class TokenService
             throw new \InvalidArgumentException("Code is required");
         }
 
-        return \DB::transaction(function () use ($code) {
+        return DB::transaction(function () use ($code) {
 
             // Lock the row for update to prevent race conditions
             $token = DB::table('token')->where('code', $code)->lockForUpdate()->first();

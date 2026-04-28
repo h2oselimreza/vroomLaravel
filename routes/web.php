@@ -59,6 +59,7 @@ use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\Place\PlaceController;
+use App\Http\Controllers\Admin\Place\PlaceTimeScheduleController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RMAssign\RMAssignController;
 use App\Http\Controllers\Admin\SubModuleController;
@@ -326,6 +327,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     /*===============Place Route==================*/
     Route::resource('place/place-info', PlaceController::class)->names('admin.place.place-info');
     Route::get('place/change-status',[PlaceController::class, 'changePlaceStatus'])->name('admin.place.changePlaceStatus');
+
+    Route::resource('place/place-time-schedule', PlaceTimeScheduleController::class)->names('admin.place.place-time-schedule');
 
 
 });

@@ -93,7 +93,7 @@
 
                                     <td>{{ $place->title ?? '-' }}</td>
 
-                                    <td class="td-center">{{ $place->workshop_code ?? '-' }}</td>
+                                    <td class="td-center">{{ $place->place_code ?? '-' }}</td>
 
                                     <td>{{ $place->address ?? '-' }}</td>
 
@@ -120,7 +120,7 @@
 
                                                 <li>
                                                     <a class="dropdown-item"
-                                                    href="{{ url('admin/Places/editPlaceShow/' . $place->place_code) }}">
+                                                    href="{{ route('admin.place.place-info.edit',$place->place_code) }}">
                                                         Edit
                                                     </a>
                                                 </li>
