@@ -58,6 +58,7 @@ use App\Http\Controllers\Admin\MasterData\AreaController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
+use App\Http\Controllers\Admin\Place\PlaceController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RMAssign\RMAssignController;
 use App\Http\Controllers\Admin\SubModuleController;
@@ -320,6 +321,12 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('individual/individual-account', IndividualCustomerController::class)->names('admin.individual.individual-account');
     Route::get('individual/change-status',[IndividualCustomerController::class, 'changeCompanyStatus'])->name('admin.individual.individual-account.changeCompanyStatus');
     Route::resource('individual/card-renew', CardRenewController::class)->names('admin.individual.card-renew');
+    
+
+    /*===============Place Route==================*/
+    Route::resource('place/place-info', PlaceController::class)->names('admin.place.place-info');
+    Route::get('place/change-status',[PlaceController::class, 'changePlaceStatus'])->name('admin.place.changePlaceStatus');
+
 
 });
 
