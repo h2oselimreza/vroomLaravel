@@ -281,3 +281,26 @@ if (!function_exists('get_company_name')) {
         return $company ?? '';
     }
 }
+
+
+if (!function_exists('get_card_type_by_card')) {
+
+    function get_card_type_by_card($cardCode, $cardFlag = 'package_code')
+    {
+        $cardTypeName = "";
+
+        if ($cardFlag == 'card_number') {
+            $cardCode = substr($cardCode, 7, 1);
+        }
+
+        if ($cardCode == '1') {
+            $cardTypeName = 'Silver Membership';
+        } else if ($cardCode == '2') {
+            $cardTypeName = 'Gold Membership';
+        } else if ($cardCode == '3') {
+            $cardTypeName = 'Platinum Membership';
+        }
+
+        return $cardTypeName;
+    }
+}

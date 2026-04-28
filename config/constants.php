@@ -57,5 +57,12 @@ return [
         11 => 'November',
         12 => 'December',
     ],
-
+    'CORPORATE_CUST' => "corp_customer",
+    'INDIVIDUAL_CUST' => "indv_customer",
+    'INDV_DEFAULT_GRP' => '3',
+    'INDV_CARD_EXPIY_GRP' => '4',
+    'INDV_PACKAGE' => 'PCK-00005',
+    'INDV_CARD_EXPIY_PACKAGE' => 'PCK-00006',
+    'INDV_EMP_CODE' => "IE",
+    'INDV_COMPANY_CODE' => "IC"
 ];
