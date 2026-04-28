@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
+use App\Http\Controllers\Admin\RMAssign\RMAssignController;
 use App\Http\Controllers\Admin\SubModuleController;
 use App\Http\Controllers\Admin\UserGroupController;
 use App\Http\Controllers\Admin\WorkingExperienceController;
@@ -310,6 +311,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('home/add-raise-home-service',[RaiseHomeServiceController::class, 'addRaiseHomeService'])->name('admin.home-service.add-raise-home-service');
     Route::get('home/my-home-service-list',[RaiseHomeServiceController::class, 'MyHomeServiceList'])->name('admin.home-service.my-home-service-list');
 
+    /*===============Home service Route==================*/
+    Route::resource('rm-assign/assign-rm-corporate', RMAssignController::class)->names('admin.rm-rm-assign');
 
 });
 
