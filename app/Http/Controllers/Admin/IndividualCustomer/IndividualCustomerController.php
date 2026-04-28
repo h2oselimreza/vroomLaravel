@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 class IndividualCustomerController extends Controller
 {
     public function index(Request $request, CommonRepository $commonRepository) {
+        //dd($request->all());
         $statusDropDown = $request->statusDropDown;
         $isActiveFlag = 1;
         if ($statusDropDown) {

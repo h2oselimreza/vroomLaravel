@@ -26,6 +26,35 @@
     <div class="add-button">
         <a href="{{ route('admin.individual.individual-account.create') }}">New Individual Account</a>
     </div>
+    <div class="row mb-3">
+        <div class="col-md-2 col-sm-6 col-xs-12">
+
+            <form action="{{ route('admin.individual.individual-account.index') }}"
+                id="statusForm"
+                method="GET">
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control"
+                            id="statusDropDown"
+                            name="statusDropDown"
+                            onchange="this.form.submit()">
+
+                        @if ($isActiveFlag == 1)
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                        @else
+                            <option value="2">Inactive</option>
+                            <option value="1">Active</option>
+                        @endif
+
+                    </select>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default"> 
@@ -135,7 +164,7 @@
     });
 
     function changeStatus() {
-        showLoader();
+        //showLoader();
         $('#statusForm').submit();
     }
 

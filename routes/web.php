@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\HomeService\EmployeeHomeServiceController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceAssignToEmployeeController;
 use App\Http\Controllers\Admin\HomeService\HomeServiceController as HomeServiceHomeServiceController;
 use App\Http\Controllers\Admin\HomeService\RaiseHomeServiceController;
+use App\Http\Controllers\Admin\IndividualCustomer\CardRenewController;
 use App\Http\Controllers\Admin\IndividualCustomer\IndividualCustomerController;
 use App\Http\Controllers\Admin\MasterData\AppointmentService\AppointmentServiceController;
 use App\Http\Controllers\Admin\MasterData\HomeService\HomeServiceCategoryController;
@@ -318,6 +319,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     /*===============Home service Route==================*/
     Route::resource('individual/individual-account', IndividualCustomerController::class)->names('admin.individual.individual-account');
     Route::get('individual/change-status',[IndividualCustomerController::class, 'changeCompanyStatus'])->name('admin.individual.individual-account.changeCompanyStatus');
+    Route::resource('individual/card-renew', CardRenewController::class)->names('admin.individual.card-renew');
+
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {
