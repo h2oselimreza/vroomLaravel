@@ -58,7 +58,9 @@ use App\Http\Controllers\Admin\MasterData\AreaController;
 use App\Http\Controllers\Admin\MasterData\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\ModuleGroupController;
+use App\Http\Controllers\Admin\Place\PlaceAttachmentController;
 use App\Http\Controllers\Admin\Place\PlaceController;
+use App\Http\Controllers\Admin\Place\PlaceImageController;
 use App\Http\Controllers\Admin\Place\PlaceTimeScheduleController;
 use App\Http\Controllers\Admin\ProfilePhotoController;
 use App\Http\Controllers\Admin\RMAssign\RMAssignController;
@@ -327,8 +329,9 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     /*===============Place Route==================*/
     Route::resource('place/place-info', PlaceController::class)->names('admin.place.place-info');
     Route::get('place/change-status',[PlaceController::class, 'changePlaceStatus'])->name('admin.place.changePlaceStatus');
-
     Route::resource('place/place-time-schedule', PlaceTimeScheduleController::class)->names('admin.place.place-time-schedule');
+    Route::resource('place/place-image', PlaceImageController::class)->names('admin.place.place-image');
+    Route::resource('place/place-attachment', PlaceAttachmentController::class)->names('admin.place.attachment');
 
 
 });
