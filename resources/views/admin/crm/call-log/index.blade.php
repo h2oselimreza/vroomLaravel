@@ -112,7 +112,7 @@
 
                                                     @if ($callHistoryDate == date('Y-m-d'))
                                                         <li>
-                                                            <a class="dropdown-item" href="{{ url('admin/Crm/editCallLogShow?logId=' . $callHistory->log_id) }}">
+                                                            <a class="dropdown-item" href="{{ route('admin.crm.call-log.edit',$callHistory->log_id) }}">
                                                                 Edit
                                                             </a>
                                                         </li>

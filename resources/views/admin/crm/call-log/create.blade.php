@@ -60,9 +60,19 @@
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <div class="panel panel-default p-3">
+                 @php
+                    $editData = isset($data['log_data']) ? $data['log_data'] : null;
+                @endphp
+                <form id="addCallLogForm" action="{{ $editData 
+                        ? route('admin.crm.call-log.update', $editData->id) 
+                        : route('admin.crm.call-log.store') }}"
+                        method="POST">
 
-                <form id="addCallLogForm" action="{{ route('admin.crm.call-log.store') }}" method="POST">
                     @csrf
+
+                    @if($editData)
+                        @method('PUT')
+                    @endif
 
                     <div class="row">
 
@@ -76,7 +86,8 @@
                                         id="customerName" value="{{ $customerName }}" {{ $disableFlag }}>
                                 @else
                                     <div class="input-group">
-                                        <input type="text" class="form-control" name="customerName" id="customerName">
+                                        <input type="text" class="form-control" name="customerName" id="customerName"
+                                        value="{{ old('customerName', $editData->customer_name ?? '') }}">
 
                                         <span class="input-group-btn">
                                             <button type="button" class="btn btn-primary save_button" onclick="getCustomerList()">
@@ -90,27 +101,28 @@
                                 <input type="hidden" name="leadCode" value="{{ $leadCode ?? '' }}">
                             </div>
                         </div>
-
                         {{-- Mobile --}}
                         <div class="col-md-4 col-sm-4 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Customer Mobile</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="customerMobileReq-error">
                                     Customer Mobile is Required
                                 </small>
 
-                                <input type="text" class="form-control" name="customerMobile"
+                                <input type="text"
+                                    class="form-control @error('customerMobile') is-invalid @enderror"
+                                    name="customerMobile"
                                     id="customerMobile"
                                     onchange="checkMobileNumber(this.value, 'customerMobile')"
-                                    value="{{ $mobile }}" {{ $disableFlag }}>
-
+                                    value="{{ old('customerMobile', $editData->customer_mobile_no ?? $mobile ?? '') }}"
+                                    {{ $disableFlag }}>
                                 @error('customerMobile')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                         </div>
-
                         {{-- Address --}}
                         <div class="col-md-4 col-sm-4 col-xs-12 mb-2">
                             <div class="form-group">
@@ -118,8 +130,8 @@
 
                                 <input type="text" class="form-control" name="customerAddress"
                                     id="customerAddress"
-                                    value="{{ $address }}" {{ $disableFlag }}>
-
+                                    {{ $disableFlag }}
+                                    value="{{ old('customerAddress', $editData->customer_address ?? $address ?? '') }}">
                                 @error('customerAddress')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -131,92 +143,150 @@
                             <div class="form-group">
                                 <label class="form-label">Call Type</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="callTypeReq-error">
                                     Please select a call type
                                 </small>
 
-                                <select class="form-control" id="callType" name="callType"
+                                <select class="form-control"
+                                        id="callType"
+                                        name="callType"
                                         onchange="setCallType(this.value)">
+
                                     <option value="">-- Select Type --</option>
 
                                     @foreach($data['callTypes'] as $callType)
-                                        <option value="{{ $callType->element_code }}">
+                                        <option value="{{ $callType->element_code }}"
+                                            {{ old('callType', $editData->call_type ?? '') == $callType->element_code ? 'selected' : '' }}>
                                             {{ $callType->element }}
                                         </option>
                                     @endforeach
+
                                 </select>
+
                                 @error('callType')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                         </div>
-
                         {{-- Reason --}}
+                        @php
+                            $selectedReasonCode = old(
+                                'feedback',
+                                isset($editData->call_reason)
+                                    ? $editData->call_reason . '|' . ($editData->call_reason_text ?? '')
+                                    : ''
+                            );
+                        @endphp
                         <div class="col-md-6 col-sm-6 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Reason</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="reasonCodeReq-error">
                                     Please select a reason
                                 </small>
 
                                 <div id="reasonDiv">
                                     <select class="form-control" name="reason" id="reasonCode">
+
                                         <option value="">-- Select Reason --</option>
+
+                                        {{-- ✅ EDIT VALUE (fallback) --}}
+                                        {{-- @if(!empty($editData))
+                                            <option value="{{ $editData->call_reason }}|{{ $editData->call_reason_text }}"
+                                                    selected>
+                                                {{ $editData->call_reason_text }}
+                                            </option>
+                                        @endif --}}
+
                                     </select>
                                 </div>
-                                @error('reasonCode')
+
+                                <input type="hidden" id="selectedReasonValue" value="{{ $selectedReasonCode }}">
+
+                                @error('reason')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                         </div>
 
                         {{-- Start Time --}}
+                        @php
+                            $startValue = old('startDtTm', $editData->call_start_dt_tm ?? '');
+                        @endphp
+
                         <div class="col-sm-6 col-md-6 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Start Time</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="hiddenStartReq-error">
                                     Start Time is Required
                                 </small>
 
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="dispStart" readonly>
-                                    <input type="hidden" name="startDtTm" id="hiddenStart">
+                                    <input type="text"
+                                        class="form-control"
+                                        id="dispStart"
+                                        value="{{ $startValue ? \Carbon\Carbon::parse($startValue)->format('h:i A') : '' }}"
+                                        readonly>
+
+                                    <input type="hidden"
+                                        name="startDtTm"
+                                        id="hiddenStart"
+                                        value="{{ $startValue }}">
 
                                     <span class="input-group-btn">
-                                        <button type="button" class="btn btn-primary save_button"
+                                        <button type="button"
+                                                class="btn btn-primary save_button"
                                                 onclick="setCurrentTime('Start')">
                                             Set
                                         </button>
                                     </span>
                                 </div>
-                                @error('dispStart')
+
+                                @error('startDtTm')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
                         </div>
 
                         {{-- End Time --}}
+                        @php
+                            $endValue = old('endDtTm', $editData->call_end_dt_tm ?? '');
+                        @endphp
+
                         <div class="col-sm-6 col-md-6 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">End Time</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="hiddenEndReq-error">
                                     End Time is Required
                                 </small>
 
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="dispEnd" readonly>
-                                    <input type="hidden" name="endDtTm" id="hiddenEnd">
+                                    <input type="text"
+                                        class="form-control"
+                                        id="dispEnd"
+                                        value="{{ $endValue ? \Carbon\Carbon::parse($endValue)->format('h:i A') : '' }}"
+                                        readonly>
+
+                                    <input type="hidden"
+                                        name="endDtTm"
+                                        id="hiddenEnd"
+                                        value="{{ $endValue }}">
 
                                     <span class="input-group-btn">
-                                        <button type="button" class="btn btn-primary save_button"
+                                        <button type="button"
+                                                class="btn btn-primary save_button"
                                                 onclick="setCurrentTime('End')">
                                             Set
                                         </button>
                                     </span>
                                 </div>
+
                                 @error('endDtTm')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -224,10 +294,20 @@
                         </div>
 
                         {{-- Feedback --}}
+                        @php
+                            $selectedFeedback = old(
+                                'feedback',
+                                isset($editData->customer_feedback)
+                                    ? $editData->customer_feedback . '|' . ($editData->customer_feedback_text ?? '')
+                                    : ''
+                            );
+                        @endphp
+
                         <div class="col-md-6 col-sm-6 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Feedback</label>
                                 <span class="text-danger">*</span>
+
                                 <small class="hidden custom-text-danger" id="feedbackCodeReq-error">
                                     Please select a feedback
                                 </small>
@@ -237,6 +317,10 @@
                                         <option value="">-- Select Feedback --</option>
                                     </select>
                                 </div>
+
+                                {{-- hidden edit value (used by JS) --}}
+                                <input type="hidden" id="selectedFeedbackValue" value="{{ $selectedFeedback }}">
+
                                 @error('feedback')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
@@ -244,27 +328,68 @@
                         </div>
 
                         {{-- Next Call Date --}}
+                        @php
+                            $nextCallDate = old('nextCallDate', isset($editData->next_call_dt_tm) ? \Carbon\Carbon::parse($editData->next_call_dt_tm)->format('Y-m-d') : '');
+                        @endphp
+
                         <div class="col-md-3 col-sm-3 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Next Call Date</label>
-                                <input type="text" class="form-control dateInput" name="nextCallDate" id="nextCallDate">
+
+                                <input type="text"
+                                    class="form-control dateInput"
+                                    name="nextCallDate"
+                                    id="nextCallDate"
+                                    value="{{ $nextCallDate }}">
+
+                                @error('nextCallDate')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
                         {{-- Next Call Time --}}
+                        @php
+                            $nextCallTime = old(
+                                'nextCallTime',
+                                isset($editData->next_call_dt_tm) ? \Carbon\Carbon::parse($editData->next_call_dt_tm)->format('h:i A') : ''
+                            );
+                        @endphp
+
                         <div class="col-md-3 col-sm-3 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Next Call Time</label>
-                                <input type="text" class="form-control timepicker" name="nextCallTime" id="nextCallTime">
+
+                                <input type="text"
+                                    class="form-control timepicker"
+                                    name="nextCallTime"
+                                    id="nextCallTime"
+                                    value="{{ $nextCallTime }}">
+
+                                @error('nextCallTime')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
                         {{-- Remarks --}}
+                        @php
+                            $remarks = old('remarks', $editData->remarks ?? '');
+                        @endphp
+
                         <div class="col-md-12 col-sm-12 col-xs-12 mb-2">
                             <div class="form-group">
                                 <label class="form-label">Remarks</label>
-                                <textarea class="form-control" rows="10" name="remarks" id="remarks"
-                                style="min-height:100px;"></textarea>
+
+                                <textarea class="form-control"
+                                        rows="10"
+                                        name="remarks"
+                                        id="remarks"
+                                        style="min-height:100px;">{{ $remarks }}</textarea>
+
+                                @error('remarks')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
@@ -273,7 +398,7 @@
                     {{-- Submit --}}
                     <div class="row mt-2">
                         <div class="col-md-4 col-sm-6 col-xs-12">
-                            <input type="hidden" name="logId" value="{{ $logId ?? '' }}">
+                            <input type="hidden" name="logId" value="{{ $editData->log_id ?? '' }}">
 
                             <button type="button" class="btn btn-primary save_button" onclick="addCallLog()">
                                 Submit
@@ -403,11 +528,13 @@
 
         var reasonList = (reasonObj && reasonObj.reasonData) ? reasonObj.reasonData : [];
         var feedbackList = (feedbackObj && feedbackObj.feedbackData) ? feedbackObj.feedbackData : [];
-
+        // -------------------
+        // REASON LOAD
+        // -------------------
         var optionStr = "<option value=''>Nothing Selected</option>";
 
         for (var i = 0; i < reasonList.length; i++) {
-            if (reasonList[i].call_type === callTypeDropDown) {
+            if (reasonList[i].call_type == callTypeDropDown) {
                 optionStr += "<option value='" +
                     reasonList[i].reason_code + "|" +
                     reasonList[i].title + "'>" +
@@ -422,6 +549,18 @@
             '</select>'
         );
 
+        // -------------------
+        // ✅ FIX EDIT AUTO SELECT
+        // -------------------
+        var selectedReasonback = $('#selectedReasonValue').val();
+
+        if (selectedReasonback) {
+            $('#reasonCode').val(selectedReasonback);
+        }
+
+        // -------------------
+        // FEEDBACK LOAD
+        // -------------------
         var optionFbStr = "<option value=''>Nothing Selected</option>";
 
         for (var i = 0; i < feedbackList.length; i++) {
@@ -439,7 +578,26 @@
             optionFbStr +
             '</select>'
         );
+
+        // -------------------
+        // ✅ FIX EDIT AUTO SELECT
+        // -------------------
+        var selectedFeedback = $('#selectedFeedbackValue').val();
+
+        if (selectedFeedback) {
+            $('#feedbackCode').val(selectedFeedback);
+        }
     }
+
+    $(document).ready(function () {
+
+        var editCallType = $('#callType').val();
+
+        if (editCallType) {
+            setCallType(editCallType);
+        }
+
+    });
 
 
     function setCurrentTime(fieldId) {

@@ -168,4 +168,29 @@ class CRMCallLogRepository
         return 1;
     }
 
+    public function getEditCallLog(string $logId)
+    {
+        return DB::table('call_center_log')
+            ->select(
+                'call_center_log.*',
+                'call_reason.title as reason_title',
+                'customer_feedback.title as feedback_title',
+                'common_table.element as call_type_title'
+            )
+            ->leftJoin('call_reason', 'call_reason.reason_code', '=', 'call_center_log.call_reason')
+            ->leftJoin('customer_feedback', 'customer_feedback.feedback_code', '=', 'call_center_log.customer_feedback')
+            ->join('common_table', 'common_table.element_code', '=', 'call_center_log.call_type')
+            ->where('call_center_log.log_id', $logId)
+            ->first();
+    }
+
+    public function editCallLog(array $updateArr)
+    {
+        DB::table('call_center_log')
+            ->where('log_id', $updateArr['log_id'])
+            ->update($updateArr);
+
+        return 1;
+    }
+
 }

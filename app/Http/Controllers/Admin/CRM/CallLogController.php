@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\CRM;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\CRM\CallCenterLog;
 use App\Repositories\CommonRepository;
 use App\Repositories\CRMCallLogRepository;
 use Carbon\Carbon;
@@ -54,84 +55,84 @@ class CallLogController extends Controller
         $data['logId'] = '';
         $data['disableFlag'] = '';
 
-        if (!empty($logId)) {
-            $arr = [
-                'historyDate' => '',
-                'taskDate'    => '',
-                'logId'       => $logId,
-            ];
+        // if (!empty($logId)) {
+        //     $arr = [
+        //         'historyDate' => '',
+        //         'taskDate'    => '',
+        //         'logId'       => $logId,
+        //     ];
 
-            /*
-            * get existing call log details with log id
-            */
-            $logDetails = $crmCallLogRepository->getCallLog($arr);
+        //     /*
+        //     * get existing call log details with log id
+        //     */
+        //     $logDetails = $crmCallLogRepository->getCallLog($arr);
 
-            if (!empty($logDetails)) {
-                $data['disableFlag'] = 'readonly';
-                $data['logId'] = $logId;
-                $data['logDetails'] = $logDetails;
+        //     if (!empty($logDetails)) {
+        //         $data['disableFlag'] = 'readonly';
+        //         $data['logId'] = $logId;
+        //         $data['logDetails'] = $logDetails;
 
-                $nextCallStatus = $logDetails[0]['next_call_status'];
-                $nextCallFlagDtTm = $logDetails[0]['next_call_flag_dt_tm'];
+        //         $nextCallStatus = $logDetails[0]['next_call_status'];
+        //         $nextCallFlagDtTm = $logDetails[0]['next_call_flag_dt_tm'];
 
-                /*
-                * if call is in HOLD_NEXT_CALL status and is not ended in CALL_UNLOCK_MINUITE
-                * specified time, free up the flag and release
-                */
-                if ($nextCallStatus == config('constants.HOLD_NEXT_CALL')) {
-                    $nextCallFlagDtTm = strtotime($nextCallFlagDtTm);
-                    $currentTime = strtotime(date('y-m-d H:i:s'));
-                    $minute = round(abs($nextCallFlagDtTm - $currentTime) / 60, 2);
+        //         /*
+        //         * if call is in HOLD_NEXT_CALL status and is not ended in CALL_UNLOCK_MINUITE
+        //         * specified time, free up the flag and release
+        //         */
+        //         if ($nextCallStatus == config('constants.HOLD_NEXT_CALL')) {
+        //             $nextCallFlagDtTm = strtotime($nextCallFlagDtTm);
+        //             $currentTime = strtotime(date('y-m-d H:i:s'));
+        //             $minute = round(abs($nextCallFlagDtTm - $currentTime) / 60, 2);
 
-                    if ($minute > config('constants.CALL_UNLOCK_MINUITE')) {
-                        $updateArr = [
-                            'next_call_status'     => config('constants.HAVE_NEXT_CALL'),
-                            'next_call_flag_dt_tm' => null,
-                            'updated_by'           => Auth::user()->user_id,
-                            //'updated_dt_tm'        => $this->dateTime,
-                        ];
+        //             if ($minute > config('constants.CALL_UNLOCK_MINUITE')) {
+        //                 $updateArr = [
+        //                     'next_call_status'     => config('constants.HAVE_NEXT_CALL'),
+        //                     'next_call_flag_dt_tm' => null,
+        //                     'updated_by'           => Auth::user()->user_id,
+        //                     //'updated_dt_tm'        => $this->dateTime,
+        //                 ];
 
-                        $crmCallLogRepository->changeNextCallStatus($updateArr, $logId);
-                    } else {
-                        return redirect()->route('admin.crm.call-log.index')->with('error','Next call status not match');
-                    }
-                }
-            }
-        }
+        //                 $crmCallLogRepository->changeNextCallStatus($updateArr, $logId);
+        //             } else {
+        //                 return redirect()->route('admin.crm.call-log.index')->with('error','Next call status not match');
+        //             }
+        //         }
+        //     }
+        // }
 
-        $callerType = $request->query('callerType', null);
-        $data['callerType'] = $callerType;
-        $data['customerInfo'] = [];
-        $data['leadCode'] = '';
+        // $callerType = $request->query('callerType', null);
+        // $data['callerType'] = $callerType;
+        // $data['customerInfo'] = [];
+        // $data['leadCode'] = '';
 
-        if (!empty($callerType)) {
-            if ($callerType == 'customer') {
-                $customerId = $request->query('customerId', '');
+        // if (!empty($callerType)) {
+        //     if ($callerType == 'customer') {
+        //         $customerId = $request->query('customerId', '');
 
-                /*
-                * get customer data
-                */
-                $data['customerInfo'] = $crmCallLogRepository->getIndividualCustomer($customerId);
+        //         /*
+        //         * get customer data
+        //         */
+        //         $data['customerInfo'] = $crmCallLogRepository->getIndividualCustomer($customerId);
 
-                if (empty($data['customerInfo'])) {
-                    return redirect('admin/Crm/addCallLogShow');
-                }
-            } elseif ($callerType == 'leads') {
-                $leadCode = $request->query('leadCode', '');
+        //         if (empty($data['customerInfo'])) {
+        //             return redirect('admin/Crm/addCallLogShow');
+        //         }
+        //     } elseif ($callerType == 'leads') {
+        //         $leadCode = $request->query('leadCode', '');
 
-                /*
-                * get leads data
-                */
-                $data['customerInfo'] = $crmCallLogRepository->getCallLeads($leadCode);
-                $data['leadCode'] = $leadCode;
+        //         /*
+        //         * get leads data
+        //         */
+        //         $data['customerInfo'] = $crmCallLogRepository->getCallLeads($leadCode);
+        //         $data['leadCode'] = $leadCode;
 
-                if (empty($data['customerInfo'])) {
-                    return redirect('admin/Crm/addCallLogShow');
-                }
-            } else {
-                return redirect('admin/Crm/addCallLogShow');
-            }
-        }
+        //         if (empty($data['customerInfo'])) {
+        //             return redirect('admin/Crm/addCallLogShow');
+        //         }
+        //     } else {
+        //         return redirect('admin/Crm/addCallLogShow');
+        //     }
+        // }
 
         /*
         * call type data
@@ -348,5 +349,120 @@ class CallLogController extends Controller
 
         return redirect()->route('admin.crm.call-log.create')->with('success','Call log added successfully.');
 
+    }
+
+    public function edit($logId, CommonRepository $commonRepository, CRMCallLogRepository $crmCallLogRepository){
+
+        $commonTableElementArr = ['type' => 'call_type'];
+        $data['callTypes'] = $commonRepository->getCommonTableElement($commonTableElementArr);
+
+        /*
+        * call reasons data
+        */
+        $data['reasons'] = [
+            'reasonData' => $commonRepository->getCallReason(null, 1)
+        ];
+
+        /*
+        * call feedbacks data
+        */
+        $data['feedbacks'] = [
+            'feedbackData' => $crmCallLogRepository->getCustomerFeedback(null, 1)
+        ];
+
+        /*
+        * customer list modal data
+        */
+        $data['companies'] = $commonRepository->getIndividualAccList($data['isActiveFlag'] ?? null, config('constants.INDIVIDUAL_CUST'));
+
+        $data['log_data'] = CallCenterLog::where('log_id',$logId)->first();
+        return view('admin.crm.call-log.create',compact('data'));
+    }
+
+    public function update(Request $request, CRMCallLogRepository $crmCallLogRepository)
+    {
+        $logId = $request->input('logId');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get existing log
+        |--------------------------------------------------------------------------
+        */
+        $callLog = $crmCallLogRepository->getEditCallLog($logId);
+
+        if (!$callLog || !isset($callLog)) {
+            return redirect()->route('admin.crm.call-log.index')->with('error','Call Log not found.');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Only today's call can be edited (same logic)
+        |--------------------------------------------------------------------------
+        */
+        if (date('Y-m-d', strtotime($callLog->call_start_dt_tm)) != date('Y-m-d')) {
+            return redirect()->route('admin.crm.call-log.index')->with('error','Call start date time not match');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Build update array
+        |--------------------------------------------------------------------------
+        */
+        $updateArr = [];
+        $updateArr['customer_name'] = $request->customerName;
+        $updateArr['customer_mobile_no'] = $request->customerMobile;
+        $updateArr['customer_address'] = $request->customerAddress;
+        $updateArr['call_type'] = $request->callType;
+        $updateArr['log_id'] = $logId;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reason (safe explode)
+        |--------------------------------------------------------------------------
+        */
+        $reason = explode('|', trim($request->input('reason', '')));
+        $updateArr['call_reason'] = $reason[0] ?? null;
+        $updateArr['call_reason_text'] = $reason[1] ?? null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Feedback (safe explode)
+        |--------------------------------------------------------------------------
+        */
+        $feedback = explode('|', trim($request->input('feedback', '')));
+        $updateArr['customer_feedback'] = $feedback[0] ?? null;
+        $updateArr['customer_feedback_text'] = $feedback[1] ?? null;
+
+        $updateArr['remarks'] = $request->input('remarks')
+            ? trim($request->input('remarks'))
+            : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Audit fields
+        |--------------------------------------------------------------------------
+        */
+        $updateArr['updated_by'] = Auth::user()->user_id ?? null;
+        $updateArr['updated_dt_tm'] = now();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validation (same condition logic)
+        |--------------------------------------------------------------------------
+        */
+        if (
+            $updateArr['call_type'] &&
+            $updateArr['call_reason'] &&
+            $updateArr['customer_feedback']
+        ) {
+            $response = $crmCallLogRepository->editCallLog($updateArr);
+
+            return redirect()
+                ->route('admin.crm.call-log.edit',$logId)
+                ->with('success', "Call Log update success");
+        }
+
+        return redirect()
+            ->route('admin.crm.call-log.index');
     }
 }
