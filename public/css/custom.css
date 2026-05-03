@@ -361,3 +361,9 @@ div.dt-container .dt-search input {
 .accordion-button{
     padding: 11px;
 }
+
+input[readonly] {
+    background-color: #f5f5f5 !important;
+    color: #555;
+    cursor: not-allowed;
+}

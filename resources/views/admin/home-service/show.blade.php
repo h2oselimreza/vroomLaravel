@@ -1003,13 +1003,5 @@
         clearBtn: true,        // optional clear button
         orientation: 'bottom'  // show below the input
     });
-
-    $('.timepicker').timepicker({
-        // showMeridian: true,
-        // defaultTime: false,
-        // explicitMode: true   // ✅ IMPORTANT FIX
-        defaultTime: false,
-        disableFocus: true
-    });
 </script>
 @endpush

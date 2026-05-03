@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeAttach
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeePhotographController;
+use App\Http\Controllers\Admin\CRM\CallLogController;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -332,6 +333,11 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('place/place-time-schedule', PlaceTimeScheduleController::class)->names('admin.place.place-time-schedule');
     Route::resource('place/place-image', PlaceImageController::class)->names('admin.place.place-image');
     Route::resource('place/place-attachment', PlaceAttachmentController::class)->names('admin.place.attachment');
+
+    /*===============Call Log==================*/
+    Route::resource('crm/call-log', CallLogController::class)->names('admin.crm.call-log');
+    Route::post('crm/setCurrentTime',[CallLogController::class, 'setCurrentTime'])->name('admin.crm.setCurrentTime');
+
 
 
 });

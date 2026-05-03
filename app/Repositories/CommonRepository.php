@@ -73,4 +73,29 @@ class CommonRepository
         return $query->get();
     }
 
+    public function getCallReason($reasonCode = null, $isActiveFlag = 1)
+    {
+        $query = DB::table('call_reason')
+            ->select('call_reason.*', 'common_table.element as call_type_name')
+            ->join('common_table', 'common_table.element_code', '=', 'call_reason.call_type');
+
+        // filter by reasonCode
+        if (!empty($reasonCode)) {
+            $query->where('reason_code', $reasonCode);
+        }
+
+        // is_active logic (same as CI)
+        if ($isActiveFlag == 1) {
+            $query->where('call_reason.is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('call_reason.is_active', 0);
+        }
+
+        // ordering
+        $query->orderBy('call_reason.call_type')
+            ->orderBy('call_reason.reason_order');
+
+        return $query->get();
+    }
+
 }

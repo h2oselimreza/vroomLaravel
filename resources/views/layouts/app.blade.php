@@ -267,5 +267,54 @@
         //     })
         </script>
         @stack('scripts')
+        <script>
+            $(document).ready(function(){
+                $('.dateInput').datepicker({
+                    format: 'yyyy-mm-dd',  // format compatible with Laravel date column
+                    autoclose: true,       // close picker after selecting a date
+                    todayHighlight: true,  // highlight today
+                    clearBtn: true,        // optional clear button
+                    orientation: 'bottom'  // show below the input
+                });
+            });
+            $('.timepicker').timepicker({
+                // showMeridian: true,
+                // defaultTime: false,
+                // explicitMode: true   // ✅ IMPORTANT FIX
+                defaultTime: false,
+                disableFocus: true
+            });
+            function getInputData(fieldsArr) {
+                var jsonVariable = {};
+                var inputArr = new Array();
+                var requiredFlag = 1;
+                for (var i = 0; i < fieldsArr.length; i++) {
+                    var inputTextValue = "";
+                    inputArr = fieldsArr[i].split('|');
+
+                    inputTextValue = $.trim($('#' + inputArr[0]).val());  // inputArr[0] text filed id
+                    if (inputArr.length === 2) {  // 2 means this filed is required
+                        if (inputTextValue === "") {
+                            requiredFlag = 0;
+                            $("#" + inputArr[1]).attr('class', 'custom-text-danger');  // inputArr[1] is required field's error div id
+                        } else {
+                            $("#" + inputArr[1]).attr('class', 'hidden custom-text-danger');
+                        }
+                    }
+                    jsonVariable[inputArr[0]] = inputTextValue;
+                }
+                if (requiredFlag === 0) {
+                    return false;  // required field validation return false
+                }
+                return jsonVariable;
+            }
+
+            function hideErrorDiv() {
+                $("#errorDiv").attr('class', 'alert alert-danger hidden');
+            }
+            function getReuiredFiledErrorMsg() {
+                return "<strong><li>Fields are requried</li></strong>";
+            }
+        </script>
     </body>
 </html>

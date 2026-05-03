@@ -988,15 +988,4 @@
 </div>
 @endsection
 @push('scripts')
-<script>
-    $(document).ready(function(){
-        $('.dateInput').datepicker({
-            format: 'yyyy-mm-dd',  // format compatible with Laravel date column
-            autoclose: true,       // close picker after selecting a date
-            todayHighlight: true,  // highlight today
-            clearBtn: true,        // optional clear button
-            orientation: 'bottom'  // show below the input
-        });
-    });
-</script>
 @endpush
