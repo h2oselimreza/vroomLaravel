@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeContro
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeeOfficeController;
 use App\Http\Controllers\Admin\Corporate_customer\Employee\CompanyEmployeePhotographController;
 use App\Http\Controllers\Admin\CRM\CallLogController;
+use App\Http\Controllers\Admin\CRM\CallLogCustomerSearch;
 use App\Http\Controllers\Admin\EmployeeAnniversaryOrBirthdayCardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\EmployeeEducationController;
@@ -337,9 +338,9 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     /*===============Call Log==================*/
     Route::resource('crm/call-log', CallLogController::class)->names('admin.crm.call-log');
     Route::post('crm/setCurrentTime',[CallLogController::class, 'setCurrentTime'])->name('admin.crm.setCurrentTime');
+    Route::get('crm/make-call',[CallLogController::class, 'makeCall'])->name('admin.crm.makeCall');
 
-
-
+    Route::get('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {

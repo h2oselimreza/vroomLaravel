@@ -188,9 +188,9 @@
                             </tfoot>
                             <tbody>
                                 @php $count = 1; @endphp
-
-                                @forelse ($callTasks as $callTask)
-                                    <tr>
+                                @if ($callTasks)
+                                    @foreach ( $callTasks as $callTask )
+                                        <tr>
                                         <td class="td-center">{{ $count }}</td>
 
                                         <td>
@@ -204,21 +204,22 @@
                                             {{ \Carbon\Carbon::parse($callTask->next_call_dt_tm)->format('h:i A') }}
                                         </td>
 
-                                        <td>{{ $callTask->created_by_name }}</td>
+                                        <td>{{ $callTask->created_by_name ?? null }}</td>
 
-                                        <td class="td-center">
+                                        <td class="text-center">
                                             <div class="btn-group">
+                                                <!-- Changed data-toggle to data-bs-toggle -->
                                                 <button type="button" 
-                                                        class="btn btn-default btn-xs dropdown-toggle" 
-                                                        data-toggle="dropdown" 
-                                                        aria-haspopup="true" 
+                                                        class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+                                                        data-bs-toggle="dropdown" 
                                                         aria-expanded="false">
-                                                    Action <span class="caret"></span>
+                                                    Action
                                                 </button>
 
-                                                <ul class="dropdown-menu pull-right">
+                                                <!-- Changed pull-right to dropdown-menu-end -->
+                                                <ul class="dropdown-menu dropdown-menu-end">
                                                     <li>
-                                                        <a href="{{ url('admin/Crm/addCallLogShow?logId=' . $callTask->log_id) }}">
+                                                        <a class="dropdown-item" href="{{ url('/admin/crm/make-call?logId=' . $callTask->log_id) }}">
                                                             Make Call
                                                         </a>
                                                     </li>
@@ -226,16 +227,14 @@
                                             </div>
                                         </td>
                                     </tr>
-
-                                    @php $count++; @endphp
-
-                                @empty
+                                    @endforeach
+                                @else
                                     <tr>
                                         <td colspan="6" class="text-center">
                                             No call tasks found
                                         </td>
-                                    </tr>
-                                @endforelse
+                                    </tr>    
+                                @endif
                             </tbody>
                         </table>
                     </div> 
@@ -319,52 +318,71 @@ $(document).ready(function () {
     }
 
     function removeCallLog(logId) {
-        swal({
+
+        Swal.fire({
             title: "Are you sure?",
-            text: "",
-            type: "warning",
+            text: "This action cannot be undone",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonText: "",
-            confirmButtonColor: "#ec6c62"
-        }, function () {
-            swal.close();
+            confirmButtonColor: "#ec6c62",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+
+            if (!result.isConfirmed) return;
+
             showLoader();
+
+            let url = "{{ route('admin.crm.call-log.destroy', ':log_id') }}";
+            url = url.replace(':log_id', logId);
+
             $.ajax({
-                url: "/admin/Crm/removeCallLog?logId=" + logId,
-                type: "DELETE"
+                url: url,
+                type: "POST",
+                data: {
+                    _method: "DELETE",
+                    _token: "{{ csrf_token() }}"
+                }
             })
+            .done(function (data) {
 
-                    .done(function (data) {
-                        hideLoader();
-//                        console.log(data);
-//                        return false;
-                        if (data === '1') {
-                            swal({
-                                title: "Successfully Done",
-                                text: "",
-                                type: "success",
-                                closeOnConfirm: false,
-                                confirmButtonText: "Ok",
-                                confirmButtonColor: "#A5DC86"
-                            }, function () {
-                                window.location.href = "/admin/Crm/callLog";
-                            });
-                        } else if (data === '2') {
-                            swal("Oops", "Invalide action!", "error");
-                        } else if (data === '3') {
-                            swal("Oops", "This call is referencing another call. Failed to remove", "error");
-                        } else {
-                            window.location.href = "/admin/Crm/callLog";
-                        }
-                    })
+                hideLoader();
 
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
+                if (data == '1') {
+
+                    Swal.fire({
+                        title: "Successfully Done",
+                        icon: "success",
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#A5DC86"
+                    }).then(() => {
+                        window.location.href = "/admin/crm/call-log";
                     });
+
+                } else if (data == '2') {
+
+                    Swal.fire("Oops", "Invalid action!", "error");
+
+                } else if (data == '3') {
+
+                    Swal.fire(
+                        "Oops",
+                        "This call is referencing another call. Failed to remove",
+                        "error"
+                    );
+
+                } else {
+
+                    window.location.href = "/admin/crm/call-log";
+                }
+            })
+            .fail(function () {
+
+                //hideLoader();
+                Swal.fire("Oops", "We couldn't connect to the server!", "error");
+            });
         });
     }
-
     function removeAllLog() {
         swal({
             title: "Are you sure?",

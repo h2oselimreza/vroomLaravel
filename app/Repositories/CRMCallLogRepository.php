@@ -193,4 +193,29 @@ class CRMCallLogRepository
         return 1;
     }
 
+    public function removeCallLog($logId)
+    {
+        $exists = DB::table('call_center_log')
+            ->where('log_id', $logId)
+            ->first();
+
+        if (!$exists) {
+            return 2;
+        }
+
+        $childExists = DB::table('call_center_log')
+            ->where('ref_log_id', $logId)
+            ->exists();
+
+        if ($childExists) {
+            return 3;
+        }
+
+        DB::table('call_center_log')
+            ->where('log_id', $logId)
+            ->delete();
+
+        return 1;
+    }
+
 }

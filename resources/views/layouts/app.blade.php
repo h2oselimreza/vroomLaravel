@@ -266,8 +266,17 @@
         // });
         //     })
         </script>
+        
         @stack('scripts')
         <script>
+
+            function showLoader() {
+                $('#overlay').show();
+            }
+            function hideLoader() {
+                $('#overlay').hide();
+            }
+
             $(document).ready(function(){
                 $('.dateInput').datepicker({
                     format: 'yyyy-mm-dd',  // format compatible with Laravel date column

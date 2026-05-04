@@ -166,11 +166,9 @@ class CallLogController extends Controller
     {
         $currentDtTm = Carbon::now();
         $nextCallResponse = "";
-
         if ($request->input('fieldId') == 'Start') {
 
-            $logId = $request->input('logId');
-
+            $logId = $request->logId;
             /*
             * if call is in HOLD_NEXT_CALL status, start the next call if start button is clicked
             */
@@ -284,8 +282,7 @@ class CallLogController extends Controller
         */
 
         $previousLogUpdate = [];
-        $previousLogId = $request->logId;
-
+        $previousLogId = $request->query('logId', '');
         if ($previousLogId) {
 
             $arr = [
@@ -295,21 +292,20 @@ class CallLogController extends Controller
             ];
 
             $logDetails = $crmCallLogRepository->getCallLog($arr);
-
-            $nextCallStatus = $logDetails[0]['next_call_status'] ?? null;
-
+            //dd($logDetails);
+            $nextCallStatus = $logDetails[0]->next_call_status ?? null;
             if ($nextCallStatus != config('constants.HOLD_NEXT_CALL')) {
                 return redirect()->route('admin.crm.call-log.create')
                 ->with('error','Call start date time and next call date time not match');
 
             }
 
-            $nextCallDtTm = $logDetails[0]['next_call_flag_dt_tm'] ?? null;
-
-            if ($insertArr['call_start_dt_tm'] != $nextCallDtTm) {
-                return redirect()->route('admin.crm.call-log.create')
-                ->with('error','Call start date time not match');
-            }
+            $nextCallDtTm = $logDetails[0]->next_call_flag_dt_tm ?? null;
+            // dd($nextCallDtTm, $insertArr['call_start_dt_tm']);
+            // if ($insertArr['call_start_dt_tm'] != $nextCallDtTm) {
+            //     return redirect()->route('admin.crm.call-log.create')
+            //     ->with('error','Call start date time not match');
+            // }
 
             $previousLogUpdate['next_call_status'] = config('constants.DONE_NEXT_CALL');
             $previousLogUpdate['next_call_flag_dt_tm'] = null;
@@ -339,6 +335,7 @@ class CallLogController extends Controller
         | Save
         |--------------------------------------------------
         */
+        //dd($insertArr,$previousLogUpdate,$previousLogId,$leadCode,$leadUpdateArr);
         $response = $crmCallLogRepository->addCallLog(
             $insertArr,
             $previousLogUpdate,
@@ -414,6 +411,18 @@ class CallLogController extends Controller
         $updateArr['customer_address'] = $request->customerAddress;
         $updateArr['call_type'] = $request->callType;
         $updateArr['log_id'] = $logId;
+        $nextCallTime = $request->nextCallTime 
+        ? date("H:i:s", strtotime($request->nextCallTime)) 
+        : null;
+
+        // 2. Only concatenate if the DATE exists, otherwise set to NULL
+        if ($request->nextCallDate && trim($request->nextCallDate) !== '') {
+            $updateArr['next_call_dt_tm'] = $request->nextCallDate . ' ' . ($nextCallTime ?? '00:00:00');
+            $updateArr['next_call_status'] = config('constants.HAVE_NEXT_CALL');
+        } else {
+            $updateArr['next_call_dt_tm'] = null;
+            $updateArr['next_call_status'] = config('constants.NO_NEXT_CALL');
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -464,5 +473,103 @@ class CallLogController extends Controller
 
         return redirect()
             ->route('admin.crm.call-log.index');
+    }
+
+    public function destroy($logId, CRMCallLogRepository $crmCallLogRepository)
+    {
+        $response = $crmCallLogRepository->removeCallLog($logId);
+
+        return response()->json($response);
+    }
+
+    public function makeCall(Request $request, CommonRepository $commonRepository, CRMCallLogRepository $crmCallLogRepository){
+        $data = [];
+        
+        // 2. Flash Messages
+        $data['msg'] = $request->query('msg') == 1 ? 'Save Successfully...!' : '';
+        $data['msgFlag'] = $request->query('msg') == 1 ? 'success' : '';
+
+        // 3. Log Details Logic
+        $logId = $request->query('logId');
+        $data['logId'] = "";
+        $data['disableFlag'] = '';
+        $data['logDetails'] = [];
+
+        if ($logId) {
+            // Fetch using Eloquent or Repository
+            $logDetails = CallCenterLog::where('log_id', $logId)->get();
+
+            if ($logDetails->isNotEmpty()) {
+                $log = $logDetails->first();
+                $data['disableFlag'] = 'readonly';
+                $data['logId'] = $logId;
+                $data['logDetails'] = $logDetails;
+
+                // Handle the "HOLD" status logic
+                if ($log->next_call_status == config('constants.HOLD_NEXT_CALL')) {
+                    $flagTime = Carbon::parse($log->next_call_flag_dt_tm);
+                    $diffInMinutes = $flagTime->diffInMinutes(now());
+
+                    if ($diffInMinutes > config('constants.CALL_UNLOCK_MINUITE')) {
+                        $log->update([
+                            'next_call_status' => config('constants.HAVE_NEXT_CALL'),
+                            'next_call_flag_dt_tm' => null,
+                            'updated_by' => Auth::user()->user_id,
+                            'updated_dt_tm' => now(),
+                        ]);
+                    } else {
+                        return redirect()->route('admin.crm.call-log.index')->with('error','One user has engaged with this call...!');
+                    }
+                }
+            }
+        }
+
+        // 4. Caller Type Logic (Customer vs Leads)
+        $callerType = $request->query('callerType');
+        $data['callerType'] = $callerType;
+        $data['customerInfo'] = [];
+        $data['leadCode'] = "";
+
+        if ($callerType) {
+            if ($callerType == 'customer') {
+                $customerId = $request->query('customerId');
+                $data['customerInfo'] = $crmCallLogRepository->getIndividualCustomer($customerId);
+            } elseif ($callerType == 'leads') {
+                $leadCode = $request->query('leadCode');
+                $data['customerInfo'] = $crmCallLogRepository->getCallLeads($leadCode);
+                $data['leadCode'] = $leadCode;
+            }
+
+            if (!$data['customerInfo']) {
+                return redirect()->route('admin.crm.call-log.create');
+            }
+        }
+
+        $logId = $request->query('logId', '');
+      
+        $commonTableElementArr = ['type' => 'call_type'];
+        $data['callTypes'] = $commonRepository->getCommonTableElement($commonTableElementArr);
+
+        /*
+        * call reasons data
+        */
+        $data['reasons'] = [
+            'reasonData' => $commonRepository->getCallReason(null, 1)
+        ];
+
+        /*
+        * call feedbacks data
+        */
+        $data['feedbacks'] = [
+            'feedbackData' => $crmCallLogRepository->getCustomerFeedback(null, 1)
+        ];
+
+        /*
+        * customer list modal data
+        */
+        $data['companies'] = $commonRepository->getIndividualAccList($data['isActiveFlag'] ?? null, config('constants.INDIVIDUAL_CUST'));
+
+        $data['log_data'] = CallCenterLog::where('log_id',$logId)->first();
+        return view('admin.crm.call-log.make-call',compact('data'));
     }
 }
