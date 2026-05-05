@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Module;
 use App\Models\ModuleGroup;
+use App\Models\SubModules;
 use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -102,33 +103,71 @@ class UserGroupController extends Controller
         $userGroup = UserGroup::findOrFail($id);
         $modules = Module::orderBy('module_order', 'asc')->get();
         $moduleGroups = ModuleGroup::orderBy('module_group_order', 'asc')->get();
+        $panelType = $userGroup->panel_type;
+        $subModules = SubModules::when($panelType, function ($q) use ($panelType) {
+            $q->where('panel_type', $panelType);
+        })
+        ->get();
+        $userGroupDetails = UserGroup::where('id', $id)->get();
+        $groupId = $id;
+
         return view('admin.user_groups.create_update', compact(
             'modules',
             'moduleGroups',
-            'userGroup'
+            'userGroup',
+            'subModules',
+            'userGroupDetails',
+            'panelType',
+            'groupId'
         ));
     }
 
     public function storeOrUpdate(Request $request, $id = null)
     {
-         $request->validate([
-            'module_group_name' => 'required|string|max:255',
-            'moduleList'        => 'required|array',
-        ]);
+        // //dd($request->all());
+        //  $request->validate([
+        //     'module_group_name' => 'required|string|max:255',
+        //     'moduleList'        => 'required|array',
+        // ]);
 
-        $moduleGroup = $id 
-            ? UserGroup::findOrFail($id)
-            : new UserGroup();
+        // $moduleGroup = $id 
+        //     ? UserGroup::findOrFail($id)
+        //     : new UserGroup();
 
-        $moduleGroup->group_name = $request->module_group_name;
-        $moduleGroup->modules = implode(',', $request->moduleList);
-        $moduleGroup->is_active = 1;
+        // $moduleGroup->group_name = $request->module_group_name;
+        // $moduleGroup->modules = implode(',', $request->moduleList);
+        // $moduleGroup->is_active = 1;
 
-        $moduleGroup->save();
+        // $moduleGroup->save();
 
-        return redirect()->route('admin.user-groups.index')
-            ->with('success', $id ? 'User group updated Successfully' : 'User group created Successfully');
-        }
+        // return redirect()->route('admin.user-groups.index')
+        //     ->with('success', $id ? 'User group updated Successfully' : 'User group created Successfully');
+
+
+            $moduleLists = $request->input('moduleList');
+            $subModuleLists = $request->input('subModuleList');
+            $moduleGroupId = $request->input('moduleGroupId');
+
+            // new block group
+            $userGroupBlockListArr = config('constants.USERGROUP_BLOCKLIST');
+
+            if (
+                in_array($moduleGroupId, $userGroupBlockListArr) &&
+                $moduleGroupId != Auth::user()->user_group
+            ) {
+                return redirect()->route('admin.user-groups.index')
+                ->with('success', $id ? 'User group updated Successfully' : 'User group created Successfully');
+            }
+            // ----------------
+
+            if (isset($moduleLists)) {
+
+                $this->editModules($moduleLists, $moduleGroupId, $subModuleLists);
+
+                return redirect()->route('admin.user-groups.edit', $id)
+                ->with('success', $id ? 'User group updated Successfully' : 'User group created Successfully');
+            }
+    }
 
         public function updateStatus($id)
         {
@@ -143,5 +182,23 @@ class UserGroupController extends Controller
             $userGroup = UserGroup::findOrFail($id);
             $userGroup->delete();
             return redirect()->back()->with('success', 'User group deleted Successfully');
+        }
+
+        private function editModules($moduleList, $moduleId, $subModuleLists = null)
+        {
+            $modules = implode(",", $moduleList);
+
+            $subModules = "";
+
+            if (!empty($subModuleLists)) {
+                $subModules = implode(",", $subModuleLists);
+            }
+
+            UserGroup::where('id', $moduleId)->update([
+                'modules' => $modules,
+                'sub_modules' => $subModules,
+                'updated_by' => Auth::user()->user_id,
+                'updated_dt_tm' => Carbon::now(),
+            ]);
         }
 }

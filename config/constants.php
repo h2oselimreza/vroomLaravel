@@ -143,8 +143,8 @@ return [
     'JOB_CREATE_UPDTAE_TYPE' => 'job',
 
     // ================= BLOCK =================
-    'USERGROUP_BLOCKLIST' => serialize(['1']),
-    'MODULE_BLOCKLIST'    => serialize(['1','2','32']),
+    'USERGROUP_BLOCKLIST' => ['1'],
+    'MODULE_BLOCKLIST'    => ['1','2','32'],
 
     // ================= INVENTORY =================
     'PURCHASE'        => 'purchase',

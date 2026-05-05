@@ -7,6 +7,7 @@ use App\Models\CustomerEmployee;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class CompanyEmployeeOfficeController extends Controller
@@ -16,7 +17,8 @@ class CompanyEmployeeOfficeController extends Controller
         $user = User::where(['user_id' => $employeeId, 'is_active' => 1])->first();
         
         $blocked = config('constants.USERGROUP_BLOCKLIST', []);
-        $currentUserGroup = auth()->user()->user_group ?? null;
+        $currentUserGroup = Auth::user()->user_group ?? null;
+        //dd($blocked, $currentUserGroup);
         $panelType = 'client';
         $userGroup =  UserGroup::query()
             ->where('is_active', 1)
@@ -49,7 +51,7 @@ class CompanyEmployeeOfficeController extends Controller
 
             $systemUserCheck = $request->system_user; // 0 or 1
 
-            if ($systemUserCheck && auth()->user()->user_id != $employeeId) {
+            if ($systemUserCheck && Auth::user()->user_id != $employeeId) {
                 // Check if user already exists
                 $user = User::where('user_id', $employeeId)->first();
 
@@ -57,7 +59,7 @@ class CompanyEmployeeOfficeController extends Controller
                     // If exists → activate
                     $user->update([
                         'is_active'   => 1,
-                        'updated_by'  => auth()->user()->user_id,
+                        'updated_by'  => Auth::user()->user_id,
                         'updated_dt_tm' => now(),
                     ]);
                 } else {
@@ -72,10 +74,10 @@ class CompanyEmployeeOfficeController extends Controller
                         'user_type_code' => 'corporate_employee',
                         'full_name' => $employee->employee_name,
                         'contact_no' => $employee->primary_mobile,
-                        'created_by' => auth()->user()->user_id,
+                        'created_by' => Auth::user()->user_id,
                         'created_type' => 'admin_employee',
                         'created_dt_tm' => now(),
-                        'updated_by' => auth()->user()->user_id,
+                        'updated_by' => Auth::user()->user_id,
                         'updated_type' => 'admin_employee',
                         'updated_dt_tm' => now(),
                     ]);
@@ -83,11 +85,11 @@ class CompanyEmployeeOfficeController extends Controller
                 }
 
             }else{
-                if(auth()->user()->user_id != $employeeId){
+                if(Auth::user()->user_id != $employeeId){
                     $user = User::where('user_id', $employeeId)->first();
                     $user->update([
                         'is_active'   => 0,
-                        'updated_by'  => auth()->user()->user_id,
+                        'updated_by'  => Auth::user()->user_id,
                         'updated_dt_tm' => now(),
                     ]);
                 }
