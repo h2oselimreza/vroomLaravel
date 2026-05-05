@@ -317,4 +317,27 @@ class CRMCallLogRepository
         return $query->get();
     }
 
+    public function addCallLeadsList($callLeadsArr, $mobileNoArr)
+    {
+        // Check existing mobile numbers
+        $results = DB::table('call_leads')
+            ->whereIn('mobile', $mobileNoArr)
+            ->get()
+            ->toArray();
+
+        if (count($results) > 0) {
+            return [
+                'result' => 4,
+                'mobileNumberExist' => $results[0]->mobile
+            ];
+        }
+
+        // Insert batch
+        DB::table('call_leads')->insert($callLeadsArr);
+
+        return [
+            'result' => 1
+        ];
+    }
+
 }

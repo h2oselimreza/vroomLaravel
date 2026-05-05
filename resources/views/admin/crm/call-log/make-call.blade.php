@@ -90,7 +90,7 @@
                                     </div>
                                 @endif --}}
                                 <input type="hidden" name="companyCode" id="companyCode" value="{{ $customerId }}">
-                                <input type="hidden" name="leadCode" value="{{ $leadCode ?? '' }}">
+                                <input type="hidden" name="leadCode" value="{{ $data['leadCode'] ?? '' }}">
                             </div>
                         </div>
                         {{-- Mobile --}}

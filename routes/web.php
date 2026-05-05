@@ -344,6 +344,9 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
 
     Route::get('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
     Route::post('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
+    Route::get('crm/call-leads',[CallLogCustomerSearch::class, 'callLeads'])->name('admin.crm.callLeads');
+    Route::get('crm/call-lead-data',[CallLogCustomerSearch::class, 'getCallLeadsList'])->name('admin.crm.lead-data');
+    Route::post('crm/upload-call-leads-list',[CallLogCustomerSearch::class, 'uploadCallLeadsList'])->name('admin.crm.uploadCallLeadsList');
 
 });
 

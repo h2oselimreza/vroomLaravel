@@ -304,3 +304,16 @@ if (!function_exists('get_card_type_by_card')) {
         return $cardTypeName;
     }
 }
+
+if (!function_exists('check_mobile_no')) {
+    function check_mobile_no($mobileNo = null)
+    {
+        if (strlen($mobileNo) == 13) {
+            if (preg_match('/^8801[3-9][0-9]{8}$/', $mobileNo)) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+}

@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="menu">
-            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 452px;">
+            <div class="slimScrollDiv" style="position: relative; overflow-y: scroll; width: auto; height: 530px;">
                 <ul class="list">
                 @php
                     $moduleGroupIdForCollapse = get_module_group($leftMenuModuleUrl);

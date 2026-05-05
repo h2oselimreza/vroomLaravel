@@ -2,9 +2,10 @@
 
 namespace App\Models\Admin\CRM;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class CallLead extends Model
+class CallLead extends BaseModel
 {
     protected $table = 'call_leads';
 
