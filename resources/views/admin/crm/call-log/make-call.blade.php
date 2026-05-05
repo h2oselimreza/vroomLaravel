@@ -46,7 +46,7 @@
         if ($data['callerType'] == 'customer') {
             $customerId = $data['customerInfo'][0]->customer_id;
         }
-    } elseif (!empty($logDetails)) {
+    } elseif (!empty($data['logDetails'])) {
         $disableFlag = 'readonly';
         $customerId = $data['logDetails'][0]->company;
         $customerName = $data['logDetails'][0]->customer_name;
@@ -89,8 +89,6 @@
                                         </span>
                                     </div>
                                 @endif --}}
-
-                                <input type="hidden" name="logId" id="logId" value="{{ $editData->log_id ?? null }}">
                                 <input type="hidden" name="companyCode" id="companyCode" value="{{ $customerId }}">
                                 <input type="hidden" name="leadCode" value="{{ $leadCode ?? '' }}">
                             </div>
@@ -384,7 +382,7 @@
                     {{-- Submit --}}
                     <div class="row mt-2">
                         <div class="col-md-4 col-sm-6 col-xs-12">
-                            <input type="hidden" name="logId" value="{{ $editData->log_id ?? '' }}">
+                            <input type="hidden" name="logId" value="{{ $editData->log_id ?? request()->get('logId') }}">
 
                             <button type="button" class="btn btn-primary save_button" onclick="addCallLog()">
                                 Submit
@@ -588,7 +586,7 @@
 
     function setCurrentTime(fieldId) {
 
-        var logId = "{{ $editData->log_id ?? '' }}";
+        var logId = "{{ $editData->log_id ?? request()->get('logId') }}";
 
         $.ajax({
             type: 'POST',

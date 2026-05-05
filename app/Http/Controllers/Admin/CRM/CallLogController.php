@@ -295,8 +295,9 @@ class CallLogController extends Controller
             //dd($logDetails);
             $nextCallStatus = $logDetails[0]->next_call_status ?? null;
             if ($nextCallStatus != config('constants.HOLD_NEXT_CALL')) {
-                return redirect()->route('admin.crm.call-log.create')
-                ->with('error','Call start date time and next call date time not match');
+                return redirect()->route('admin.crm.makeCall', [
+                    'logId' => $request->logId
+                ])->with('error', 'Call start date time and next call date time not match');
 
             }
 
