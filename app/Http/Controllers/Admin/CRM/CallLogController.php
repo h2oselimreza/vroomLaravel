@@ -572,4 +572,63 @@ class CallLogController extends Controller
         $data['log_data'] = CallCenterLog::where('log_id',$logId)->first();
         return view('admin.crm.call-log.make-call',compact('data'));
     }
+
+    public function truncateCallLog()
+    {
+        try {
+            DB::table('call_center_log')->truncate();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Call log truncated successfully'
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage() // remove in production
+            ], 500);
+        }
+    }
+
+
+    public function removeCallLogPanel(Request $request)
+    {
+        try {
+
+            // Convert dates (same logic as CI)
+            $fromDateInput = trim($request->input('fromDate'));
+            $toDateInput   = trim($request->input('toDate'));
+
+            // Validate required fields
+            if (!$fromDateInput || !$toDateInput) {
+                return response('0'); // optional: invalid input
+            }
+
+            // Append time (same behavior)
+            $fromDate = Carbon::parse($fromDateInput)->startOfDay(); // 00:00:00
+            $toDate   = Carbon::parse($toDateInput)->endOfDay();     // 23:59:59
+
+            // Compare dates
+            if ($fromDate->gt($toDate)) {
+                return response('2'); // same as your CI logic
+            }
+
+            // Delete logs between dates
+            DB::table('call_center_log')
+                ->where('created_dt_tm', '>=', $fromDate)
+                ->where('created_dt_tm', '<=', $toDate)
+                ->delete();
+
+            return response('1'); // success (same as CI)
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage() // remove in production
+            ], 500);
+        }
+    }
 }

@@ -43,7 +43,7 @@
                         <label class="form-label">Choose Date</label>
                         <div class="form-group" >
                             <div class="input-group">
-                                <form id="historyForm" action="admin/Crm/callLog" method="POST">
+                                <form id="historyForm" action="{{ route('admin.crm.call-log.index') }}" method="GET" style="width: 90%;">
                                     <input type="text" class="form-control dateInput" name="historyDate" id="historyDate" value="{{ $callHistoryDate ?? null }}">
                                 </form>
                                 <span class="input-group-btn">
@@ -151,11 +151,11 @@
                 </div>
                 <div class="panel-body">
 
-                    <div class="form-group mt-2" >
+                    <div class="col-md-12 form-group mt-2" >
                         <label class="form-label">Choose Date</label>
                         <div class="form-group" >
                             <div class="input-group">
-                                <form id="taskForm" action="admin/Crm/callLog" method="POST">
+                                <form id="taskForm" action="{{ route('admin.crm.call-log.index') }}" method="GET" style="width: 90%;">
                                     <input type="text" class="form-control dateInput" name="taskDate" id="taskDate" value="{{ $callTaskDate ?? null }}">
                                 </form>
                                 <span class="input-group-btn">
@@ -210,7 +210,7 @@
                                             <div class="btn-group">
                                                 <!-- Changed data-toggle to data-bs-toggle -->
                                                 <button type="button" 
-                                                        class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+                                                        class="btn btn-sm dropdown-toggle" 
                                                         data-bs-toggle="dropdown" 
                                                         aria-expanded="false">
                                                     Action
@@ -258,7 +258,7 @@
                         <div class="panel-body">
                             <a href="#" onclick="removeAllLog()" class="btn btn-danger save_button mt-3 mb-3">Delete All</a>
                             <br>
-                            <form id="removeCallLogPanelForm" action="admin/Crm/removeCallLogPanel" method="POST">
+                            <form id="removeCallLogPanelForm" action="/admin/crm/remove-call-log-panel" method="POST">
                                 <div class="row">
                                     <div class="col-md-5 col-sm-5 col-xs-12">
                                         <div class="form-group">
@@ -383,42 +383,48 @@ $(document).ready(function () {
             });
         });
     }
+
     function removeAllLog() {
-        swal({
+        Swal.fire({
             title: "Are you sure?",
-            text: "",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonText: "",
-            confirmButtonColor: "#ec6c62"
-        }, function () {
-            swal.close();
-            showLoader();
-            $.ajax({
-                url: "/admin/Crm/truncateCallLog",
-                type: "DELETE"
-            })
+            confirmButtonColor: "#ec6c62",
+            confirmButtonText: "Yes",
+            reverseButtons: true
+        }).then((result) => {
 
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '1') {
-                            swal({
-                                title: "Successfully Done",
-                                text: "",
-                                type: "success",
-                                closeOnConfirm: false,
-                                confirmButtonText: "Ok",
-                                confirmButtonColor: "#A5DC86"
-                            }, function () {
-                                window.location.href = "/admin/Crm/callLog";
-                            });
-                        }
-                    })
+            if (result.isConfirmed) {
+                showLoader();
 
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
-                    });
+                $.ajax({
+                    url: "/admin/crm/truncate-call-Log",
+                    type: "DELETE",
+                    data: {
+                        _method: "DELETE",
+                        _token: "{{ csrf_token() }}"
+                    }
+                })
+
+                .done(function (data) {
+                    hideLoader();
+                    if (data == 1 || data.status === true) {
+                        Swal.fire({
+                            title: "Successfully Done",
+                            icon: "success",
+                            confirmButtonColor: "#A5DC86",
+                            confirmButtonText: "Ok"
+                        }).then(() => {
+                            window.location.href = "/admin/crm/call-log";
+                        });
+                    }
+                })
+
+                .fail(function () {
+                    hideLoader();
+                    Swal.fire("Oops", "We couldn't connect to the server!", "error");
+                });
+            }
         });
     }
 
@@ -427,7 +433,7 @@ $(document).ready(function () {
         var toDate = $('#toDate').val();
 
         if (fromDate === '' || toDate === '') {
-            sweetAlert('From date and to date is required...!');
+            Swal.fire('Warning', 'From date and to date is required...!', 'warning');
             return false;
         }
 
@@ -435,46 +441,58 @@ $(document).ready(function () {
         var tDate = new Date(toDate);
 
         if (fDate > tDate) {
-            sweetAlert('From date can not be greater than to date...!');
+            Swal.fire('Warning', 'From date can not be greater than to date...!', 'warning');
             return false;
         }
 
-        swal({
+        Swal.fire({
             title: "Are you sure?",
-            text: "",
-            type: "warning",
+            icon: "warning",
             showCancelButton: true,
-            closeOnConfirm: false,
-            confirmButtonText: "",
-            confirmButtonColor: "#ec6c62"
-        }, function () {
-            swal.close();
-            showLoader();
-            $.ajax({
-                url: "/admin/Crm/removeCallLogPanel",
-                data: {fromDate: fromDate, toDate: toDate},
-                type: "POST"
-            })
+            confirmButtonColor: "#ec6c62",
+            confirmButtonText: "Yes",
+            reverseButtons: true
+        }).then((result) => {
 
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '1') {
-                            swal({
-                                title: "Successfully Done",
-                                text: "",
-                                type: "success",
-                                closeOnConfirm: false,
-                                confirmButtonText: "Ok",
-                                confirmButtonColor: "#A5DC86"
-                            }, function () {
-                                window.location.href = "/admin/Crm/callLog";
-                            });
-                        }
-                    })
+            if (result.isConfirmed) {
+                showLoader();
 
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
-                    });
+                $.ajax({
+                    url: "/admin/crm/remove-call-log-panel",
+                    type: "POST",
+                    data: {
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        _token: "{{ csrf_token() }}"
+                    }
+                })
+
+                .done(function (data) {
+                    hideLoader();
+
+                    // Keep your original logic
+                    if (data === '1' || data == 1) {
+                        Swal.fire({
+                            title: "Successfully Done",
+                            icon: "success",
+                            confirmButtonColor: "#A5DC86",
+                            confirmButtonText: "Ok"
+                        }).then(() => {
+                            window.location.href = "/admin/crm/call-log";
+                        });
+                    }
+
+                    // Optional: handle '2' (date error from backend)
+                    else if (data == '2') {
+                        Swal.fire('Warning', 'From date can not be greater than to date...!', 'warning');
+                    }
+                })
+
+                .fail(function () {
+                    hideLoader();
+                    Swal.fire("Oops", "We couldn't connect to the server!", "error");
+                });
+            }
         });
     }
 </script>

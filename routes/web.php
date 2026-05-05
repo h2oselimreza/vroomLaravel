@@ -339,6 +339,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::resource('crm/call-log', CallLogController::class)->names('admin.crm.call-log');
     Route::post('crm/setCurrentTime',[CallLogController::class, 'setCurrentTime'])->name('admin.crm.setCurrentTime');
     Route::get('crm/make-call',[CallLogController::class, 'makeCall'])->name('admin.crm.makeCall');
+    Route::delete('crm/truncate-call-Log',[CallLogController::class, 'truncateCallLog'])->name('admin.crm.truncateCallLog');
+    Route::post('/crm/remove-call-log-panel', [CallLogController::class, 'removeCallLogPanel'])->name('admin.crm.removeCallLogPanel');
 
     Route::get('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
 });
