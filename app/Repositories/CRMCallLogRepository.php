@@ -218,4 +218,103 @@ class CRMCallLogRepository
         return 1;
     }
 
+    public function getCustomer($customerType)
+    {
+        return DB::table('corporate_companies')
+            ->select('title', 'company_code', 'company_mobile')
+            ->where('company_type', $customerType)
+            ->where('is_active', 1)
+            ->get();
+    }
+
+
+    public function getIndividualAccList($arr)
+    {
+        // ----------- BASIC SEARCH -----------
+        if (
+            $arr['fromDate'] == "" &&
+            $arr['toDate'] == "" &&
+            $arr['serviceCodeArr'] == []
+        ) {
+            //dd($arr);
+            $query = DB::table('corporate_companies')
+                ->select('corporate_companies.*')
+                ->where('corporate_companies.company_type', config('constants.INDIVIDUAL_CUST'));
+
+            if ($arr['customerId'] != "") {
+                $query->where('corporate_companies.company_code', 'like', '%' . $arr['customerId'] . '%');
+            }
+
+            if ($arr['customerName'] != "") {
+                $query->where('corporate_companies.title', 'like', '%' . $arr['customerName'] . '%');
+            }
+
+            if ($arr['customerMobile'] != "") {
+                $query->where('corporate_companies.company_mobile', 'like', '%' . $arr['customerMobile'] . '%');
+            }
+
+            return $query->get();
+        }
+
+        // ----------- ADVANCE SEARCH -----------
+        $query = DB::table('home_service_app_detail_gen')
+            ->select(
+                'home_service_app_detail_gen.appointment_no',
+                'home_service_app_detail_gen.service_variant',
+                'home_service_app_summary_gen.company',
+                'home_service_app_summary_gen.final_date',
+                'corporate_companies.title',
+                'corporate_companies.company_code',
+                'corporate_companies.address',
+                'corporate_companies.company_mobile',
+                'corporate_companies.is_active',
+                'service_variants.service_variant_name'
+            )
+            ->leftJoin(
+                'home_service_app_summary_gen',
+                'home_service_app_summary_gen.appointment_no',
+                '=',
+                'home_service_app_detail_gen.appointment_no'
+            )
+            ->join(
+                'corporate_companies',
+                'corporate_companies.company_code',
+                '=',
+                'home_service_app_summary_gen.company'
+            )
+            ->join(
+                'service_variants',
+                'service_variants.variant_code',
+                '=',
+                'home_service_app_detail_gen.service_variant'
+            )
+            ->where('corporate_companies.company_type', config('constants.INDIVIDUAL_CUST'))
+            ->where('home_service_app_summary_gen.status', config('constants.APPOINTMENT_CASH_COLLECT'));
+
+        if ($arr['customerId'] != "") {
+            $query->where('corporate_companies.company_code', 'like', '%' . $arr['customerId'] . '%');
+        }
+
+        if ($arr['customerName'] != "") {
+            $query->where('corporate_companies.title', 'like', '%' . $arr['customerName'] . '%');
+        }
+
+        if ($arr['customerMobile'] != "") {
+            $query->where('corporate_companies.company_mobile', 'like', '%' . $arr['customerMobile'] . '%');
+        }
+
+        if ($arr['fromDate'] != "" && $arr['toDate'] != "") {
+            $query->where('home_service_app_summary_gen.final_date', '>=', $arr['fromDate'])
+                ->where('home_service_app_summary_gen.final_date', '<=', $arr['toDate']);
+        }
+
+        if ($arr['serviceCodeArr'] != []) {
+            $query->whereIn('home_service_app_detail_gen.service_variant', $arr['serviceCodeArr']);
+        }
+
+        $query->orderBy('home_service_app_summary_gen.final_date', 'DESC');
+
+        return $query->get();
+    }
+
 }

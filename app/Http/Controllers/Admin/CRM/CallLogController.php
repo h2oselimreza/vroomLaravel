@@ -282,7 +282,7 @@ class CallLogController extends Controller
         */
 
         $previousLogUpdate = [];
-        $previousLogId = $request->query('logId', '');
+        $previousLogId = $request->logId ?? null;
         if ($previousLogId) {
 
             $arr = [
@@ -484,13 +484,9 @@ class CallLogController extends Controller
 
     public function makeCall(Request $request, CommonRepository $commonRepository, CRMCallLogRepository $crmCallLogRepository){
         $data = [];
-        
-        // 2. Flash Messages
-        $data['msg'] = $request->query('msg') == 1 ? 'Save Successfully...!' : '';
-        $data['msgFlag'] = $request->query('msg') == 1 ? 'success' : '';
-
+        $data['isActiveFlag'] = 1;
         // 3. Log Details Logic
-        $logId = $request->query('logId');
+        $logId = $request->query('logId') ?? null;
         $data['logId'] = "";
         $data['disableFlag'] = '';
         $data['logDetails'] = [];
@@ -567,9 +563,7 @@ class CallLogController extends Controller
         /*
         * customer list modal data
         */
-        $data['companies'] = $commonRepository->getIndividualAccList($data['isActiveFlag'] ?? null, config('constants.INDIVIDUAL_CUST'));
-
-        $data['log_data'] = CallCenterLog::where('log_id',$logId)->first();
+        $data['companies'] = $commonRepository->getIndividualAccList($data['isActiveFlag'], config('constants.INDIVIDUAL_CUST'));
         return view('admin.crm.call-log.make-call',compact('data'));
     }
 

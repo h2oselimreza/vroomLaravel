@@ -37,22 +37,21 @@
     $customerName = "";
     $mobile = "";
     $address = "";
-
-    if (!empty($customerInfo)) {
+    if (!empty($data['customerInfo'])) {
         $disableFlag = 'readonly';
-        $customerName = $customerInfo[0]['name'];
-        $mobile = $customerInfo[0]['mobile'];
-        $address = $customerInfo[0]['address'];
+        $customerName = $data['customerInfo'][0]->name;
+        $mobile = $data['customerInfo'][0]->mobile;
+        $address = $data['customerInfo'][0]->address;
 
-        if ($callerType == 'customer') {
-            $customerId = $customerInfo[0]['customer_id'];
+        if ($data['callerType'] == 'customer') {
+            $customerId = $data['customerInfo'][0]->customer_id;
         }
     } elseif (!empty($logDetails)) {
         $disableFlag = 'readonly';
-        $customerId = $logDetails[0]['company'];
-        $customerName = $logDetails[0]['customer_name'];
-        $mobile = $logDetails[0]['customer_mobile_no'];
-        $address = $logDetails[0]['customer_address'];
+        $customerId = $data['logDetails'][0]->company;
+        $customerName = $data['logDetails'][0]->customer_name;
+        $mobile = $data['logDetails'][0]->customer_mobile_no;
+        $address = $data['logDetails'][0]->customer_address;
     }
 @endphp
 
@@ -63,7 +62,7 @@
                  @php
                     $editData = isset($data['log_data']) ? $data['log_data'] : null;
                 @endphp
-                <form id="addCallLogForm" action="{{ url('/admin/crm/call-log?logId=' . $editData->log_id) }}"
+                <form id="addCallLogForm" action="{{ url('/admin/crm/call-log') }}"
                         method="POST">
 
                     @csrf
@@ -75,10 +74,10 @@
                             <div class="form-group">
                                 <label class="form-label">Customer Name</label>
 
-                                @if($disableFlag)
+                                {{-- @if($disableFlag) --}}
                                     <input type="text" class="form-control" name="customerName"
                                         id="customerName" value="{{ $customerName }}" {{ $disableFlag }}>
-                                @else
+                                {{-- @else
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="customerName" id="customerName"
                                         value="{{ old('customerName', $editData->customer_name ?? '') }}">
@@ -89,8 +88,9 @@
                                             </button>
                                         </span>
                                     </div>
-                                @endif
+                                @endif --}}
 
+                                <input type="hidden" name="logId" id="logId" value="{{ $editData->log_id ?? null }}">
                                 <input type="hidden" name="companyCode" id="companyCode" value="{{ $customerId }}">
                                 <input type="hidden" name="leadCode" value="{{ $leadCode ?? '' }}">
                             </div>
@@ -110,7 +110,7 @@
                                     name="customerMobile"
                                     id="customerMobile"
                                     onchange="checkMobileNumber(this.value, 'customerMobile')"
-                                    value="{{ old('customerMobile', $editData->customer_mobile_no ?? $mobile ?? '') }}"
+                                    value="{{ old('customerMobile',  $mobile ?? '') }}"
                                     {{ $disableFlag }}>
                                 @error('customerMobile')
                                     <small class="text-danger">{{ $message }}</small>
@@ -125,7 +125,7 @@
                                 <input type="text" class="form-control" name="customerAddress"
                                     id="customerAddress"
                                     {{ $disableFlag }}
-                                    value="{{ old('customerAddress', $editData->customer_address ?? $address ?? '') }}">
+                                    value="{{ old('customerAddress', $address ?? '') }}">
                                 @error('customerAddress')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror

@@ -343,6 +343,8 @@ Route::middleware(['auth', 'panel:admin'])->prefix('admin')->group(function () {
     Route::post('/crm/remove-call-log-panel', [CallLogController::class, 'removeCallLogPanel'])->name('admin.crm.removeCallLogPanel');
 
     Route::get('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
+    Route::post('crm/customer-log-search',[CallLogCustomerSearch::class, 'index'])->name('admin.crm.customer-log-search');
+
 });
 
 Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function () {
