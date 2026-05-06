@@ -35,4 +35,19 @@ class MasterDataRepository
 
             ->get();
     }
+
+    public function getVendorList($isActiveFlag = 1, $companyCode)
+    {
+        $query = DB::table('corporate_vendor');
+
+        if ($isActiveFlag == 1) {
+            $query->where('is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('is_active', 0);
+        }
+        $query->where('company', $companyCode);
+
+        return $query->get();
+
+    }
 }

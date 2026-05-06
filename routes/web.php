@@ -91,6 +91,7 @@ use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientWorkshopAppointmentController;
+use App\Http\Controllers\Client\Vendor\VendorController;
 use App\Models\Admin\MasterData\CostCategory;
 use Illuminate\Support\Facades\Route;
 
@@ -404,6 +405,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::delete('vehicle-maintenance/delete-appointment-service/{appointment_no}', [ClientWorkshopAppointmentController::class, 'destory'])->name('client.vehicle-maintenance.delete-appointment-service');
 
     Route::resource('expense/expense-with-vehicle', ExpenseWithVehicleController::class)->names('client.expense.expense-with-vehicle');
+
+    Route::resource('vendor/info', VendorController::class)->names('client.vendor.venor-list');
 });
 
 require __DIR__.'/auth.php';
