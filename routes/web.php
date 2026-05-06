@@ -86,6 +86,7 @@ use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Workshop\ServiceController;
+use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -402,6 +403,7 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('vehicle-maintenance/add-new-appointment', [ClientWorkshopAppointmentController::class, 'addNewAppointment'])->name('client.vehicle-maintenance.addNewAppointment');
     Route::delete('vehicle-maintenance/delete-appointment-service/{appointment_no}', [ClientWorkshopAppointmentController::class, 'destory'])->name('client.vehicle-maintenance.delete-appointment-service');
 
+    Route::resource('expense/expense-with-vehicle', ExpenseWithVehicleController::class)->names('client.expense.expense-with-vehicle');
 });
 
 require __DIR__.'/auth.php';

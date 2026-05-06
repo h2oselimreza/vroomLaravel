@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Company;
 use App\Models\CustomerEmployee;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommonRepository
@@ -96,6 +97,35 @@ class CommonRepository
             ->orderBy('call_reason.reason_order');
 
         return $query->get();
+    }
+
+    public function getCostHead($isActiveFlag = 1)
+    {
+        return DB::table('cost_heads as ch')
+            ->select('ch.*', 'cc.parent_category_str', 'cc.category_name')
+            ->join('cost_categories as cc', 'cc.category_code', '=', 'ch.cost_category')
+
+            ->where('cc.is_active', 1)
+
+            ->when($isActiveFlag == 1, function ($q) {
+                $q->where('ch.is_active', 1);
+            })
+
+            ->when($isActiveFlag == 2, function ($q) {
+                $q->where('ch.is_active', 0);
+            })
+
+            ->when( Auth::user()->customerEmployee->customer_type == config('constants.INDIVIDUAL_CUST'), function ($q) {
+                $q->where('cc.company', config('constants.INDIVIDUAL_EXP'));
+            })
+
+            ->when(Auth::user()->customerEmployee->customer_type  == config('constants.CORPORATE_CUST'), function ($q) {
+                $q->where('cc.company', Auth::user()->customerEmployee->company );
+            })
+
+            ->orderBy('cc.category_name', 'ASC')
+
+            ->get();
     }
 
 }
