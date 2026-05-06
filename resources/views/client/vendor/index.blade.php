@@ -14,6 +14,21 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
+                    </div>
+                @endif
+
+                <!-- Error Message -->
+                @if(session('error'))
+                    <div class="alert alert-danger" role="alert">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>Error!</strong> {{ session('error') }}
+                    </div>
+                @endif
                 <a href="{{ route('client.vendor.venor-list.create') }}" class="btn bg-blue waves-effect">Add Vendor</a>
                 <br><br>
                 <div class="table-custom-responsive">

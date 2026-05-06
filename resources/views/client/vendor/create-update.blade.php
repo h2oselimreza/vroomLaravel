@@ -154,8 +154,7 @@
                                                 <div class="form-line">
                                                     <select class="form-control" name="division" onchange="setDistrict(this.value)" id="division">
                                                         <option value="">--  Select  Division--</option>
-
-                                                        @foreach ($divisions as $division)
+                                                        @foreach ($divisions ?? [] as $division)
                                                             <option value="{{ $division['id'] }}"
                                                                 {{ isset($vendor) && $vendor->division == $division['id'] ? 'selected' : '' }}>
                                                                 {{ $division['division_en_name'] }} ({{ $division['division_bn_name'] }})

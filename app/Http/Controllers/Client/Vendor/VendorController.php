@@ -127,12 +127,12 @@ class VendorController extends Controller
         }
     }
 
-    public function edit($vendorCode, AreaRepository $areaRepository){
+    public function edit($id, AreaRepository $areaRepository){
         $data['disableFlag'] = 1;
         $divisions = $areaRepository->getDivision();
         $districts = $areaRepository->getDistrict();
         $upozillas = $areaRepository->getUpozilla();
-        $vendor = CorporateVendor::where('vendor_code', $vendorCode)->first();
+        $vendor = CorporateVendor::where('id', $id)->first();
         return view('client.vendor.create-update',compact('divisions','districts','upozillas','vendor'));
     }
 
