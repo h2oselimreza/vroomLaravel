@@ -128,4 +128,25 @@ class CommonRepository
             ->get();
     }
 
+    public function getCostCategory($isActiveFlag = 1)
+    {
+        $query = DB::table('cost_categories');
+
+        if ($isActiveFlag == 1) {
+            $query->where('is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('is_active', 0);
+        }
+
+        if ( Auth::user()->customerEmployee->customer_type == config('constants.INDIVIDUAL_CUST')) {
+            $query->where('company', config('constants.INDIVIDUAL_EXP'));
+        } elseif (Auth::user()->customerEmployee->customer_type == config('constants.CORPORATE_CUST')) {
+            $query->where('company', Auth::user()->customerEmployee->company);
+        }
+
+        return $query
+            ->orderBy('parent_category_str', 'ASC')
+            ->get();
+    }
+
 }

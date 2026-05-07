@@ -87,6 +87,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Workshop\ServiceController;
 use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
+use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
+use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -411,6 +413,13 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('vendor/info', VendorController::class)->names('client.vendor.venor-list');
     Route::resource('vendor/profile-image', VendorImageController::class)->names('client.vendor.profile-image');
     Route::resource('vendor/attachment', VendorAttachmentController::class)->names('client.vendor.attachment');
+
+    /*===================MastaData Route==============*/
+    Route::get('master-data/expense', [MasterDataController::class, 'expense'])->name('client.master-data.expense');
+    Route::resource('vendor/expense-category', ExpenseCategoryController::class)->names('client.master-data.expense-category');
+    Route::post('master-data/expense-category-active', [ExpenseCategoryController::class, 'activeExpenseCategory'])->name('client.master-data.expense-category.active');
+
+
 
 });
 

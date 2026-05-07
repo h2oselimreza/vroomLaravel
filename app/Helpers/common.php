@@ -317,3 +317,45 @@ if (!function_exists('check_mobile_no')) {
         return 0;
     }
 }
+
+if (!function_exists('get_parent_category_str')) {
+
+    function get_parent_category_str($arr = [])
+    {
+        if (!empty($arr)) {
+
+            $parentCategoryCodeStr = $arr['parentCategoryCodeStr'] ?? '';
+            $categories = $arr['categoryArr'] ?? [];
+
+            $parentCatgCodeArr = explode(' / ', $parentCategoryCodeStr);
+
+            $responseArr = [];
+
+            for ($i = 0; $i < count($parentCatgCodeArr); $i++) {
+
+                foreach ($categories as $category) {
+
+                    $categoryCode = is_array($category)
+                        ? ($category['category_code'] ?? null)
+                        : ($category->category_code ?? null);
+
+                    $categoryName = is_array($category)
+                        ? ($category['category_name'] ?? null)
+                        : ($category->category_name ?? null);
+
+                    if ($categoryCode == $parentCatgCodeArr[$i]) {
+                        $responseArr[] = $categoryName;
+                    }
+                }
+            }
+
+            if (!empty($responseArr)) {
+                return implode(' / ', $responseArr);
+            }
+
+            return "";
+        }
+
+        return "";
+    }
+}

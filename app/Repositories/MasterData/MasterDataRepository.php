@@ -6,6 +6,7 @@ use App\Models\CommonTable;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Division;
 use App\Models\MetaData\Upozilla;
+use App\Services\TokenService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -72,6 +73,183 @@ class MasterDataRepository
         DB::table('corporate_vendor_file')
             ->whereIn('id', $imageIds)
             ->delete();
+
+        return 1;
+    }
+
+    public function insertExpenseCategory(array $insertArr, $tokenService): int
+    {
+        $exists = DB::table('cost_categories')
+            ->where('company', $insertArr['company'])
+            ->where('category_name', $insertArr['category_name'])
+            ->exists();
+
+        if ($exists) {
+            return 2; // duplicate entry
+        }
+
+        $insertArr['category_code'] = config('constants.COST_CTG_CODE') . $tokenService->getTokenByCode(config('constants.COST_CTG_CODE'));
+
+        // Parent category string (unchanged logic)
+        $insertArr['parent_category_str'] = $this->getParentCostCategoryStr($insertArr);
+
+        // Insert record safely
+        DB::table('cost_categories')->insert($insertArr);
+
+        return 1;
+    }
+
+    public function getParentCostCategoryStr(array $arr): string
+    {
+        if ($arr['parent_category'] == 1) {
+            return $arr['category_code'];
+        }
+
+        $row = DB::table('cost_categories')
+            ->where('company', $arr['company'])
+            ->where('category_code', $arr['parent_category'])
+            ->first();
+
+        $strArr = [];
+
+        if ($row) {
+            $strArr[] = $row->parent_category_str;
+        }
+
+        $strArr[] = $arr['category_code'];
+
+        return implode(' / ', $strArr);
+    }
+
+    public function editExpenseCategory(array $updateArr, int $categoryId): int
+    {
+        // Check duplicate entry
+        $exists = DB::table('cost_categories')
+            ->where('company', $updateArr['company'])
+            ->where('category_name', $updateArr['category_name'])
+            ->where('id', '!=', $categoryId)
+            ->exists();
+
+        if ($exists) {
+            return 2; // duplicate entry
+        }
+
+        // Generate parent category string
+        $updateArr['parent_category_str'] = $this->getParentCostCategoryStr($updateArr);
+
+        // Get existing category info
+        $row = DB::table('cost_categories')
+            ->where('company', $updateArr['company'])
+            ->where('category_code', $updateArr['category_code'])
+            ->first();
+
+        // Check parent category changed
+        if ($row && $updateArr['parent_category'] != $row->parent_category) {
+
+            $categoryBatchUpdateArr = [];
+
+            $results = DB::table('cost_categories')
+                ->where('category_code', '!=', $updateArr['category_code'])
+                ->where('parent_category_str', 'LIKE', '%' . $row->parent_category_str . '%')
+                ->get();
+
+            foreach ($results as $result) {
+
+                $arr = [];
+
+                $arr['id'] = $result->id;
+
+                $arr['parent_category_str'] =
+                    $updateArr['parent_category_str'] .
+                    str_replace(
+                        $row->parent_category_str,
+                        '',
+                        $result->parent_category_str
+                    );
+
+                $categoryBatchUpdateArr[] = $arr;
+            }
+
+            // Batch update
+            if (!empty($categoryBatchUpdateArr)) {
+
+                foreach ($categoryBatchUpdateArr as $batchData) {
+
+                    DB::table('cost_categories')
+                        ->where('id', $batchData['id'])
+                        ->update([
+                            'parent_category_str' => $batchData['parent_category_str']
+                        ]);
+                }
+            }
+        }
+
+        // Update main category
+        DB::table('cost_categories')
+            ->where('id', $categoryId)
+            ->where('company', $updateArr['company'])
+            ->update($updateArr);
+
+        return 1;
+    }
+
+    public function removeExpenseCategory(int $categoryId, $company): int
+    {
+        // Get category information
+        $row = DB::table('cost_categories')
+            ->where('id', $categoryId)
+            ->where('company', $company)
+            ->first();
+
+        // Category not found
+        if (!$row) {
+            return 4;
+        }
+
+        $categoryCode = $row->category_code;
+        $categoryId   = $row->id;
+
+        // Check child category exists
+        $childCategoryExists = DB::table('cost_categories')
+            ->where('parent_category', $categoryCode)
+            ->where('is_active', 1)
+            ->where('company', $company)
+            ->exists();
+
+        if ($childCategoryExists) {
+            return 2; // this category has child category
+        }
+
+        // Check cost head exists
+        $costHeadExists = DB::table('cost_heads')
+            ->where('cost_category', $categoryCode)
+            ->where('is_active', 1)
+            ->where('company', $company)
+            ->exists();
+
+        if ($costHeadExists) {
+            return 3; // this category has services
+        }
+
+        // Update category status
+        DB::table('cost_categories')
+            ->where('id', $categoryId)
+            ->where('company', $company)
+            ->update([
+                'is_active' => 0
+            ]);
+
+        return 1;
+    }
+
+    public function activeExpenseCategory(int $categoryId, $company): int
+    {
+        DB::table('cost_categories')
+            ->where('id', $categoryId)
+            ->where('company', $company)
+            ->update([
+                'is_active' => 1
+            ]);
 
         return 1;
     }
