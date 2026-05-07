@@ -16,8 +16,8 @@
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="">
-            <button type="button" class="btn btn-<?php echo ($secondLastSegment == 'attachment') ? 'info' : 'default' ?> waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>  Expense Head</b></button>
+        <a href="{{ route('client.master-data.expense-head.index') }}">
+            <button type="button" class="btn btn-<?php echo ($secondLastSegment == 'expense-head') ? 'info' : 'default' ?> waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>  Expense Head</b></button>
         </a>
     </div>
 </div>

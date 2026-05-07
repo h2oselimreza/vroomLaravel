@@ -253,4 +253,58 @@ class MasterDataRepository
 
         return 1;
     }
+
+    public function insertExpenseHead(array $insertArr, $tokenService): int
+    {
+        // Check duplicate entry
+        $exists = DB::table('cost_heads')
+            ->where('company', $insertArr['company'])
+            ->where('cost_head', $insertArr['cost_head'])
+            ->exists();
+
+        if ($exists) {
+            return 2; // duplicate entry
+        }
+
+        // Generate codes (same logic)
+        $insertArr['cost_head_code'] = config('constants.COST_HEAD_CODE') . $tokenService->getTokenByCode(config('constants.COST_HEAD_CODE'));
+
+        $insertArr['cost_head_dis_code'] = $insertArr['cost_head_code'];
+
+        DB::table('cost_heads')->insert($insertArr);
+
+        return 1;
+    }
+
+    public function editExpenseHead($updateArr, $costHeadId)
+    {
+        // 1. Duplicate Check (Logic Preserved)
+        $exists = DB::table('cost_heads')
+            ->where('id', '!=', $costHeadId)
+            ->where('company', $updateArr['company'])
+            ->where('cost_head', $updateArr['cost_head'])
+            ->exists();
+
+        if ($exists) {
+            return 2; // Duplicate entry code
+        }
+
+        // 2. Perform Update (Logic Preserved)
+        $updated = DB::table('cost_heads')
+            ->where('id', $costHeadId)
+            ->where('company', $updateArr['company'])
+            ->update($updateArr);
+
+        return 1; // Success code
+    }
+
+    public function checkExpHead(array $arr): int
+    {
+        $isUsed = DB::table('expense_detail')
+            ->join('expense_summary', 'expense_summary.expense_no', '=', 'expense_detail.expense_no')
+            ->where('expense_detail.expense_head', $arr['cost_head_code'])
+            ->where('expense_summary.company', $arr['company'])
+            ->exists();
+        return $isUsed ? 0 : 1;
+    }
 }
