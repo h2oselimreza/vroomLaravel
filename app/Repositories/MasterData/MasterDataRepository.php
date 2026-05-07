@@ -7,6 +7,7 @@ use App\Models\MetaData\District;
 use App\Models\MetaData\Division;
 use App\Models\MetaData\Upozilla;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class MasterDataRepository
 {
@@ -49,5 +50,29 @@ class MasterDataRepository
 
         return $query->get();
 
+    }
+
+    public function deleteFile($fileId)
+    {
+        $imageIds = explode(',', $fileId);
+        $results = DB::table('corporate_vendor_file')
+            ->select('file_name')
+            ->whereIn('id', $imageIds)
+            ->get();
+
+        foreach ($results as $result) {
+
+            $file = public_path('assets/client/files/vendor/' . $result->file_name);
+
+            if (File::exists($file)) {
+                File::delete($file);
+            }
+        }
+
+        DB::table('corporate_vendor_file')
+            ->whereIn('id', $imageIds)
+            ->delete();
+
+        return 1;
     }
 }

@@ -16,8 +16,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="/client/Home">Home</a></li>
         <li><a href="#">Master Data</a></li>
-        <li><a href="/client/MasterData/vendor">Vendor List</a></li>
-        <li><a href="/client/MasterData/attachmentShow/<?php echo $id ?>">Attachment</a></li>
+        <li><a href="{{ route('client.vendor.venor-list.index') }}">Vendor List</a></li>
+        <li><a href="{{ route('client.vendor.attachment.edit', $vedorCode) }}">Attachment</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -36,7 +36,7 @@
                                 <table width="99%">
                                     <tr>
                                         <td class="text-left">Attachment</td>
-                                        <td class="text-right"><?php echo $id ?></td>
+                                        <td class="text-right"><?php echo $vedorCode ?></td>
                                     </tr>
                                 </table>
                             </div>
@@ -46,9 +46,9 @@
                                 <form action="{{ route('client.vendor.attachment.store') }}" enctype="multipart/form-data" class="dropzone" id="image-upload" style="background-color: white">
                                     @csrf
                                     <div class="dz-message" data-dz-message><span>Drop files to upload</span></div>
-                                    <input type="hidden" name="id" id="vendorCode" value="<?php echo $id ?>">
+                                    <input type="hidden" name="vendorCode" id="vendorCode" value="<?php echo $vedorCode ?>">
                                 </form>
-                                <a href="{{ route('client.vendor.attachment.edit',$id) }}">Please reload to see upload files</a>
+                                <a href="{{ route('client.vendor.attachment.edit',$vedorCode) }}">Please reload to see upload files</a>
                             </div>
                             <hr>
                             <table class="table table-bordered table-striped custom-table" id="dataTable">
@@ -88,7 +88,7 @@
 
                                             <td class="td-center">
                                                 <a target="_blank"
-                                                href="{{ asset('assets/files/vendor/' . $attachedFile->file_name) }}">
+                                                href="{{ asset('assets/client/files/vendor/' . $attachedFile->file_name) }}">
                                                     Show
                                                 </a>
                                             </td>
@@ -117,11 +117,19 @@
     
 @endsection
 @push('scripts')
+<script>
+window.onload = function () {
+    document.querySelectorAll('.dataTables_wrapper').forEach(function(el) {
+        el.style.position = 'static';
+    });
+};
+</script>
 <script src="{{ asset('assets/select_bo/js/dropZone.js') }}"></script>
 <script>
     function deleteFile(serial) {
-        var fileId = $('#fileId' + serial).val();
-        var vendorCode = $('#vendorCode').val();
+
+        let fileId = $('#fileId' + serial).val();
+        let vendorCode = $('#vendorCode').val();
 
         swal({
             title: "Are you sure?",
@@ -132,13 +140,25 @@
             confirmButtonText: "Yes, remove it...!",
             confirmButtonColor: "#ec6c62"
         }, function () {
+
             showLoader();
+
             $.ajax({
-                url: "/client/MasterData/removeFile?fileId=" + fileId + "&vendorCode=" + vendorCode,
-                type: "DELETE"
-            })
-                .done(function (data) {
+                url: "{{ route('client.vendor.attachment.destroy', ':vendorCode') }}"
+                    .replace(':vendorCode', vendorCode),
+
+                type: "DELETE",
+
+                data: {
+                    fileId: fileId,
+                    vendorCode: vendorCode,
+                    _token: "{{ csrf_token() }}"
+                },
+
+                success: function (data) {
+
                     hideLoader();
+
                     swal({
                         title: "Remove Successfully",
                         text: "This file is remove now",
@@ -147,13 +167,28 @@
                         confirmButtonText: "Ok",
                         confirmButtonColor: "#A5DC86"
                     }, function () {
-                        window.location.href = "/client/MasterData/attachmentShow/" + vendorCode;
+
+                        window.location.href =
+                        "{{ route('client.vendor.attachment.edit', ':vendorCode') }}"
+                            .replace(':vendorCode', vendorCode);
+
                     });
 
-                })
-                .error(function (data) {
-                    swal("Oops", "We couldn't connect to the server!", "error");
-                });
+                },
+
+                error: function (xhr) {
+
+                    hideLoader();
+
+                    swal(
+                        "Oops",
+                        "We couldn't connect to the server!",
+                        "error"
+                    );
+
+                }
+            });
+
         });
     }
 </script>

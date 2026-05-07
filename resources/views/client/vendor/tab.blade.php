@@ -17,19 +17,19 @@
         </div>
     @else
         <div class="btn-group" role="group">
-            <a href="{{ isset($vendor) ? route('client.vendor.venor-list.edit', $vendor->id) : '#' }}">
+            <a href="{{ isset($vendor) ? route('client.vendor.venor-list.edit', $vendor->vendor_code) : '#' }}">
                 <button type="submit"  class="btn btn-<?php echo ($secondLastSegment == 'info') ? 'info' : 'default' ?> btn-lg waves-effect"> <i class="fa fa-user"></i><b> General Info</b></button>
             </a>
         </div>
     @endif
     
     <div class="btn-group" role="group">
-        <a href="{{ isset($vendor) ? route('client.vendor.profile-image.edit', $vendor->id) : '#' }}">
+        <a href="{{ isset($vendor) ? route('client.vendor.profile-image.edit', $vendor->vendor_code) : '#' }}">
             <button type="button" class="btn btn-<?php echo ($secondLastSegment == 'profile-image') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-home"></i><b> Images</b></button>
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="{{ isset($vendor) ? route('client.vendor.attachment.edit', $vendor->id) : '#' }}">
+        <a href="{{ isset($vendor) ? route('client.vendor.attachment.edit', $vendor->vendor_code) : '#' }}">
             <button type="button" class="btn btn-<?php echo ($secondLastSegment == 'attachment') ? 'info' : 'default' ?> waves-effect btn-lg" <?php echo ($disableFlag == '1') ? 'disabled' : '' ?>> <i class="fa fa-image"></i><b> Attachment</b></button>
         </a>
     </div>

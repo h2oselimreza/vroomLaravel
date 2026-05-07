@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 
 class VendorImageController extends Controller
 {
-    public function edit($id){
-        $vendor = CorporateVendor::where('id', $id)->first();
+    public function edit($vendorCode){
+        $vendor = CorporateVendor::where('vendor_code', $vendorCode)->first();
         return view('client.vendor.image.create-edit',compact('vendor'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $vendorCode)
     {
     
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
-        $vendor = CorporateVendor::where('id', $id)->firstOrFail();
+        $vendor = CorporateVendor::where('vendor_code', $vendorCode)->firstOrFail();
 
         if ($request->hasFile('image')) {
             
@@ -46,7 +46,7 @@ class VendorImageController extends Controller
         }
 
         return redirect()
-            ->route('client.employee.photograph.edit', $id)
+            ->route('client.vendor.profile-image.edit', $vendorCode)
             ->with('success', 'Photo updated successfully');
     }
 }

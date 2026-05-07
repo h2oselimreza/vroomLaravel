@@ -7,8 +7,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="/client/Home"> Home</a></li>
         <li><a href="#"> Master Data</a></li>
-        <li><a href="/client/MasterData/vendor"> Vendor List</a></li>
-        <li><a href="/client/MasterData/addVendorShow"> Add Vendor</a></li>
+        <li><a href="{{ route('client.vendor.venor-list.index') }}"> Vendor List</a></li>
+        <li><a href="#"> Add Vendor</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -333,9 +333,9 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-        let division = "{{ $vendor->division }}";
-        let district = "{{ $vendor->district }}";
-        let upozilla = "{{ $vendor->upozilla }}";
+        let division = "{{ $vendor->division ?? null }}";
+        let district = "{{ $vendor->district ?? null }}";
+        let upozilla = "{{ $vendor->upozilla ?? null }}";
 
         // Step 1: set district
         setDistrict(division, district);

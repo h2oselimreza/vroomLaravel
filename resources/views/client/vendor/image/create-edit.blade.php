@@ -8,7 +8,7 @@
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#"> Master Data</a></li>
         <li><a href="{{ route('client.vendor.venor-list.index') }}"> Vendor List</a></li>
-        <li><a href=""> Profile Image</a></li>
+        <li><a href="{{ route('client.vendor.profile-image.edit', $vendor->vendor_code) }}"> Profile Image</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -34,7 +34,7 @@
                     </div>
                 @endif
 
-                <form action="{{ isset($vendor) ? route('client.vendor.profile-image.update', $vendor->id) : route('client.vendor.profile-image.store') }}" method="POST" id="insertForm" enctype="multipart/form-data">
+                <form action="{{ isset($vendor) ? route('client.vendor.profile-image.update', $vendor->vendor_code) : route('client.vendor.profile-image.store') }}" method="POST" id="insertForm" enctype="multipart/form-data">
                     @csrf
                     @if(isset($vendor))
                         @method('PUT')
