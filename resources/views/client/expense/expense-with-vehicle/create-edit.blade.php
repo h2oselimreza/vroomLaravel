@@ -90,10 +90,10 @@
                                 <div class="form-group form-float" >
                                     <div class="form-line">
                                         <select class="form-control" name="vendor"  id="vendor" onchange="toggleGuestDiv(this.value)">
-                                            <option value="gest">Guest</option>
+                                            <option value="">Guest</option>
                                             <?php
                                             foreach ($data['vendors'] as $vendor) {
-                                                echo "<option value='$vendor[vendor_code]'>$vendor[title]</option>";
+                                                echo "<option value='$vendor->vendor_code'>$vendor->title</option>";
                                             }
                                             ?>
                                         </select>

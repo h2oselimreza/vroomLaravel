@@ -7,6 +7,7 @@ use App\Repositories\Client\ExpenseRepository;
 use App\Repositories\Client\VehicleRepository;
 use App\Repositories\CommonRepository;
 use App\Repositories\MasterData\MasterDataRepository;
+use App\Services\TokenService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,7 +86,8 @@ class ExpenseWithVehicleController extends Controller
     public function store(
         Request $request,
         VehicleRepository $vehicleRepository,
-        ExpenseRepository $expenseRepository
+        ExpenseRepository $expenseRepository,
+        TokenService $tokenService
     ) {
         DB::beginTransaction();
 
@@ -107,7 +109,7 @@ class ExpenseWithVehicleController extends Controller
             }
 
             $company = Auth::user()->customerEmployee->company;
-            $userId = Auth::id();
+            $userId = Auth::user()->user_id;
             $now = Carbon::now();
 
             $vehicles = $vehicleRepository->getVehicleInfo([
@@ -116,7 +118,7 @@ class ExpenseWithVehicleController extends Controller
                 'companyCode' => $company,
             ]);
 
-            $expenseNo = 'EXPENSE_NO' . date('Ym');
+            $expenseNo = config('constants.EXPENSE_NO') . $tokenService->getTokenByCode(config('constants.EXPENSE_NO'));
             // 🔥 Vehicle loop
             for ($i = 1; $i <= $vehicleCount; $i++) {
 
@@ -174,11 +176,10 @@ class ExpenseWithVehicleController extends Controller
             }
 
             // 🔥 Summary
-            $vendor = $request->vendor;
             $summaryArr = [
                 'company' => $company,
                 'expense_title' => $request->input('expenseTitle'),
-                'vendor' => $vendor ?: null,
+                'vendor' => $request->vendor ?: null,
                 'expense_type' => 'vehicle',
                 'expense_date' => $request->input('expenseDate'),
                 'expense_no' => $expenseNo,
@@ -188,19 +189,17 @@ class ExpenseWithVehicleController extends Controller
                 'updated_by' => $userId,
                 'updated_dt_tm' => $now,
             ];
-
             if ($summaryArr['vendor']) {
                 $summaryArr['guest_name'] = null;
                 $summaryArr['guest_mobile'] = null;
                 $summaryArr['is_guest'] = 0;
             } else {
-                $summaryArr['guest_name'] = trim($request->input('guestName'));
+                $summaryArr['guest_name'] = $request->input('guestName');
                 $summaryArr['guest_mobile'] = $request->input('guestMobile')
                     ? $request->input('guestMobile')
                     : null;
                 $summaryArr['is_guest'] = 1;
             }
-
             // validation (unchanged logic)
             if (!($summaryArr['expense_title'] && $summaryArr['expense_date'] && $detailsArr)) {
 
@@ -226,8 +225,7 @@ class ExpenseWithVehicleController extends Controller
 
                     $fileName = Str::random(10);
                     $ext = $file->getClientOriginalExtension();
-                    $fileNameWithExt = $fileName . '.' . $ext;
-
+                    $fileNameWithExt = $fileName . '_' . Carbon::now()->format('YmdHis') . '.' . $ext;
                     $file->move(public_path('assets/client/files/expense'), $fileNameWithExt);
 
                     $insertFileArr[] = [
