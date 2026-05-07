@@ -8,7 +8,7 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="/client/Home"> Home</a></li>
         <li><a href="#"> Expense</a></li>
-        <li><a href="/client/Expense/expenseList"> Expense List</a></li>
+        <li><a href="{{ route('client.expense.expense-with-vehicle.index') }}"> Expense List</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -58,16 +58,21 @@
         </div>
         <div class="card">
             <div class="body">
-                <?php
-                if ($msg) {
-                    ?>
-                    <div class="alert alert-<?php echo $msgFlag ?>">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        <strong><?php echo $msg ?></strong>
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
                     </div>
-                    <?php
-                }
-                ?>
+                @endif
+
+                <!-- Error Message -->
+                @if(session('error'))
+                    <div class="alert alert-danger" role="alert">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>Error!</strong> {{ session('error') }}
+                    </div>
+                @endif
                 <a href="{{ route('client.expense.expense-with-vehicle.create') }}" class="btn bg-blue waves-effect">New Expense</a>
                 <br><br>
                 <div class="table-custom-responsive">
@@ -124,13 +129,13 @@
 
                                         <ul class="dropdown-menu pull-right">
                                             <li>
-                                                <a href="{{ url('/client/Expense/showEditExpense?expenseNo=' . $expenseList->expense_no) }}">
+                                                <a href="{{ route('client.expense.expense-with-vehicle.edit', $expenseList->expense_no) }}">
                                                     Edit
                                                 </a>
                                             </li>
 
                                             <li>
-                                                <a href="{{ url('/client/Expense/showExpense?expenseNo=' . $expenseList->expense_no) }}">
+                                                <a href="{{ route('client.expense.expense-with-vehicle.show', $expenseList->expense_no) }}">
                                                     Show
                                                 </a>
                                             </li>

@@ -96,4 +96,46 @@ class ExpenseRepository
         return 1;
     }
 
+    public function getExpenseTakenVehicle($arr)
+    {
+        return DB::table('expense_detail')
+            ->select(
+                'expense_detail.vehicle',
+                'vehicles.registration_no'
+            )
+            ->join(
+                'vehicles',
+                'vehicles.vehicle_id',
+                '=',
+                'expense_detail.vehicle'
+            )
+            ->where('expense_detail.expense_no', $arr['expenseNo'])
+            ->distinct()
+            ->get();
+    }
+
+    public function getExpenseDetails($arr)
+    {
+        return DB::table('expense_detail')
+            ->select(
+                'expense_detail.*',
+                'cost_heads.cost_head as expense_head_name'
+            )
+            ->join(
+                'cost_heads',
+                'cost_heads.cost_head_code',
+                '=',
+                'expense_detail.expense_head'
+            )
+            ->where('expense_detail.expense_no', $arr['expenseNo'])
+            ->get();
+    }
+
+    public function getExpenseFiles($arr)
+    {
+        return DB::table('expense_files')
+            ->where('expense_no', $arr['expenseNo'])
+            ->get();
+    }
+
 }

@@ -260,5 +260,42 @@ class ExpenseWithVehicleController extends Controller
         }
     }
 
+    public function edit($expenseNo, Request $request, 
+        VehicleRepository $vehicleRepository,
+        ExpenseRepository $expenseRepository,
+        CommonRepository $commonRepository,
+        MasterDataRepository $masterDataRepository) {
+
+        if (!$expenseNo) {
+            return redirect()->route('client.expense.expense-with-vehicle.index')->with('error', 'Expense number not found');
+        }
+        $arr['expenseNo'] = $expenseNo;
+        $arr['company'] =  Auth::user()->customerEmployee->company;
+        $arr['expenseType'] = config('constants.EXP_TYPE_VEHICLE');
+        $data['expenseSummary'] = $expenseRepository->getExpenseSummary($arr);
+        if (empty($data['expenseSummary'])) {
+            return redirect()->route('client.expense.expense-with-vehicle.index')->with('error', 'Expense number not found');
+        }
+
+        $data['takenVehicles'] = $expenseRepository->getExpenseTakenVehicle($arr);
+        $data['expenseDetails'] = $expenseRepository->getExpenseDetails($arr);
+        $data['expenseFiles'] = $expenseRepository->getExpenseFiles($arr);
+
+        $arr = array();
+        $arr['isActiveFlag'] = 1;
+        $arr['bulkFlag'] = 2;
+        $arr['companyCode'] = Auth::user()->customerEmployee->company;
+        $data['vehicles'] = $vehicleRepository->getVehicleInfo($arr);
+        $data['costHeads'] = $commonRepository->getCostHead(1);
+        $data['expenseNo'] = $expenseNo;
+        $data['vendors'] = array();
+        if ( Auth::user()->customerEmployee->customer_type == config('constants.CORPORATE_CUST')) {
+            $arr['companyCode'] = Auth::user()->customerEmployee->company;
+            $arr['bulkFlag'] = 1;
+            $data['vendors'] = $masterDataRepository->getVendorGeneralInfo($arr);
+        }
+        return view('client.expense.expense-with-vehicle.edit',compact('data','expenseNo'));
+    }
+
 
 }
