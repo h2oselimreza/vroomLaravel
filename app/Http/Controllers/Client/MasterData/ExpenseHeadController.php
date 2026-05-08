@@ -20,8 +20,7 @@ class ExpenseHeadController extends Controller
     ) {
 
         $data = [];
-        $isActiveFlag = 1;
-        $isActiveFlag =  $request->query('statusDropDown');
+        $isActiveFlag =  $request->query('statusDropDown') ?? 1;
 
         if ($isActiveFlag) {
             $isActiveFlag = $isActiveFlag;
@@ -158,5 +157,36 @@ class ExpenseHeadController extends Controller
             // Future error-free: catch unexpected issues
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function changeStatus(Request $request, MasterDataRepository $masterDataRepository)
+    {
+        $costHeadId = $request->costHeadId;
+        $status = $request->status;
+        if ($costHeadId > 0) {
+            $user = Auth::user()->customerEmployee;
+            $company = $user->company;
+
+            if ($user->customer_type == config('constants.INDIVIDUAL_CUST')) {
+                $company = config('constants.INDIVIDUAL_EXP');
+            }
+
+            try {
+                $response = $masterDataRepository->removeExpenseHead($costHeadId, $company, $status);
+                
+                return response()->json([
+                    'success' => true,
+                    'data' => $response
+                ]);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Database error: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid ID'], 400);
     }
 }

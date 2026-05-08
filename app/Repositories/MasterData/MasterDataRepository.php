@@ -2,13 +2,16 @@
 
 namespace App\Repositories\MasterData;
 
+use App\Models\Admin\MasterData\CostHead;
 use App\Models\CommonTable;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Division;
 use App\Models\MetaData\Upozilla;
 use App\Services\TokenService;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class MasterDataRepository
 {
@@ -306,5 +309,22 @@ class MasterDataRepository
             ->where('expense_summary.company', $arr['company'])
             ->exists();
         return $isUsed ? 0 : 1;
+    }
+
+    public function removeExpenseHead($costHeadId, $company, $status): int
+    {
+        $value = ($status == 'inactive') ? 0 : 1;
+        try {
+            // Replicating $this->db->where()->where()->update()
+            $updated = CostHead::where('id', $costHeadId)
+                ->where('company', $company)
+                ->update(['is_active' => $value]);
+
+            return 1;
+
+        } catch (Exception $e) {
+            Log::error("Failed to remove Expense Head ID {$costHeadId}: " . $e->getMessage());
+            throw $e;
+        }
     }
 }

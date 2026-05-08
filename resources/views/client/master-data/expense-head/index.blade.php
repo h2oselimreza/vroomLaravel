@@ -165,14 +165,14 @@
                                                                 @if ($isActiveFlag == 1)
                                                                     <li>
                                                                         <a href="#"
-                                                                        onclick="removeCostHead('{{ $costHead->id }}')">
+                                                                        onclick="changeHeadStatus('{{ $costHead->id }}','inactive')">
                                                                             Inactive
                                                                         </a>
                                                                     </li>
                                                                 @elseif ($isActiveFlag == 2)
                                                                     <li>
                                                                         <a href="#"
-                                                                        onclick="activeCostHead('{{ $costHead->id }}')">
+                                                                        onclick="changeHeadStatus('{{ $costHead->id }}','active')">
                                                                             Active
                                                                         </a>
                                                                     </li>
@@ -492,38 +492,52 @@
         });
     }
 
-    function removeCostHead(costHeadId) {
+    function changeHeadStatus(costHeadId, status) {
         swal({
             title: "Are you sure?",
-            text: "",
+            text: "You are about to change the status of this item.",
             type: "warning",
             showCancelButton: true,
+            confirmButtonText: "Yes, change it!",
             closeOnConfirm: false,
-            confirmButtonText: "Yes, inactive it...!",
             confirmButtonColor: "#ec6c62"
         }, function () {
             showLoader();
-            $.ajax({
-                url: "/client/MasterData/removeExpenseHead?costHeadId=" + costHeadId,
-                type: "DELETE"
-            })
-                    .done(function (data) {
-                        hideLoader();
-                        swal({
-                            title: "Remove Successfully",
-                            text: "This expense head is inactive now",
-                            type: "success",
-                            closeOnConfirm: false,
-                            confirmButtonText: "Ok",
-                            confirmButtonColor: "#A5DC86"
-                        }, function () {
-                            window.location.href = "/client/MasterData/expenseHeadShow";
-                        });
 
-                    })
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
+            $.ajax({
+                url: "/client/vendor/expense-change-status",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}" 
+                },
+                data: {
+                    costHeadId: costHeadId,
+                    status: status
+                }
+            })
+            .done(function (response) {
+                hideLoader();
+                if (response.success) {
+                    swal({
+                        title: "Removed Successfully",
+                        text: response.message || "This expense head is inactive now",
+                        type: "success",
+                        closeOnConfirm: false,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#A5DC86"
+                    }, function () {
+                        window.location.href = "/client/vendor/expense-head";
                     });
+                } else {
+                    swal("Error", response.message || "Something went wrong!", "error");
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                hideLoader();
+                // Handle 419 (Session Expired) or 500 (Server Error)
+                let errorMsg = (jqXHR.status === 419) ? "Session expired. Please refresh." : "We couldn't connect to the server!";
+                swal("Oops", errorMsg, "error");
+            });
         });
     }
 

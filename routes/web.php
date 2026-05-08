@@ -420,6 +420,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('vendor/expense-category', ExpenseCategoryController::class)->names('client.master-data.expense-category');
     Route::post('master-data/expense-category-active', [ExpenseCategoryController::class, 'activeExpenseCategory'])->name('client.master-data.expense-category.active');
     Route::resource('vendor/expense-head', ExpenseHeadController::class)->names('client.master-data.expense-head');
+    Route::post('vendor/expense-change-status', [ExpenseHeadController::class, 'changeStatus'])->name('client.master-data.expense-change-status');
+
 
 });
 
