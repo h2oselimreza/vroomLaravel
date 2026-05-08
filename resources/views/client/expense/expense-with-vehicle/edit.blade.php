@@ -40,8 +40,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="/client/Home"> Home</a></li>
         <li><a href="#"> Expense</a></li>
-        <li><a href="/client/Expense/expenseList"> Expense List</a></li>
-        <li><a href="/client/Expense/showEditExpense?expenseNo=<?php echo $expenseNo ?>"> Edit Expense</a></li>
+        <li><a href="/client/expense/expense-with-vehicle"> Expense List</a></li>
+        <li><a href="{{ route('client.expense.expense-with-vehicle.edit', $expenseNo) }}"> Edit Expense</a></li>
     </div>
 </div>
 
