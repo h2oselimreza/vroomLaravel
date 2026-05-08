@@ -297,5 +297,149 @@ class ExpenseWithVehicleController extends Controller
         return view('client.expense.expense-with-vehicle.edit',compact('data','expenseNo'));
     }
 
+   public function update($id, Request $request, ExpenseRepository $expenseRepository)
+    {
+        try {
+            $vehicleCount = (int) $request->input('vehicleCount');
+            if (!$vehicleCount) {
+                return redirect()
+                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->with('error', 'Vehicle count not found');
+            }
+
+            $detailsUpdateArr = [];
+            $detailsInsertArr = [];
+            $detailTableIdArr = [];
+            $totalAmount = 0;
+            $expenseNo = $request->input('expenseNo');
+            $updateDtTm = $request->input('updateDtTm');
+            // 2. Process Nested Vehicle/Expense Logic
+            for ($i = 1; $i <= $vehicleCount; $i++) {
+                $vehicleId = $request->input('vehicleId' . $i);
+                if ($vehicleId) {
+                    $takenExpenseCount = (int)$request->input('takenExpenseCount' . $i);
+                    for ($j = 1; $j <= $takenExpenseCount; $j++) {
+                        
+                        if ($request->has('expenseHeadCode' . $i . $j)) {
+                            $detailTableId = (int)$request->input('detailTableId' . $i . $j);
+                            
+                            $quantity = (float)$request->input('quantity' . $i . $j, 0);
+                            $unitPrice = (float)$request->input('unitPrice' . $i . $j, 0);
+                            $adjust = (float)$request->input('adjust' . $i . $j, 0);
+                            $calcAmount = ($quantity * $unitPrice) + $adjust;
+
+                            $row = [
+                                'odometer_mileage' => $request->input('mileage' . $i) ? floatval($request->input('mileage' . $i)) : null,
+                                'expense_head'     => $request->input('expenseHeadCode' . $i . $j),
+                                'quantity'         => $quantity,
+                                'unit_name'        => $request->input('unitName' . $i . $j),
+                                'unit_price'       => $unitPrice,
+                                'adjust'           => $adjust,
+                                'amount'           => $calcAmount,
+                                'remarks'          => $request->input('remarks' . $i . $j) ?: null,
+                                'updated_by'       => Auth::user()->user_id,
+                                'updated_dt_tm'    => Carbon::now(),
+                            ];
+
+                            if ($detailTableId) {
+                                $row['id'] = $detailTableId;
+                                $detailsUpdateArr[] = $row;
+                                $detailTableIdArr[] = $detailTableId;
+                            } else {
+                                $row['expense_no'] = $expenseNo;
+                                $row['vehicle']    = $vehicleId;
+                                $row['created_by'] = Auth::user()->user_id;
+                                $row['created_dt_tm'] = Carbon::now();
+                                $detailsInsertArr[] = $row;
+                            }
+                            $totalAmount += $calcAmount;
+                        }
+                    }
+                }
+            }
+
+            // 3. Prepare Summary Data
+            $summaryData = [
+                'expense_title' => $request->input('expenseTitle'),
+                'expense_date'  => $request->input('expenseDate'),
+                'total_amount'  => $totalAmount,
+                'updated_by'    => Auth::user()->user_id,
+                'updated_dt_tm' => Carbon::now(),
+            ];
+
+            $vendor = $request->input('vendor');
+            if ($vendor) {
+                $summaryData['vendor'] = trim($vendor);
+                $summaryData['is_guest'] = 0;
+                $summaryData['guest_name'] = null;
+                $summaryData['guest_mobile'] = null;
+            } else {
+                $summaryData['is_guest'] = 1;
+                $summaryData['guest_name'] = $request->input('guestName');
+                $summaryData['guest_mobile'] = $request->input('guestMobile') ?: null;
+            }
+
+            // Validation logic
+            if (empty($summaryData['expense_title']) || empty($summaryData['expense_date']) || ($summaryData['vendor'] == null && $summaryData['guest_name'] == null)) {
+                return redirect()
+                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->with('error', 'Expense title or expense_date or vendor not found');
+            }
+
+            // 4. File Upload Handling
+            $insertFileArr = [];
+            if ($request->hasFile('expenseFile')) {
+                foreach ($request->file('expenseFile') as $file) {
+                    if ($file->isValid()) {
+                        $refNo = reference_no(); 
+                        $extension = $file->getClientOriginalExtension();
+                        $newFileName = $refNo . '_' . now()->format('Ymd_His') . '.' . $extension;
+                        
+                        $file->move(public_path('assets/client/files/expense'), $newFileName);
+
+                        $insertFileArr[] = [
+                            'expense_no'    => $expenseNo,
+                            'original_name' => $file->getClientOriginalName(),
+                            'file_name'     => $newFileName,
+                            'created_by'    => Auth::user()->user_id,
+                            'created_dt_tm' => Carbon::now(),
+                            'updated_by'    => Auth::user()->user_id,
+                            'updated_dt_tm' => Carbon::now(),
+                        ];
+                    }
+                }
+            }
+
+            // 5. Database Transaction via Repository
+            $deleteData = [
+                'vehicleStr'     => $request->input('deleteVehicleStr'),
+                'expenseHeadStr' => $request->input('deleteHeadStr'),
+                'fileStr'        => $request->input('deleteFileStr'),
+            ];
+
+            // Perform the update
+            $result = $expenseRepository->editExpense(
+                $summaryData, $detailsUpdateArr, $detailsInsertArr, $detailTableIdArr, 
+                $insertFileArr, $expenseNo, $deleteData, $updateDtTm, Auth::user()->customerEmployee->company
+            );
+
+            // Handle Return Logic based on Repository result
+            if ($result == 3) {
+                return redirect()->back()->with('error', 'Data has been modified by another user. Please refresh.');
+            } elseif ($result == 4) {
+                return redirect()->back()->with('error', 'One or more items do not exist.');
+            }
+
+            return redirect()
+                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->with('success', 'Data updated successfully');
+
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->route('client.expense.expense-with-vehicle.edit', $id)
+                ->with('error', 'Something went wrong while updating: ' . $e->getMessage());
+        }
+    }
 
 }

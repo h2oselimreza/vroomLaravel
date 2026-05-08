@@ -258,38 +258,6 @@
                     </div>
                 </div>
                 <!-- ------------- ----------------- ----------------- -->
-                @php
-                    $data['costHeads'] = [
-    (object)[
-        'category_name' => 'Fuel & Oil',
-        'cost_head' => 'Diesel Purchase',
-        'unit_name' => 'Liter',
-        'unit_price' => '102.50',
-        'cost_head_code' => 'CH001',
-    ],
-    (object)[
-        'category_name' => 'Maintenance',
-        'cost_head' => 'Engine Oil Change',
-        'unit_name' => 'Service',
-        'unit_price' => '0.00',
-        'cost_head_code' => 'CH002',
-    ],
-    (object)[
-        'category_name' => 'Repair',
-        'cost_head' => 'Brake Pad Replacement',
-        'unit_name' => 'Set',
-        'unit_price' => '3500.00',
-        'cost_head_code' => 'CH003',
-    ],
-    (object)[
-        'category_name' => 'Toll',
-        'cost_head' => 'Highway Toll',
-        'unit_name' => 'Trip',
-        'unit_price' => '150.00',
-        'cost_head_code' => 'CH004',
-    ],
-];
-                @endphp
                 <!-- --------------- expense head modal -------------------- -->
                 <button type="button" class="btn btn-default hidden" data-toggle="modal" data-target="#expenseModal" id="expenseModalBtn"></button>
                 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog">

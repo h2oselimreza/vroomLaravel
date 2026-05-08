@@ -49,6 +49,21 @@
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
+                <!-- Success Message -->
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>{{ session('success') }}</strong>
+                    </div>
+                @endif
+
+                <!-- Error Message -->
+                @if(session('error'))
+                    <div class="alert alert-danger" role="alert">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                        <strong>Error!</strong> {{ session('error') }}
+                    </div>
+                @endif
                 <?php
                 $vendorTitle = '';
                 $guestName = '';
@@ -69,7 +84,12 @@
                     }
                 }
                 ?>
-                <form action="/client/Expense/editExpense" method="POST"  enctype="multipart/form-data" id="expenseForm">
+                <form action="{{ route('client.expense.expense-with-vehicle.update', $expenseNo) }}" 
+                method="POST" 
+                enctype="multipart/form-data" 
+                id="expenseForm">
+                @csrf
+                @method('PUT')
                     <div class="row">
                         <div class="col-md-3 col-sm-6 col-xs-12">
                             <div class="form-group form-float" >
@@ -370,6 +390,7 @@
                             <input type="hidden" name="vehicleCount" id="vehicleCount" value="<?php echo $vehicleCount ?>">
                             <input type="hidden" id="vehicleSerial">
                             <input type="hidden" id="takenExpenseSerial">
+                            <input type="hidden" name="expenseNo" value="<?php echo $expenseNo ?>">
                             <input type="hidden" name="updateDtTm" value="<?php echo $updateDtTm ?>">
 
 
@@ -437,7 +458,7 @@
 
                                             <td class="td-center">
                                                 <a target="_blank"
-                                                href="{{ asset('assets/files/expense/' . $expensFile->file_name) }}">
+                                                href="{{ asset('assets/client/files/expense/' . $expensFile->file_name) }}">
                                                     Show
                                                 </a>
                                             </td>
