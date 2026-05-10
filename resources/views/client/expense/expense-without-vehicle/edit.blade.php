@@ -36,12 +36,12 @@
 </style>
 
 <div class="block-header">
-    <h2>EDIT LIST</h2><br>
+    <h2>EDIT GENERAL EXPENSE</h2><br>
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="/client/Home"> Home</a></li>
         <li><a href="#"> Expense</a></li>
-        <li><a href="/client/expense/expense-with-vehicle"> Expense List</a></li>
-        <li><a href="{{ route('client.expense.expense-with-vehicle.edit', $expenseNo) }}"> Edit Expense</a></li>
+        <li><a href="/client/expense/expense-without-vehicle"> Expense List</a></li>
+        <li><a href="{{ route('client.expense.expense-without-vehicle.edit', $expenseNo) }}"> Edit General Expense</a></li>
     </div>
 </div>
 
@@ -84,7 +84,7 @@
                     }
                 }
                 ?>
-                <form action="{{ route('client.expense.expense-with-vehicle.update', $expenseNo) }}" 
+                <form action="{{ route('client.expense.expense-without-vehicle.update', $expenseNo) }}" 
                 method="POST" 
                 enctype="multipart/form-data" 
                 id="expenseForm">

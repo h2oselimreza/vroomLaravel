@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client\Expense;
 
+use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Controller;
 use App\Repositories\Client\ExpenseRepository;
 use App\Repositories\Client\VehicleRepository;
@@ -14,20 +15,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class ExpenseWithVehicleController extends Controller
+class ExpenseWithoutVehicleController extends Controller
 {
     public function index(Request $request, ExpenseRepository $expenseRepository)
     {
         $data = [];
 
-        $data['leftMenuModuleUrl'] = "client/Expense/expenseList";
         $data['msg'] = "";
         $data['msgFlag'] = "";
 
         // Filters (same logic as CI)
         $arr = [
             'company'     => Auth::user()->customerEmployee->company,
-            'expenseType' => config('constants.EXP_TYPE_VEHICLE'),
+            'expenseType' => config('constants.EXP_TYPE_GENERAL'),
             'expenseNo'   => $request->get('expenseNo', ''),
             'title'       => $request->get('title', ''),
             'expenseDate' => '',
@@ -62,12 +62,12 @@ class ExpenseWithVehicleController extends Controller
         $data['expenseLists'] = $expenseRepository->getExpenseSummaryList($arr);
 
 
-        return view('client.expense.expense-with-vehicle.index', $data);
+        return view('client.expense.expense-without-vehicle.index', $data);
     }
 
     public function create(VehicleRepository $vehicleRepository, CommonRepository $commonRepository, MasterDataRepository $masterDataRepository){
         $arr['isActiveFlag'] = 1;
-        $arr['bulkFlag'] = 2;  // 2 means all vehicle without vehicle array
+        $arr['bulkFlag'] = 2;  // 2 means all vehicle without- vehicle array
         $arr['companyCode'] = Auth::user()->customerEmployee->company;
         $data['vehicles'] = $vehicleRepository->getVehicleInfo($arr);
 
@@ -79,7 +79,7 @@ class ExpenseWithVehicleController extends Controller
             $data['vendors'] = $masterDataRepository->getVendorGeneralInfo($arr);
         }
 
-        return view('client.expense.expense-with-vehicle.create-edit',compact('data'));
+        return view('client.expense.expense-without-vehicle.create-edit',compact('data'));
 
     }
 
@@ -104,8 +104,8 @@ class ExpenseWithVehicleController extends Controller
                 DB::rollBack();
 
                 return $redirectFlagHidden == 1
-                    ? redirect('/client/expense/expense-with-vehicle')
-                    : redirect('/client/expense/expense-with-vehicle/create');
+                    ? redirect('/client/expense/expense-without-vehicle')
+                    : redirect('/client/expense/expense-without-vehicle/create');
             }
 
             $company = Auth::user()->customerEmployee->company;
@@ -180,7 +180,7 @@ class ExpenseWithVehicleController extends Controller
                 'company' => $company,
                 'expense_title' => $request->input('expenseTitle'),
                 'vendor' => $request->vendor ?: null,
-                'expense_type' => 'vehicle',
+                'expense_type' => config('constants.EXP_TYPE_GENERAL'),
                 'expense_date' => $request->input('expenseDate'),
                 'expense_no' => $expenseNo,
                 'total_amount' => $totalAmount,
@@ -206,15 +206,15 @@ class ExpenseWithVehicleController extends Controller
                 DB::rollBack();
 
                 return $redirectFlagHidden == 1
-                    ? redirect('/client/expense/expense-with-vehicle')
-                    : redirect('/client/expense/expense-with-vehicle/create');
+                    ? redirect('/client/expense/expense-without-vehicle')
+                    : redirect('/client/expense/expense-without-vehicle/create');
             }
 
             if (!$summaryArr['vendor'] && !$summaryArr['guest_name']) {
 
                 DB::rollBack();
 
-                return redirect()->route('client.expense.expense-with-vehicle.create')
+                return redirect()->route('client.expense.expense-without-vehicle.create')
                     ->with('error', 'Vendor and guest name is not found.');
             }
 
@@ -247,7 +247,7 @@ class ExpenseWithVehicleController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('client.expense.expense-with-vehicle.index')
+                ->route('client.expense.expense-without-vehicle.index')
                 ->with('success', 'Expense add successfully');
 
         } catch (\Throwable $e) {
@@ -267,14 +267,14 @@ class ExpenseWithVehicleController extends Controller
         MasterDataRepository $masterDataRepository) {
 
         if (!$expenseNo) {
-            return redirect()->route('client.expense.expense-with-vehicle.index')->with('error', 'Expense number not found');
+            return redirect()->route('client.expense.expense-without-vehicle.index')->with('error', 'Expense number not found');
         }
         $arr['expenseNo'] = $expenseNo;
         $arr['company'] =  Auth::user()->customerEmployee->company;
-        $arr['expenseType'] = config('constants.EXP_TYPE_VEHICLE');
+        $arr['expenseType'] = config('constants.EXP_TYPE_GENERAL');
         $data['expenseSummary'] = $expenseRepository->getExpenseSummary($arr);
         if (empty($data['expenseSummary'])) {
-            return redirect()->route('client.expense.expense-with-vehicle.index')->with('error', 'Expense number not found');
+            return redirect()->route('client.expense.expense-without-vehicle.index')->with('error', 'Expense number not found');
         }
 
         $data['takenVehicles'] = $expenseRepository->getExpenseTakenVehicle($arr);
@@ -294,7 +294,7 @@ class ExpenseWithVehicleController extends Controller
             $arr['bulkFlag'] = 1;
             $data['vendors'] = $masterDataRepository->getVendorGeneralInfo($arr);
         }
-        return view('client.expense.expense-with-vehicle.edit',compact('data','expenseNo'));
+        return view('client.expense.expense-without-vehicle.edit',compact('data','expenseNo'));
     }
 
    public function update($id, Request $request, ExpenseRepository $expenseRepository)
@@ -303,7 +303,7 @@ class ExpenseWithVehicleController extends Controller
             $vehicleCount = (int) $request->input('vehicleCount');
             if (!$vehicleCount) {
                 return redirect()
-                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->route('client.expense.expense-without-vehicle.edit', $id)
                     ->with('error', 'Vehicle count not found');
             }
 
@@ -368,6 +368,7 @@ class ExpenseWithVehicleController extends Controller
             ];
 
             $vendor = $request->input('vendor') ?? null;
+
             if ($vendor) {
                 $summaryData['vendor'] = $vendor;
                 $summaryData['is_guest'] = 0;
@@ -379,16 +380,16 @@ class ExpenseWithVehicleController extends Controller
                 $summaryData['guest_mobile'] = $request->input('guestMobile') ?: null;
             }
 
-            // Validation logic
             if (
                 empty($summaryData['expense_title']) ||
                 empty($summaryData['expense_date']) ||
                 (empty($summaryData['vendor']) && empty($summaryData['guest_name']))
             ) {
                 return redirect()
-                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->route('client.expense.expense-without-vehicle.edit', $id)
                     ->with('error', 'Expense title or expense_date or vendor not found');
             }
+
             // 4. File Upload Handling
             $insertFileArr = [];
             if ($request->hasFile('expenseFile')) {
@@ -434,13 +435,13 @@ class ExpenseWithVehicleController extends Controller
             }
 
             return redirect()
-                    ->route('client.expense.expense-with-vehicle.edit', $id)
+                    ->route('client.expense.expense-without-vehicle.edit', $id)
                     ->with('success', 'Data updated successfully');
 
         } catch (\Exception $e) {
-
+            dd($e->getMessage());
             return redirect()
-                ->route('client.expense.expense-with-vehicle.edit', $id)
+                ->route('client.expense.expense-without-vehicle.edit', $id)
                 ->with('error', 'Something went wrong while updating: ' . $e->getMessage());
         }
     }
@@ -450,7 +451,7 @@ class ExpenseWithVehicleController extends Controller
 
         if(!$expenseNo){
             return redirect()
-            ->route('client.expense.expense-with-vehicle.index')
+            ->route('client.expense.expense-without-vehicle.index')
             ->with('error', 'Expense number not found');
         }
 
@@ -458,13 +459,13 @@ class ExpenseWithVehicleController extends Controller
         $arr = [];
         $arr['expenseNo']   = $expenseNo;
         $arr['company']     = Auth::user()->customerEmployee->company;
-        $arr['expenseType'] = config('constants.EXP_TYPE_VEHICLE');
+        $arr['expenseType'] = config('constants.EXP_TYPE_GENERAL');
 
         $expenseSummary = $expenseRepository->getExpenseSummary($arr);
 
         if ($expenseSummary->isEmpty()) {
             return redirect()
-                ->route('client.expense.expense-with-vehicle.index')
+                ->route('client.expense.expense-without-vehicle.index')
                 ->with('error', 'Expense summary not found');
         }
 
@@ -485,7 +486,7 @@ class ExpenseWithVehicleController extends Controller
 
         //$this->data['vendors'] = [];
 
-        return view('client.expense.expense-with-vehicle.show', 
+        return view('client.expense.expense-without-vehicle.show', 
             compact('takenVehicles','expenseDetails','expenseFiles','vehicles','expenseNo','expenseSummary')
         );      
     }
@@ -505,5 +506,4 @@ class ExpenseWithVehicleController extends Controller
             return response(2);
         }
     }
-
 }

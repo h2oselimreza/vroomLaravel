@@ -86,6 +86,7 @@ use App\Http\Controllers\Client\Vehicle\ClientVehicleDocumentationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Workshop\ServiceController;
+use App\Http\Controllers\Client\Expense\ExpenseWithoutVehicleController;
 use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
 use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
 use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
@@ -410,6 +411,7 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::delete('vehicle-maintenance/delete-appointment-service/{appointment_no}', [ClientWorkshopAppointmentController::class, 'destory'])->name('client.vehicle-maintenance.delete-appointment-service');
 
     Route::resource('expense/expense-with-vehicle', ExpenseWithVehicleController::class)->names('client.expense.expense-with-vehicle');
+    Route::resource('expense/expense-without-vehicle', ExpenseWithoutVehicleController::class)->names('client.expense.expense-without-vehicle');
 
     Route::resource('vendor/info', VendorController::class)->names('client.vendor.venor-list');
     Route::resource('vendor/profile-image', VendorImageController::class)->names('client.vendor.profile-image');
