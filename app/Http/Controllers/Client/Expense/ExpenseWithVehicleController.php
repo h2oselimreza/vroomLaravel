@@ -442,4 +442,49 @@ class ExpenseWithVehicleController extends Controller
         }
     }
 
+    public function show($expenseNo, ExpenseRepository $expenseRepository, VehicleRepository $vehicleRepository)
+    {
+
+        if(!$expenseNo){
+            return redirect()
+            ->route('client.expense.expense-with-vehicle.index')
+            ->with('error', 'Expense number not found');
+        }
+
+
+        $arr = [];
+        $arr['expenseNo']   = $expenseNo;
+        $arr['company']     = Auth::user()->customerEmployee->company;
+        $arr['expenseType'] = config('constants.EXP_TYPE_VEHICLE');
+
+        $expenseSummary = $expenseRepository->getExpenseSummary($arr);
+
+        if ($expenseSummary->isEmpty()) {
+            return redirect()
+                ->route('client.expense.expense-with-vehicle.index')
+                ->with('error', 'Expense summary not found');
+        }
+
+        $takenVehicles = $expenseRepository->getExpenseTakenVehicle($arr);
+
+        $expenseDetails = $expenseRepository->getExpenseDetails($arr);
+
+        $expenseFiles = $expenseRepository->getExpenseFiles($arr);
+
+        $vehicleArr = [];
+        $vehicleArr['isActiveFlag'] = 1;
+        $vehicleArr['bulkFlag']     = 2;
+        $vehicleArr['companyCode']  = Auth::user()->customerEmployee->company;
+
+        $vehicles = $vehicleRepository->getVehicleInfo($vehicleArr);
+
+        $expenseNo = $expenseNo;
+
+        //$this->data['vendors'] = [];
+
+        return view('client.expense.expense-with-vehicle.show', 
+            compact('takenVehicles','expenseDetails','expenseFiles','vehicles','expenseNo','expenseSummary')
+        );      
+    }
+
 }
