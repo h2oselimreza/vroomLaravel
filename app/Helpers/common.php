@@ -359,3 +359,135 @@ if (!function_exists('get_parent_category_str')) {
         return "";
     }
 }
+
+
+if (!function_exists('getNextReminderShowDtTm')) {
+
+    function getNextReminderShowDtTm($arr, $currentDtTm)
+    {
+        $nextReminderOnDtTm = "";
+
+        $currentDtTm = strtotime($currentDtTm);
+
+        $reminderOnDtTm = strtotime(
+            $arr['reminder_on_dt_tm'] . config('constants.SHOW_REMINDER_TIME')
+        );
+
+        $beforeReminderCount = $arr['before_reminder_count'];
+
+        if (
+            $currentDtTm >= $reminderOnDtTm &&
+            $arr['repeat_every'] == '0'
+        ) {
+            return false;
+        }
+
+        for ($i = $beforeReminderCount; $i >= 0; $i--) {
+
+            $nextReminderDtTm = date(
+                'Y-m-d H:i:s',
+                strtotime(
+                    '-' . getCalculatedDateStr(
+                        $i,
+                        $arr['before_reminder_type']
+                    ),
+                    $reminderOnDtTm
+                )
+            );
+
+            if ($currentDtTm < strtotime($nextReminderDtTm)) {
+                return $nextReminderDtTm;
+            }
+        }
+
+        //---------- reminder on date is less than current time ----------------//
+
+        while (1) {
+
+            $nextReminderOnDtTm = date(
+                'Y-m-d H:i:s',
+                strtotime(
+                    '+' . getCalculatedDateStr(
+                        $arr['repeat_every'],
+                        $arr['repeat_type']
+                    ),
+                    $reminderOnDtTm
+                )
+            );
+
+            if ($currentDtTm < strtotime($nextReminderOnDtTm)) {
+                break;
+            }
+
+            $reminderOnDtTm = strtotime($nextReminderOnDtTm);
+        }
+
+        $nextReminderOnDtTm = strtotime($nextReminderOnDtTm);
+
+        for ($i = $beforeReminderCount; $i >= 0; $i--) {
+
+            $nextReminderDtTm = date(
+                'Y-m-d H:i:s',
+                strtotime(
+                    '-' . getCalculatedDateStr(
+                        $i,
+                        $arr['before_reminder_type']
+                    ),
+                    $nextReminderOnDtTm
+                )
+            );
+
+            if ($currentDtTm < strtotime($nextReminderDtTm)) {
+                return $nextReminderDtTm;
+            }
+        }
+
+        return false;
+    }
+}
+
+
+if (!function_exists('getCalculatedDateStr')) {
+
+    function getCalculatedDateStr($count, $type)
+    {
+        $str = "";
+
+        if ($type == 'day') {
+
+            $str = $count . ' day';
+
+        } elseif ($type == 'week') {
+
+            $str = ($count * 7) . ' day';
+
+        }
+
+        if ($type == 'month') {
+
+            $str = $count . ' months';
+
+        }
+
+        if ($type == 'year') {
+
+            $str = $count . ' year';
+        }
+
+        return $str;
+    }
+
+    if (!function_exists('shorten_string')) {
+
+        function shorten_string($string, $limit)
+        {
+            $stringCount = strlen($string);
+
+            if ($stringCount > $limit) {
+                $string = substr($string, 0, $limit) . "...";
+            }
+
+            return $string;
+        }
+    }
+}

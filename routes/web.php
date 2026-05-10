@@ -91,6 +91,7 @@ use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
 use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
 use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
+use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -423,6 +424,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('master-data/expense-category-active', [ExpenseCategoryController::class, 'activeExpenseCategory'])->name('client.master-data.expense-category.active');
     Route::resource('vendor/expense-head', ExpenseHeadController::class)->names('client.master-data.expense-head');
     Route::post('vendor/expense-change-status', [ExpenseHeadController::class, 'changeStatus'])->name('client.master-data.expense-change-status');
+
+    /*===================Reminder Route==============*/
+    Route::resource('reminder/set-reminder', SetReminderController::class)->names('client.reminder.set-reminder');
+    Route::post('reminder/set-reminder/create', [SetReminderController::class, 'create'])->name('client.reminder.create');
 
 
 });
