@@ -174,6 +174,7 @@
 @push('scripts')
 <script>
     function removeExpense(expenseNo) {
+
         swal({
             title: "Are you sure?",
             text: "",
@@ -182,33 +183,59 @@
             closeOnConfirm: false,
             confirmButtonText: "Yes, remove it...!",
             confirmButtonColor: "#ec6c62"
-        }, function () {
-            showLoader();
-            $.ajax({
-                url: "/client/Expense/removeExpense?expenseNo=" + expenseNo,
-                type: "DELETE"
-            })
-                    .done(function (data) {
 
-                        hideLoader();
-                        if (data === '1') {
-                            swal({
-                                title: "Remove Successfully",
-                                text: "This Expense is removed now",
-                                type: "success",
-                                closeOnConfirm: false,
-                                confirmButtonText: "Ok",
-                                confirmButtonColor: "#A5DC86"
-                            }, function () {
-                                window.location.href = "/client/Expense/expenseList";
-                            });
-                        } else if (data === '2') {
-                            window.location.href = "/client/Expense/expenseList";
-                        }
-                    })
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
+        }, function () {
+
+            showLoader();
+
+            $.ajax({
+                url: "/client/expense/expense-with-vehicle/" + expenseNo,
+
+                type: "DELETE",
+
+                data: {
+                    _token: "{{ csrf_token() }}"
+                }
+
+            })
+
+            .done(function (data) {
+
+                hideLoader();
+
+                if (data == '1' || data == 1) {
+
+                    swal({
+                        title: "Remove Successfully",
+                        text: "This Expense is removed now",
+                        type: "success",
+                        closeOnConfirm: false,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#A5DC86"
+
+                    }, function () {
+
+                        window.location.href = "/client/expense/expense-with-vehicle";
                     });
+
+                } else if (data === '2' || data == 2) {
+
+                    window.location.href = "/client/expense/expense-with-vehicle";
+                }
+
+            })
+
+            .fail(function () {
+
+                hideLoader();
+
+                swal(
+                    "Oops",
+                    "We couldn't connect to the server!",
+                    "error"
+                );
+            });
+
         });
     }
 </script>

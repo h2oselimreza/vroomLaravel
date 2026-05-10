@@ -215,4 +215,46 @@ class ExpenseRepository
         });
     }
 
+    public function deleteExpense($expenseNo, $companyCode)
+    {
+        $expenseSummary = DB::table('expense_summary')
+            ->where('expense_no', $expenseNo)
+            ->where('company', $companyCode)
+            ->first();
+
+        if (empty($expenseSummary)) {
+            return 2;
+        }
+
+        DB::table('expense_summary')
+            ->where('expense_no', $expenseNo)
+            ->delete();
+
+        DB::table('expense_detail')
+            ->where('expense_no', $expenseNo)
+            ->delete();
+
+        //--------- remove file from folder ----------------//
+
+        $results = DB::table('expense_files')
+            ->select('file_name')
+            ->where('expense_no', $expenseNo)
+            ->get();
+
+        foreach ($results as $result) {
+
+            $file = public_path('assets/client/files/expense/' . $result->file_name);
+
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        DB::table('expense_files')
+            ->where('expense_no', $expenseNo)
+            ->delete();
+
+        return 1;
+    }
+
 }

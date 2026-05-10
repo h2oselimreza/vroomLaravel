@@ -487,4 +487,20 @@ class ExpenseWithVehicleController extends Controller
         );      
     }
 
+    public function destroy($expenseNo, ExpenseRepository $expenseRepository)
+    {
+
+        if ($expenseNo) {
+            $result = $expenseRepository->deleteExpense(
+                $expenseNo,
+                Auth::user()->customerEmployee->company,
+            );
+
+            return response($result);
+
+        } else {
+            return response(2);
+        }
+    }
+
 }
