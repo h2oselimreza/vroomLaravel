@@ -4,7 +4,9 @@ namespace App\Repositories\MasterData;
 
 use App\Models\Admin\MasterData\CostHead;
 use App\Models\Admin\MasterData\Service;
+use App\Models\Client\Product;
 use App\Models\Client\ProductCategory;
+use App\Models\Client\ProductVariant;
 use App\Models\CommonTable;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Division;
@@ -481,6 +483,54 @@ class MasterDataRepository
             ->update([
                 'is_active' => 1
             ]);
+
+        return 1;
+    }
+
+    public function insertProduct($insertArr, $insertVariantArr, $generateMonthlyToken)
+    {
+        $duplicate = Product::where('company', $insertArr['company'])
+            ->where('product_type', $insertArr['product_type'])
+            ->where('product_name', $insertArr['product_name'])
+            ->first();
+
+        if ($duplicate) {
+            return 2; // duplicate entry
+        }
+
+        // Generate product code
+        $insertArr['product_code'] = config('constants.PRODUCT') . $generateMonthlyToken->get_month_token(config('constants.PRODUCT'));
+
+        // Insert product
+        Product::create($insertArr);
+
+        // Generate variant code
+        $insertVariantArr['variant_code'] = config('constants.VARIANT') . $generateMonthlyToken->get_month_token(config('constants.VARIANT'));
+
+        $insertVariantArr['product'] = $insertArr['product_code'];
+
+        // Insert default variant
+        ProductVariant::create($insertVariantArr);
+
+        return 1;
+    }
+
+    public function updateProduct($updateArr)
+    {
+        // Duplicate check
+        $duplicate = Product::where('product_code', '!=', $updateArr['product_code'])
+            ->where('product_type', $updateArr['product_type'])
+            ->where('product_name', $updateArr['product_name'])
+            ->where('company', $updateArr['company'])
+            ->first();
+
+        if ($duplicate) {
+            return 2; // duplicate entry
+        }
+
+        // Update product
+        Product::where('product_code', $updateArr['product_code'])
+            ->update($updateArr);
 
         return 1;
     }

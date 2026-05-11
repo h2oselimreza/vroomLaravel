@@ -92,6 +92,7 @@ use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
 use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
 use App\Http\Controllers\Client\MasterData\InventoryCategoryController;
 use App\Http\Controllers\Client\MasterData\InventoryController;
+use App\Http\Controllers\Client\MasterData\InventoryProductController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
@@ -430,6 +431,8 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::get('vendor/inventory', [InventoryController::class, 'index'])->name('client.master-data.inventory');
     Route::resource('vendor/inventory-category', InventoryCategoryController::class)->names('client.master-data.inventory-category');
     Route::post('master-data/inventory-category-active', [InventoryCategoryController::class, 'activeInventoryCategory'])->name('client.master-data.inventory-category.active');
+
+    Route::resource('vendor/inventory-product', InventoryProductController::class)->names('client.master-data.inventory-product');
 
     /*===================Reminder Route==============*/
     Route::resource('reminder/set-reminder', SetReminderController::class)->names('client.reminder.set-reminder');

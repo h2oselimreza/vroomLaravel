@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Client\Product;
 use App\Models\Company;
 use App\Models\CustomerEmployee;
 use Illuminate\Support\Facades\Auth;
@@ -166,6 +167,29 @@ class CommonRepository
 
         $query->where('company', $arr['company']);
         $query->orderBy('parent_category_str', 'ASC');
+
+        return $query->get();
+    }
+
+    public function getProduts($arr, $isActiveFlag = 1)
+    {
+        $query = Product::select('products.*', 'product_categories.parent_category_str')
+            ->join('product_categories', 'product_categories.category_code', '=', 'products.category')
+            ->where('products.company', $arr['company'])
+            ->where('products.product_type', $arr['productType'])
+            ->where('product_categories.is_active', 1);
+
+        if (!empty($arr['productCode'])) {
+            $query->where('products.product_code', $arr['productCode']);
+        }
+
+        if ($isActiveFlag == 1) {
+            $query->where('products.is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('products.is_active', 0);
+        }
+
+        $query->orderBy('products.product_name', 'ASC');
 
         return $query->get();
     }
