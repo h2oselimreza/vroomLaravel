@@ -90,6 +90,8 @@ use App\Http\Controllers\Client\Expense\ExpenseWithoutVehicleController;
 use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
 use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
 use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
+use App\Http\Controllers\Client\MasterData\InventoryCategoryController;
+use App\Http\Controllers\Client\MasterData\InventoryController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
@@ -424,6 +426,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('master-data/expense-category-active', [ExpenseCategoryController::class, 'activeExpenseCategory'])->name('client.master-data.expense-category.active');
     Route::resource('vendor/expense-head', ExpenseHeadController::class)->names('client.master-data.expense-head');
     Route::post('vendor/expense-change-status', [ExpenseHeadController::class, 'changeStatus'])->name('client.master-data.expense-change-status');
+
+    Route::get('vendor/inventory', [InventoryController::class, 'index'])->name('client.master-data.inventory');
+    Route::resource('vendor/inventory-category', InventoryCategoryController::class)->names('client.master-data.inventory-category');
+    Route::post('master-data/inventory-category-active', [InventoryCategoryController::class, 'activeInventoryCategory'])->name('client.master-data.inventory-category.active');
 
     /*===================Reminder Route==============*/
     Route::resource('reminder/set-reminder', SetReminderController::class)->names('client.reminder.set-reminder');

@@ -149,4 +149,25 @@ class CommonRepository
             ->get();
     }
 
+    public function getProductCategoryList($arr, $isActiveFlag = 1)
+    {
+        $query = DB::table('product_categories');
+
+        if ($isActiveFlag == 1) {
+
+            $query->where('is_active', 1);
+
+        } elseif ($isActiveFlag == 2) {
+
+            $query->where('is_active', 0);
+        }
+
+        $query->where('category_type', $arr['categoryType']);
+
+        $query->where('company', $arr['company']);
+        $query->orderBy('parent_category_str', 'ASC');
+
+        return $query->get();
+    }
+
 }

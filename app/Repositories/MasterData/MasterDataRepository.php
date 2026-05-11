@@ -3,10 +3,13 @@
 namespace App\Repositories\MasterData;
 
 use App\Models\Admin\MasterData\CostHead;
+use App\Models\Admin\MasterData\Service;
+use App\Models\Client\ProductCategory;
 use App\Models\CommonTable;
 use App\Models\MetaData\District;
 use App\Models\MetaData\Division;
 use App\Models\MetaData\Upozilla;
+use App\Services\Client\GenerateMonthlyToken;
 use App\Services\TokenService;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -326,5 +329,159 @@ class MasterDataRepository
             Log::error("Failed to remove Expense Head ID {$costHeadId}: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    public function insertCategory($insertArr,$generateMonthlyToken)
+    {
+        $query = ProductCategory::where('company', $insertArr['company'])
+            ->where('category_type', $insertArr['category_type'])
+            ->where('category_name', $insertArr['category_name'])
+            ->first();
+
+        if ($query) {
+            return 2;
+        }
+
+        $insertArr['category_code'] = config('constants.PRODUCT_CATEGORY') . $generateMonthlyToken->get_month_token(config('constants.PRODUCT_CATEGORY'));
+
+        $insertArr['parent_category_str'] = $this->getParentCategoryStr($insertArr);
+
+        ProductCategory::create($insertArr);
+
+        return 1;
+    }
+
+    private function getParentCategoryStr($arr)
+    {
+        if ($arr['parent_category'] == 1) {
+            return $arr['category_code'];
+        }
+
+        $row = ProductCategory::where('category_code', $arr['parent_category'])->first();
+
+        $strArr = [];
+
+        if ($row) {
+            $strArr[] = $row->parent_category_str;
+        } else {
+            $strArr[] = '';
+        }
+
+        $strArr[] = $arr['category_code'];
+
+        return implode(' / ', $strArr);
+    }
+
+    public function editProductCategory($updateArr, $categoryType)
+    {
+        $duplicate = ProductCategory::where('category_type', $categoryType)
+            ->where('category_name', $updateArr['category_name'])
+            ->where('company', $updateArr['company'])
+            ->where('category_code', '!=', $updateArr['category_code'])
+            ->first();
+
+        if ($duplicate) {
+            return 2; // duplicate entry
+        }
+
+        $updateArr['parent_category_str'] = $this->getParentCategoryStr($updateArr);
+
+        $currentRow = ProductCategory::where('company', $updateArr['company'])
+            ->where('category_code', $updateArr['category_code'])
+            ->first();
+
+        if (!$currentRow) {
+            return 1; // safety fallback (no change in logic flow)
+        }
+
+        // Step 4: If parent changed → update child hierarchy
+        if ($updateArr['parent_category'] != $currentRow->parent_category) {
+
+            $results = ProductCategory::where('company', $updateArr['company'])
+                ->where('category_code', '!=', $updateArr['category_code'])
+                ->where('parent_category_str', 'like', '%' . $currentRow->parent_category_str . '%')
+                ->get();
+
+            $categoryBatchUpdateArr = [];
+
+            foreach ($results as $result) {
+
+                $categoryBatchUpdateArr[] = [
+                    'id' => $result->id,
+                    'parent_category_str' =>
+                        $updateArr['parent_category_str'] .
+                        str_replace(
+                            $currentRow->parent_category_str,
+                            '',
+                            $result->parent_category_str
+                        )
+                ];
+            }
+            if (!empty($categoryBatchUpdateArr)) {
+
+                ProductCategory::upsert(
+                    $categoryBatchUpdateArr,
+                    ['id'],
+                    ['parent_category_str']
+                );
+            }
+        }
+
+        ProductCategory::where('company', $updateArr['company'])
+            ->where('category_code', $updateArr['category_code'])
+            ->update($updateArr);
+
+        return 1;
+    }
+
+    public function removeCategory($categoryId, $company)
+    {
+        $row = ProductCategory::where('id', $categoryId)
+            ->where('company', $company)
+            ->first();
+
+        if (!$row) {
+            return 1; // safe fallback (no change in original flow)
+        }
+
+        $categoryCode = $row->category_code;
+
+        $childExists = ProductCategory::where('parent_category', $categoryCode)
+            ->where('company', $company)
+            ->where('is_active', 1)
+            ->exists();
+
+        if ($childExists) {
+            return 2; // this category has child category
+        }
+
+        $productExists = DB::table('products')
+            ->where('company', $company)
+            ->where('category', $categoryCode)
+            ->where('is_active', 1)
+            ->exists();
+
+        if ($productExists) {
+            return 3; // this category has product
+        }
+
+        ProductCategory::where('id', $categoryId)
+            ->where('company', $company)
+            ->update([
+                'is_active' => 0
+            ]);
+
+        return 1;
+    }
+
+    public function activeCategory($categoryId, $company)
+    {
+        ProductCategory::where('id', $categoryId)
+            ->where('company', $company)
+            ->update([
+                'is_active' => 1
+            ]);
+
+        return 1;
     }
 }

@@ -8,49 +8,49 @@ use Carbon\Carbon;
 
 class GenerateMonthlyToken
 {
-    public function generateMonthlyToken($code = null)
-    {
-        if (!$code) {
-            return '0001';
-        }
+    // public function generateMonthlyToken($code = null)
+    // {
+    //     if (!$code) {
+    //         return '0001';
+    //     }
 
-        return DB::transaction(function () use ($code) {
+    //     return DB::transaction(function () use ($code) {
 
-            $token = Token::where('code', $code)
-                ->lockForUpdate()
-                ->first();
-            if (!$token) {
-                Token::create([
-                    'code'     => $code,
-                    'dt'       => now()->toDateString(),
-                    'tokenNo'  => '0001',
-                ]);
+    //         $token = Token::where('code', $code)
+    //             ->lockForUpdate()
+    //             ->first();
+    //         if (!$token) {
+    //             Token::create([
+    //                 'code'     => $code,
+    //                 'dt'       => now()->toDateString(),
+    //                 'tokenNo'  => '0001',
+    //             ]);
 
-                return '0001';
-            }
+    //             return '0001';
+    //         }
 
-            $expMonth   = Carbon::parse($token->dt)->format('Y-m');
-            $todayMonth = now()->format('Y-m');
+    //         $expMonth   = Carbon::parse($token->dt)->format('Y-m');
+    //         $todayMonth = now()->format('Y-m');
 
-            if ($todayMonth > $expMonth) {
-                $token->update([
-                    'dt'      => now()->toDateString(),
-                    'tokenNo' => '0001',
-                ]);
+    //         if ($todayMonth > $expMonth) {
+    //             $token->update([
+    //                 'dt'      => now()->toDateString(),
+    //                 'tokenNo' => '0001',
+    //             ]);
 
-                return '0001';
-            }
+    //             return '0001';
+    //         }
 
-            $nextTokenNo = str_pad(((int) $token->tokenNo) + 1, 4, '0', STR_PAD_LEFT);
+    //         $nextTokenNo = str_pad(((int) $token->tokenNo) + 1, 4, '0', STR_PAD_LEFT);
 
-            $token->update([
-                'dt'      => now()->toDateString(),
-                'tokenNo' => $nextTokenNo,
-            ]);
+    //         $token->update([
+    //             'dt'      => now()->toDateString(),
+    //             'tokenNo' => $nextTokenNo,
+    //         ]);
 
-            return $nextTokenNo;
-        });
-    }
+    //         return $nextTokenNo;
+    //     });
+    // }
 
 
     function get_month_token($code = null)
