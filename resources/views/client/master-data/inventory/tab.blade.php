@@ -17,12 +17,12 @@
     </div>
     <div class="btn-group" role="group">
         <a href="{{ route('client.master-data.inventory-product.index') }}">
-            <button type="button" class="btn btn-{{ (($secondLastSegment == 'inventory-product') || ($secondLastSegment == 'create')) ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>  Product</b></button>
+            <button type="button" class="btn btn-{{ (($thirdLastSegment == 'inventory-product')) ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>  Product</b></button>
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="{{ route('client.master-data.expense-head.index') }}">
-            <button type="button" class="btn btn-<?php echo ($secondLastSegment == 'expense-head') ? 'info' : 'default' ?> waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>   Variant</b></button>
+        <a href="{{ route('client.master-data.inventory-product-variant.index') }}">
+            <button type="button" class="btn btn-{{ (($thirdLastSegment == 'inventory-product-variant')) ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa fa-tasks"></i><b>   Variant</b></button>
         </a>
     </div>
 </div>

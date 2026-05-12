@@ -93,6 +93,7 @@ use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
 use App\Http\Controllers\Client\MasterData\InventoryCategoryController;
 use App\Http\Controllers\Client\MasterData\InventoryController;
 use App\Http\Controllers\Client\MasterData\InventoryProductController;
+use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
@@ -434,6 +435,11 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
 
     Route::resource('vendor/inventory-product', InventoryProductController::class)->names('client.master-data.inventory-product');
 
+    Route::resource('vendor/inventory-product-variant', InventoryVariantController::class)->names('client.master-data.inventory-product-variant');
+    Route::post('vendor/inventory-product-variant', [InventoryVariantController::class, 'setProductVariant'])->name('client.master-data.setProductVariant');
+    Route::post('vendor/inventory-product-variant-store', [InventoryVariantController::class, 'store'])->name('client.master-data.inventory-product-variant-store');
+    Route::post('vendor/check-dup-variant', [InventoryVariantController::class, 'checkDupVariant'])->name('client.master-data.check-dup-variant');
+    Route::post('vendor/product-variant-active', [InventoryVariantController::class, 'activeProductVariant'])->name('client.master-data.product-variant-active');
     /*===================Reminder Route==============*/
     Route::resource('reminder/set-reminder', SetReminderController::class)->names('client.reminder.set-reminder');
     Route::post('reminder/set-reminder/create', [SetReminderController::class, 'create'])->name('client.reminder.create');

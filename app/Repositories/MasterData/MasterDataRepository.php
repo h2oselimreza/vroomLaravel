@@ -13,7 +13,9 @@ use App\Models\MetaData\Division;
 use App\Models\MetaData\Upozilla;
 use App\Services\Client\GenerateMonthlyToken;
 use App\Services\TokenService;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -531,6 +533,163 @@ class MasterDataRepository
         // Update product
         Product::where('product_code', $updateArr['product_code'])
             ->update($updateArr);
+
+        return 1;
+    }
+
+    public function getProductVariant($arr)
+    {
+        $query = DB::table('product_variants')
+            ->where('variant_type', $arr['variantType'])
+            ->where('product', $arr['productCode'])
+            ->where('company', $arr['company'])
+            ->where('is_active', 1)
+            ->get();
+
+        return $query->toArray();
+    }
+
+    public function checkVariantContengency($contentVariantId, $contentCheckUpdateDtTm)
+    {
+        $row = DB::table('product_variants')
+            ->where('id', $contentVariantId)
+            ->first();
+
+        if ($row && $row->updated_dt_tm == $contentCheckUpdateDtTm) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    public function checkDupProductVariant(
+        array $variantNameArr,
+        $product,
+        $variantType,
+        $company
+    ) {
+
+        $productVariants = DB::table('product_variants')
+            ->select('variant_name')
+            ->where('product', $product)
+            ->where('company', $company)
+            ->where('variant_type', $variantType)
+            ->where('is_active', 0)
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($variantNameArr); $i++) {
+
+            foreach ($productVariants as $productVariant) {
+
+                if ($productVariant->variant_name == $variantNameArr[$i]) {
+                    return 2;
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    public function saveProductVariant($updateArr, $insertArr, $deleteVariantIdStr)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $flag = 0;
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE VARIANTS
+            |--------------------------------------------------------------------------
+            */
+
+            if (!empty($updateArr)) {
+
+                foreach ($updateArr as $row) {
+
+                    DB::table('product_variants')
+                        ->where('id', $row['id'])
+                        ->update([
+                            'variant_name' => $row['variant_name'],
+                            'unit_name' => $row['unit_name'],
+                            'model' => $row['model'],
+                            'display_code' => $row['display_code'],
+                            'details' => $row['details'],
+                            'updated_by' => $row['updated_by'],
+                            'updated_dt_tm' => $row['updated_dt_tm'],
+                        ]);
+                }
+
+                $flag = 1;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | INSERT VARIANTS
+            |--------------------------------------------------------------------------
+            */
+
+            if (!empty($insertArr)) {
+
+                DB::table('product_variants')->insert($insertArr);
+
+                $flag = 1;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | SOFT DELETE VARIANTS
+            |--------------------------------------------------------------------------
+            */
+
+            if (!empty($deleteVariantIdStr)) {
+
+                $deleteIdArr = array_filter(
+                    explode(',', $deleteVariantIdStr)
+                );
+
+                DB::table('product_variants')
+                    ->whereIn('id', $deleteIdArr)
+                    ->update([
+                        'is_active' => 0,
+                        'updated_by' => Auth::user()->user_id,
+                        'updated_dt_tm' => now(),
+                    ]);
+
+                $flag = 1;
+            }
+
+            DB::commit();
+
+            return $flag ? 1 : 0;
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Save Product Variant Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return 0;
+        }
+    }
+
+    public function activeVariant($variantId, $company)
+    {
+        DB::table('product_variants')
+            ->where('company', $company)
+            ->where('id', $variantId)
+            ->update([
+                'is_active' => 1,
+                'updated_dt_tm' => Carbon::now(),
+                'updated_by' => Auth::user()->user_id ?? null,
+            ]);
 
         return 1;
     }

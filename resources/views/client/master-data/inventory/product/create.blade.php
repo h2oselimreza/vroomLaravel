@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn btn-primary bg-blue btn-sm waves-effect" onclick="{{ $product ? 'submitEditProduct()' : 'submitAddProduct()' }}">Add Product</button>
+                        <button class="btn btn-primary bg-blue btn-sm waves-effect" onclick="{{ $product ?? null ? 'submitEditProduct()' : 'submitAddProduct()' }}">Add Product</button>
 
                     </div>
                 </div>
@@ -208,9 +208,9 @@
             hideErrorDiv();
         }
 
-        var productCode = '{{ $product->product_code}}';
+        //var productCode = '{{ $product->product_code ?? null }}';
 
-        var url = "{{ route('client.master-data.inventory-product.update', $product->product_code) }}";
+        var url = "{{ route('client.master-data.inventory-product.update', $product->product_code ?? 1) }}";
         showLoader();
 
         $.ajax({

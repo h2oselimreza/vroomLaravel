@@ -194,4 +194,32 @@ class CommonRepository
         return $query->get();
     }
 
+    public function getProductVariants($arr, $isActiveFlag = 1)
+    {
+        $query = DB::table('product_variants')
+            ->select(
+                'product_variants.*',
+                'products.product_name',
+                'product_categories.parent_category_str',
+                'product_categories.category_name'
+            )
+            ->join('products', 'products.product_code', '=', 'product_variants.product')
+            ->join('product_categories', 'product_categories.category_code', '=', 'products.category')
+            ->where('product_variants.company', $arr['company']);
+
+        // Active filter (same logic)
+        if ($isActiveFlag == 1) {
+            $query->where('product_variants.is_active', 1);
+        } elseif ($isActiveFlag == 2) {
+            $query->where('product_variants.is_active', 0);
+        }
+
+        $query->where('products.is_active', 1)
+            ->where('product_categories.is_active', 1)
+            ->where('product_variants.variant_type', $arr['variantType'])
+            ->orderBy('product_variants.product', 'ASC');
+
+        return $query->get();
+    }
+
 }
