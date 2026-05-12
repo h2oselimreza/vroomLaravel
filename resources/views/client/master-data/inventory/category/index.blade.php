@@ -415,7 +415,7 @@
                     }, function () {
 
                         window.location.href =
-                            "{{ route('client.master-data.expense-category.index') }}";
+                            "{{ route('client.master-data.inventory-category.index') }}";
 
                     });
                 }

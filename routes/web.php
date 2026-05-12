@@ -88,6 +88,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Workshop\ServiceController;
 use App\Http\Controllers\Client\Expense\ExpenseWithoutVehicleController;
 use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
+use App\Http\Controllers\Client\inventory\ClientInventoryController;
+use App\Http\Controllers\Client\inventory\StockInController;
+use App\Http\Controllers\Client\inventory\StockOutController;
 use App\Http\Controllers\Client\MasterData\ExpenseCategoryController;
 use App\Http\Controllers\Client\MasterData\ExpenseHeadController;
 use App\Http\Controllers\Client\MasterData\InventoryCategoryController;
@@ -428,21 +431,31 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('master-data/expense-category-active', [ExpenseCategoryController::class, 'activeExpenseCategory'])->name('client.master-data.expense-category.active');
     Route::resource('vendor/expense-head', ExpenseHeadController::class)->names('client.master-data.expense-head');
     Route::post('vendor/expense-change-status', [ExpenseHeadController::class, 'changeStatus'])->name('client.master-data.expense-change-status');
-
-    Route::get('vendor/inventory', [InventoryController::class, 'index'])->name('client.master-data.inventory');
-    Route::resource('vendor/inventory-category', InventoryCategoryController::class)->names('client.master-data.inventory-category');
+    //inventory category route
+    Route::get('master-data/inventory', [InventoryController::class, 'index'])->name('client.master-data.inventory');
+    Route::resource('master-data/inventory-category', InventoryCategoryController::class)->names('client.master-data.inventory-category');
     Route::post('master-data/inventory-category-active', [InventoryCategoryController::class, 'activeInventoryCategory'])->name('client.master-data.inventory-category.active');
+    //inventory product route
+    Route::resource('master-data/inventory-product', InventoryProductController::class)->names('client.master-data.inventory-product');
 
-    Route::resource('vendor/inventory-product', InventoryProductController::class)->names('client.master-data.inventory-product');
-
-    Route::resource('vendor/inventory-product-variant', InventoryVariantController::class)->names('client.master-data.inventory-product-variant');
-    Route::post('vendor/inventory-product-variant', [InventoryVariantController::class, 'setProductVariant'])->name('client.master-data.setProductVariant');
-    Route::post('vendor/inventory-product-variant-store', [InventoryVariantController::class, 'store'])->name('client.master-data.inventory-product-variant-store');
-    Route::post('vendor/check-dup-variant', [InventoryVariantController::class, 'checkDupVariant'])->name('client.master-data.check-dup-variant');
-    Route::post('vendor/product-variant-active', [InventoryVariantController::class, 'activeProductVariant'])->name('client.master-data.product-variant-active');
+    //product variant route
+    Route::resource('master-data/inventory-product-variant', InventoryVariantController::class)->names('client.master-data.inventory-product-variant');
+    Route::post('master-data/inventory-product-variant', [InventoryVariantController::class, 'setProductVariant'])->name('client.master-data.setProductVariant');
+    Route::post('master-data/inventory-product-variant-store', [InventoryVariantController::class, 'store'])->name('client.master-data.inventory-product-variant-store');
+    Route::post('master-data/check-dup-variant', [InventoryVariantController::class, 'checkDupVariant'])->name('client.master-data.check-dup-variant');
+    Route::post('master-data/product-variant-active', [InventoryVariantController::class, 'activeProductVariant'])->name('client.master-data.product-variant-active');
     /*===================Reminder Route==============*/
     Route::resource('reminder/set-reminder', SetReminderController::class)->names('client.reminder.set-reminder');
     Route::post('reminder/set-reminder/create', [SetReminderController::class, 'create'])->name('client.reminder.create');
+
+    /*===================Inventory Route==============*/
+    Route::get('inventory/stock', [ClientInventoryController::class, 'index'])->name('client.master-data.stock');
+    Route::resource('inventory/stock-in', StockInController::class)->names('client.inventory.stock-in');
+    Route::post('inventory/editStockIn', [StockInController::class, 'editStockIn'])->name('client.inventory.editStockIn');
+    Route::resource('inventory/stock-out', StockOutController::class)->names('client.inventory.stock-out');
+
+
+
 
 
 });

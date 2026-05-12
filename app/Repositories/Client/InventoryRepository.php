@@ -1,0 +1,422 @@
+<?php
+
+namespace App\Repositories\Client;
+
+use App\Models\Admin\MasterData\ServiceVariant;
+use App\Models\Client\HomeServiceAppDetail;
+use App\Models\Client\HomeServiceAppSummaryGen;
+use App\Models\CorporateCompany;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class InventoryRepository
+{
+    public function getStockSummary($arr)
+    {
+        $query = DB::table('stock_summary');
+
+        if (!empty($arr['summaryId'])) {
+            $query->where(
+                'stock_summary_id',
+                $arr['summaryId']
+            );
+        }
+
+        $query->where('company', $arr['company']);
+        $query->where('stock_type', $arr['stockType']);
+        $query->where('is_active', 1);
+
+        $query->orderBy('stock_date', 'DESC');
+
+        return $query->get();
+    }
+
+    public function addStockIn(
+        $stockSummaryArr,
+        $stockDetailInsertArr,
+        $stockUpdateQuery,
+        $stockInsertArr
+    ) {
+
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('stock_summary')
+                ->insert($stockSummaryArr);
+
+            DB::table('stock_details')
+                ->insert($stockDetailInsertArr);
+
+
+            if (!empty($stockUpdateQuery)) {
+
+                DB::statement($stockUpdateQuery);
+            }
+
+            if (!empty($stockInsertArr)) {
+
+                DB::table('stock')
+                    ->insert($stockInsertArr);
+            }
+
+            DB::commit();
+
+            return 1;
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Add Stock In Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return 0;
+        }
+    }
+
+    public function getCompanyVariant($arr)
+    {
+        $variantCode = [];
+
+        $results = DB::table('product_variants')
+            ->select('variant_code')
+            ->where('company', $arr['company'])
+            ->where('variant_type', $arr['variantType'])
+            ->where('is_active', 1)
+            ->get();
+
+        foreach ($results as $result) {
+
+            $variantCode[] = $result->variant_code;
+        }
+
+        return $variantCode;
+    }
+
+    public function getCompanyStock($arr)
+    {
+        $query = DB::table('stock')
+            ->where('company', $arr['company']);
+
+        if (!empty($arr['variantArr'])) {
+
+            $query->whereIn(
+                'variant',
+                $arr['variantArr']
+            );
+        }
+
+        return $query
+            ->get();
+    }
+
+    public function removeStockSummary(
+        $stockSummaryId,
+        $companyCode,
+        $stockSummaryArr,
+        $stockDetailInsertArr,
+        $stockUpdateQuery
+    ) {
+
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('stock_summary')
+                ->where('company', $companyCode)
+                ->where('stock_summary_id', $stockSummaryId)
+                ->update($stockSummaryArr);
+
+            DB::table('stock_details')
+                ->insert($stockDetailInsertArr);
+
+            if (!empty($stockUpdateQuery)) {
+                DB::statement($stockUpdateQuery);
+            }
+
+            DB::commit();
+
+            return 1;
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            Log::error('Remove Stock Summary Repo Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+            ]);
+
+            return 0;
+        }
+    }
+
+    public function getCalculatedStockDetail($arr)
+    {
+        return DB::table('stock_details')
+        ->select(
+            DB::raw('MIN(stock_details.id) as stock_details_auto_id'),
+            'stock_details.stock_detail_id',
+            'stock_details.variant',
+            DB::raw('MAX(stock_details.remarks) as remarks'),
+            DB::raw('SUM(stock_details.credit_quantity) as credit_quantity'),
+            DB::raw('SUM(stock_details.debit_quantity) as debit_quantity'),
+            'product_variants.variant_name',
+            'product_variants.unit_name'
+        )
+        ->join(
+            'product_variants',
+            'product_variants.variant_code',
+            '=',
+            'stock_details.variant'
+        )
+        ->where('stock_details.company', $arr['company'])
+        ->where('stock_details.stock_summary_id', $arr['summaryId'])
+
+        // ✅ added condition safely
+        ->when(!empty($arr['transactionType']), function ($query) use ($arr) {
+            $query->where('stock_details.trasaction_type', $arr['transactionType']);
+        })
+
+        ->groupBy(
+            'stock_details.variant',
+            'stock_details.stock_detail_id',
+            'product_variants.variant_name',
+            'product_variants.unit_name'
+        )
+        ->get()
+        ->toArray();
+    }
+
+    public function changeStockStatus($variantArr, $statusData)
+    {
+        dd($variantArr, $statusData);
+        if (!empty($variantArr)) {
+
+            DB::table('stock')
+                ->whereIn('variant', $variantArr)
+                ->update($statusData);
+        }
+    }
+
+    public function getDeleteStockDetailsNew($variantDeleteStr, $company, $summaryId)
+    {
+        $variantArr = [];
+
+        // STEP 1: Get distinct variants from stock_details by IDs
+        $results = DB::table('stock_details')
+            ->select('variant')
+            ->whereIn('id', explode(',', $variantDeleteStr))
+            ->groupBy('variant')
+            ->get();
+
+        foreach ($results as $result) {
+            $variantArr[] = $result->variant;
+        }
+
+        // STEP 2: If variants exist, get aggregated stock details
+        if (!empty($variantArr)) {
+
+            $data = DB::table('stock_details')
+                ->select(
+                    DB::raw('SUM(credit_quantity) as credit_quantity'),
+                    DB::raw('SUM(debit_quantity) as debit_quantity'),
+                    'variant'
+                )
+                ->where('stock_summary_id', $summaryId)
+                ->where('company', $company)
+                ->whereIn('variant', $variantArr)
+                ->groupBy('variant')
+                ->get();
+
+            return $data->toArray();
+        }
+
+        return [];
+    }
+
+    public function editStockIn(
+        $stockSummaryArr,
+        $stockDetailInsertArr,
+        $stockSummaryId,
+        $company,
+        $tempTableInsertArr,
+        $variantArr
+    ) {
+        $stockInsertArr = [];
+
+        try {
+
+            if (!empty($tempTableInsertArr)) {
+
+                $stockTempTable = 'stock_temp' . reference_no();
+
+                // CREATE TEMP TABLE
+                DB::statement("
+                    CREATE TEMPORARY TABLE IF NOT EXISTS `$stockTempTable` (
+                        id int(11) NOT NULL AUTO_INCREMENT,
+                        company varchar(50) NOT NULL,
+                        variant_temp varchar(50) NOT NULL,
+                        debit_quantity_temp decimal(10,2) NOT NULL DEFAULT '0.00',
+                        credit_quantity_temp decimal(10,2) NOT NULL DEFAULT '0.00',
+                        PRIMARY KEY (id)
+                    )
+                ");
+
+                // INSERT TEMP DATA
+                DB::table($stockTempTable)->insert($tempTableInsertArr);
+
+                // JOIN QUERY
+                $results = DB::table($stockTempTable)
+                    ->selectRaw("
+                        SUM($stockTempTable.debit_quantity_temp) as debit_quantity_temp,
+                        SUM($stockTempTable.credit_quantity_temp) as credit_quantity_temp,
+                        $stockTempTable.variant_temp,
+                        stock.quantity as stock_quantity,
+                        stock.id as stock_auto_id,
+                        stock.status
+                    ")
+                    ->leftJoin('stock', 'stock.variant', '=', "$stockTempTable.variant_temp")
+                    ->groupBy("$stockTempTable.variant_temp")
+                    ->get();
+
+                $createUpdateUser = Auth::user()->user_id;
+                $dateTime = now();
+
+                // MARK PROCESSING
+                $statusData = [
+                    'status' => 2,
+                    'updated_by' => $createUpdateUser,
+                    'updated_dt_tm' => $dateTime
+                ];
+
+                $this->changeStockStatus($variantArr, $statusData);
+
+                $stockIdArr = [];
+                $quantityStrArr = [];
+                $updatedByStrArr = [];
+                $updatedDtTmStrArr = [];
+                $stockUpdateQuery = '';
+
+                foreach ($results as $result) {
+
+                    if ($result->status == 2) {
+                        $statusData['status'] = 1;
+                        $this->changeStockStatus($variantArr, $statusData);
+                        return 4;
+                    }
+
+                    if ($result->stock_quantity) {
+
+                        $stockIdArr[] = $result->stock_auto_id;
+                        $variantQuantity = 0;
+
+                        if ($result->credit_quantity_temp >= $result->debit_quantity_temp) {
+
+                            $variantQuantity =
+                                $result->credit_quantity_temp - $result->debit_quantity_temp;
+
+                            $quantityStrArr[] =
+                                "WHEN `id` = {$result->stock_auto_id} THEN `quantity` + {$variantQuantity}";
+
+                        } else {
+
+                            $variantQuantity =
+                                $result->debit_quantity_temp - $result->credit_quantity_temp;
+
+                            $quantityStrArr[] =
+                                "WHEN `id` = {$result->stock_auto_id} THEN `quantity` - {$variantQuantity}";
+
+                            if ($result->stock_quantity < $variantQuantity) {
+
+                                $statusData['status'] = 1;
+                                $this->changeStockStatus($variantArr, $statusData);
+
+                                return 3;
+                            }
+                        }
+
+                        $updatedByStrArr[] =
+                            "WHEN `id` = {$result->stock_auto_id} THEN '{$createUpdateUser}'";
+
+                        $updatedDtTmStrArr[] =
+                            "WHEN `id` = {$result->stock_auto_id} THEN '{$dateTime}'";
+
+                    } else {
+
+                        $stockInsertArr[] = [
+                            'company' => $company,
+                            'variant' => $result->variant_temp,
+                            'quantity' => $result->credit_quantity_temp,
+                            'status' => 1,
+                            'created_by' => $createUpdateUser,
+                            'created_dt_tm' => $dateTime,
+                            'updated_by' => $createUpdateUser,
+                            'updated_dt_tm' => $dateTime,
+                        ];
+                    }
+                }
+
+                if (!empty($stockIdArr)) {
+
+                    $stockUpdateQuery =
+                        "UPDATE `stock` SET `quantity` = CASE "
+                        . implode(' ', $quantityStrArr)
+                        . " ELSE `quantity` END, "
+                        . "`updated_by` = CASE "
+                        . implode(' ', $updatedByStrArr)
+                        . " ELSE `updated_by` END, "
+                        . "`updated_dt_tm` = CASE "
+                        . implode(' ', $updatedDtTmStrArr)
+                        . " ELSE `updated_dt_tm` END "
+                        . "WHERE `id` IN(" . implode(',', $stockIdArr) . ")";
+                }
+            }
+
+            // UPDATE SUMMARY
+            DB::table('stock_summary')
+                ->where('company', $company)
+                ->where('stock_summary_id', $stockSummaryId)
+                ->update($stockSummaryArr);
+
+            // INSERT DETAILS
+            if (!empty($stockDetailInsertArr)) {
+                DB::table('stock_details')->insert($stockDetailInsertArr);
+            }
+
+            // EXECUTE STOCK UPDATE
+            if ($stockUpdateQuery) {
+                DB::statement($stockUpdateQuery);
+            }
+
+            // INSERT NEW STOCK
+            if (!empty($stockInsertArr)) {
+                DB::table('stock')->insert($stockInsertArr);
+            }
+
+            // FINAL STATUS RESET
+            $statusData = [
+                'status' => 1
+            ];
+
+            $this->changeStockStatus($variantArr, $statusData);
+
+            return 1;
+
+        } catch (\Throwable $e) {
+
+            Log::error('editStockIn Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return 0;
+        }
+    }
+}
