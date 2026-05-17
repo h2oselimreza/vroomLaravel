@@ -5,8 +5,8 @@
     <div class="breadcrumb breadcrumb-bg-blue-grey">
         <li><a href="client/Home"> Home</a></li>
         <li><a href="#"> Inventory</a></li>
-        <li><a href="client/Inventory/stock"> Stock</a></li>
-        <li><a href="client/Inventory/stockIn"> Stock In</a></li>
+        <li><a href="{{ route('client.master-data.stock') }}"> Stock</a></li>
+        <li><a href="{{ route('client.inventory.stock-in.index') }}"> Stock In</a></li>
     </div>
 </div>
 <div class="row clearfix">
