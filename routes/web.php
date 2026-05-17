@@ -453,10 +453,7 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('inventory/stock-in', StockInController::class)->names('client.inventory.stock-in');
     Route::post('inventory/editStockIn', [StockInController::class, 'editStockIn'])->name('client.inventory.editStockIn');
     Route::resource('inventory/stock-out', StockOutController::class)->names('client.inventory.stock-out');
-
-
-
-
+    Route::post('inventory/checkStockQuantity', [StockOutController::class, 'checkStockQuantity'])->name('client.master-data.checkStockQuantity');
 
 });
 

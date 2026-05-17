@@ -196,7 +196,6 @@ class InventoryRepository
 
     public function changeStockStatus($variantArr, $statusData)
     {
-        dd($variantArr, $statusData);
         if (!empty($variantArr)) {
 
             DB::table('stock')
@@ -417,6 +416,323 @@ class InventoryRepository
             ]);
 
             return 0;
+        }
+    }
+
+    public function getStockVaiant(array $arr)
+    {
+        return DB::table('stock')
+            ->select(
+                'stock.quantity',
+                'product_variants.*',
+                'products.product_name',
+                'product_categories.parent_category_str',
+                'product_categories.category_name'
+            )
+            ->join(
+                'product_variants',
+                'product_variants.variant_code',
+                '=',
+                'stock.variant'
+            )
+            ->join(
+                'products',
+                'products.product_code',
+                '=',
+                'product_variants.product'
+            )
+            ->join(
+                'product_categories',
+                'product_categories.category_code',
+                '=',
+                'products.category'
+            )
+            ->where('stock.company', $arr['company'])
+            ->where('product_variants.is_active', 1)
+            ->where('products.is_active', 1)
+            ->where('product_categories.is_active', 1)
+            ->where('product_variants.variant_type', $arr['variantType'])
+            ->orderBy('product_variants.product', 'ASC')
+            ->get();
+    }
+
+    public function addStockOut(
+        array $stockSummaryArr,
+        array $stockDetailsArr,
+        array $tempTableInsetArr,
+        $companyCode
+    ) {
+        DB::beginTransaction();
+
+        try {
+
+            $query = $this->getStockDebitQuery(
+                $tempTableInsetArr,
+                $companyCode
+            );
+
+            if ($query['isSuccess'] == 2) {
+
+                DB::rollBack();
+
+                return 3;
+            }
+
+            $stockUpdateQuery = $query['query'];
+
+            DB::table('stock_summary')->insert($stockSummaryArr);
+
+            DB::table('stock_details')->insert($stockDetailsArr);
+
+            DB::statement($stockUpdateQuery);
+
+            DB::commit();
+
+            return 1;
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return 2;
+        }
+    }
+
+    public function checkStockQuantity(array $tempTableInsetArr, $company)
+    {
+        try {
+
+            $stockTempTable = 'stock_temp' . reference_no();
+
+            $tempTableSqlStr = "
+                CREATE TEMPORARY TABLE IF NOT EXISTS `$stockTempTable` (
+                    `id` INT(11) NOT NULL AUTO_INCREMENT,
+                    `company` VARCHAR(50)
+                        CHARACTER SET utf8mb4
+                        COLLATE utf8mb4_unicode_ci NOT NULL,
+
+                    `variant_temp` VARCHAR(50)
+                        CHARACTER SET utf8mb4
+                        COLLATE utf8mb4_unicode_ci NOT NULL,
+
+                    `quantity_temp` DECIMAL(10,2) NOT NULL DEFAULT '0.00',
+
+                    PRIMARY KEY (`id`)
+                )
+            ";
+
+            DB::statement($tempTableSqlStr);
+
+            DB::table($stockTempTable)->insert($tempTableInsetArr);
+
+            $results = DB::table($stockTempTable)
+            ->select(
+                DB::raw('SUM(' . $stockTempTable . '.quantity_temp) as total_quantity'),
+                DB::raw($stockTempTable . '.variant_temp as variant_code'),
+                DB::raw('MAX(stock.quantity) as quantity_db')
+            )
+            ->join(
+                'stock',
+                DB::raw('stock.variant COLLATE utf8mb4_unicode_ci'),
+                '=',
+                DB::raw($stockTempTable . '.variant_temp COLLATE utf8mb4_unicode_ci')
+            )
+            ->where('stock.company', $company)
+            ->groupBy($stockTempTable . '.variant_temp')
+            ->get();
+
+            foreach ($results as $result) {
+
+                if ($result->total_quantity > $result->quantity_db) {
+
+                    return 2;
+                }
+            }
+
+            return 1;
+
+        } catch (\Throwable $e) {
+
+            Log::error('Check Stock Quantity Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return 2;
+        }
+    }
+
+
+    public function getStockDebitQuery(array $tempTableInsetArr, $company)
+    {
+        try {
+
+            $queryStr = "";
+
+            $stockTempTable = 'stock_temp' . reference_no();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Temporary Table
+            |--------------------------------------------------------------------------
+            */
+
+            $tempTableSqlStr = "
+                CREATE TEMPORARY TABLE IF NOT EXISTS `$stockTempTable` (
+                    `id` INT(11) NOT NULL AUTO_INCREMENT,
+
+                    `company` VARCHAR(50)
+                        CHARACTER SET utf8mb4
+                        COLLATE utf8mb4_unicode_ci NOT NULL,
+
+                    `variant_temp` VARCHAR(50)
+                        CHARACTER SET utf8mb4
+                        COLLATE utf8mb4_unicode_ci NOT NULL,
+
+                    `quantity_temp` DECIMAL(10,2) NOT NULL DEFAULT '0.00',
+
+                    PRIMARY KEY (`id`)
+                )
+            ";
+
+            DB::statement($tempTableSqlStr);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Insert Batch Data
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table($stockTempTable)->insert($tempTableInsetArr);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Prepare Arrays
+            |--------------------------------------------------------------------------
+            */
+
+            $stockIdArr = [];
+            $quantityStrArr = [];
+            $updatedByStrArr = [];
+            $updatedDtTmStrArr = [];
+
+            $dateTime = date('Y-m-d H:i:s');
+
+            $createUpdateUser = session('user_id');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Get Stock Information
+            |--------------------------------------------------------------------------
+            */
+
+            $results = DB::table($stockTempTable)
+                ->select(
+                    DB::raw(
+                        'SUM(' . $stockTempTable . '.quantity_temp) as total_quantity'
+                    ),
+
+                    DB::raw(
+                        $stockTempTable . '.variant_temp as variant_code'
+                    ),
+
+                    DB::raw(
+                        'MAX(stock.quantity) as quantity_db'
+                    ),
+
+                    DB::raw(
+                        'MAX(stock.id) as stock_id'
+                    )
+                )
+                ->join(
+                    'stock',
+                    DB::raw(
+                        'stock.variant COLLATE utf8mb4_unicode_ci'
+                    ),
+                    '=',
+                    DB::raw(
+                        $stockTempTable . '.variant_temp COLLATE utf8mb4_unicode_ci'
+                    )
+                )
+                ->where('stock.company', $company)
+                ->groupBy($stockTempTable . '.variant_temp')
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Generate Update Query
+            |--------------------------------------------------------------------------
+            */
+
+            foreach ($results as $result) {
+
+                if ($result->total_quantity > $result->quantity_db) {
+
+                    return [
+                        'isSuccess' => 2
+                    ];
+                }
+
+                $stockIdArr[] = $result->stock_id;
+
+                $quantityStrArr[] =
+                    "WHEN `id` = " . $result->stock_id .
+                    " THEN `quantity`-" . $result->total_quantity;
+
+                $updatedByStrArr[] =
+                    "WHEN `id` = " . $result->stock_id .
+                    " THEN '" . $createUpdateUser . "'";
+
+                $updatedDtTmStrArr[] =
+                    "WHEN `id` = " . $result->stock_id .
+                    " THEN '" . $dateTime . "'";
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Final Update Query
+            |--------------------------------------------------------------------------
+            */
+
+            if ($stockIdArr) {
+
+                $queryStr =
+                    "UPDATE `stock`
+                    SET
+                        `quantity` = CASE " .
+                            implode(' ', $quantityStrArr) .
+                            " ELSE `quantity` END,
+
+                        `updated_by` = CASE " .
+                            implode(' ', $updatedByStrArr) .
+                            " ELSE `updated_by` END,
+
+                        `updated_dt_tm` = CASE " .
+                            implode(' ', $updatedDtTmStrArr) .
+                            " ELSE `updated_dt_tm` END
+
+                    WHERE `id` IN(" .
+                        implode(',', $stockIdArr) .
+                    ")";
+            }
+
+            return [
+                'isSuccess' => 1,
+                'query'     => $queryStr
+            ];
+
+        } catch (\Throwable $e) {
+
+            Log::error('Get Stock Debit Query Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return [
+                'isSuccess' => 2
+            ];
         }
     }
 }
