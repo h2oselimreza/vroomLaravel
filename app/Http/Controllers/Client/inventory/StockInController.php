@@ -282,7 +282,7 @@ class StockInController extends Controller
             // stock details
             $data['stockDetails'] =
                 $inventoryRepository->getCalculatedStockDetail($arr);
-
+            //dd($data['stockDetails']);
             if (!empty($data['stockSummary']) && !empty($data['stockDetails'])) {
 
                 $arr['variantType'] = config('constants.PURCHASE');
@@ -291,7 +291,7 @@ class StockInController extends Controller
 
                 $data['variants'] =
                     $commonRepository->getProductVariants($arr, 1);
-
+                //dd($data['variants']);
                 return view("client.inventory.stock-in.edit",compact('data'));
 
             } else {
@@ -331,7 +331,6 @@ class StockInController extends Controller
             $stockSummaryArr['updated_by'] = Auth::user()->user_id;
             $stockSummaryArr['updated_dt_tm'] = Carbon::now();
             $stockSummaryArr['stock_summary_id'] = $stockSummaryId;
-
             $counter = (int) trim($request->post('counterHidden'));
 
             $variantArr = [];
@@ -367,23 +366,21 @@ class StockInController extends Controller
                             $stockSummaryId
                         );
                 }
-
                 if ($deleteStockDetails) {
 
                     foreach ($deleteStockDetails as $deleteStockDetail) {
 
                         $stockDetailArr = [];
-
                         $stockDetailArr['stock_detail_id'] = reference_no();
                         $stockDetailArr['stock_summary_id'] = $stockSummaryId;
                         $stockDetailArr['company'] = Auth::user()->customerEmployee->company;
-                        $stockDetailArr['variant'] = $deleteStockDetail['variant'];
+                        $stockDetailArr['variant'] = $deleteStockDetail->variant;
                         $stockDetailArr['remarks'] = null;
                         $stockDetailArr['credit_quantity'] = 0.00;
 
                         $stockDetailArr['debit_quantity'] =
-                            $deleteStockDetail['credit_quantity']
-                            - $deleteStockDetail['debit_quantity'];
+                            $deleteStockDetail->credit_quantity
+                            - $deleteStockDetail->debit_quantity;
 
                         $stockDetailArr['trasaction_type'] = config('constants.DEBIT');
                         $stockDetailArr['status'] = 3;
@@ -397,14 +394,14 @@ class StockInController extends Controller
 
                         $tempArr = [];
                         $tempArr['company'] = Auth::user()->customerEmployee->company;
-                        $tempArr['variant_temp'] = $deleteStockDetail['variant'];
+                        $tempArr['variant_temp'] = $deleteStockDetail->variant;
                         $tempArr['debit_quantity_temp'] =
                             $stockDetailArr['debit_quantity'];
                         $tempArr['credit_quantity_temp'] = 0.00;
 
                         $tempTableInsertArr[] = $tempArr;
 
-                        $variantArr[] = $deleteStockDetail['variant'];
+                        $variantArr[] = $deleteStockDetail->variant;
                     }
                 }
 
@@ -416,7 +413,7 @@ class StockInController extends Controller
                     $quantity = $request->post('quantity' . $i);
                     $stockDetailAutoId = (int) $request->post('stockDetailsAutoId' . $i);
 
-                    if ($variantCode && $stockDetailAutoId == 1) {
+                    if ($variantCode && $stockDetailAutoId == 0) {
 
                         $stockDetailArr = [];
 
@@ -454,7 +451,6 @@ class StockInController extends Controller
                     !array_diff($variantArr, $companyVariantArr)
                     && $quantityFlag
                 ) {
-
                     if ($variantNewInsertArr) {
 
                         $count = count($variantNewInsertArr);
@@ -477,7 +473,7 @@ class StockInController extends Controller
                             $tempTableInsertArr[] = $tempArr;
                         }
                     }
-                    
+                    //dd($tempTableInsertArr);
                     $response = $inventoryRepository->editStockIn(
                         $stockSummaryArr,
                         $stockDetailInsertArr,

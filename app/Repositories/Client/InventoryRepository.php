@@ -158,41 +158,107 @@ class InventoryRepository
         }
     }
 
-    public function getCalculatedStockDetail($arr)
+    // public function getCalculatedStockDetail($arr)
+    // {
+    //     return DB::table('stock_details')
+    //     ->select(
+    //         DB::raw('MIN(stock_details.id) as stock_details_auto_id'),
+    //         'stock_details.stock_detail_id',
+    //         'stock_details.variant',
+    //         DB::raw('MAX(stock_details.remarks) as remarks'),
+    //         DB::raw('SUM(stock_details.credit_quantity) as credit_quantity'),
+    //         DB::raw('SUM(stock_details.debit_quantity) as debit_quantity'),
+    //         'product_variants.variant_name',
+    //         'product_variants.unit_name'
+    //     )
+    //     ->join(
+    //         'product_variants',
+    //         'product_variants.variant_code',
+    //         '=',
+    //         'stock_details.variant'
+    //     )
+    //     ->where('stock_details.company', $arr['company'])
+    //     ->where('stock_details.stock_summary_id', $arr['summaryId'])
+
+    //     // ✅ added condition safely
+    //     ->when(!empty($arr['transactionType']), function ($query) use ($arr) {
+    //         $query->where('stock_details.trasaction_type', $arr['transactionType']);
+    //     })
+
+    //     ->groupBy(
+    //         'stock_details.variant',
+    //         'stock_details.stock_detail_id',
+    //         'product_variants.variant_name',
+    //         'product_variants.unit_name'
+    //     )
+    //     ->get()
+    //     ->toArray();
+    // }
+
+    public function getCalculatedStockDetail(array $arr)
     {
-        return DB::table('stock_details')
-        ->select(
-            DB::raw('MIN(stock_details.id) as stock_details_auto_id'),
-            'stock_details.stock_detail_id',
-            'stock_details.variant',
-            DB::raw('MAX(stock_details.remarks) as remarks'),
-            DB::raw('SUM(stock_details.credit_quantity) as credit_quantity'),
-            DB::raw('SUM(stock_details.debit_quantity) as debit_quantity'),
-            'product_variants.variant_name',
-            'product_variants.unit_name'
-        )
-        ->join(
-            'product_variants',
-            'product_variants.variant_code',
-            '=',
-            'stock_details.variant'
-        )
-        ->where('stock_details.company', $arr['company'])
-        ->where('stock_details.stock_summary_id', $arr['summaryId'])
+        try {
 
-        // ✅ added condition safely
-        ->when(!empty($arr['transactionType']), function ($query) use ($arr) {
-            $query->where('stock_details.trasaction_type', $arr['transactionType']);
-        })
+            $query = DB::table('stock_details')
+                ->select(
+                    DB::raw('MAX(stock_details.id) as stock_details_auto_id'),
+                    DB::raw('MAX(stock_details.stock_detail_id) as stock_detail_id'),
+                    'stock_details.variant',
+                    DB::raw('MAX(stock_details.remarks) as remarks'),
 
-        ->groupBy(
-            'stock_details.variant',
-            'stock_details.stock_detail_id',
-            'product_variants.variant_name',
-            'product_variants.unit_name'
-        )
-        ->get()
-        ->toArray();
+                    DB::raw(
+                        'SUM(stock_details.credit_quantity) as credit_quantity'
+                    ),
+
+                    DB::raw(
+                        'SUM(stock_details.debit_quantity) as debit_quantity'
+                    ),
+
+                    DB::raw(
+                        'MAX(product_variants.variant_name) as variant_name'
+                    ),
+
+                    DB::raw(
+                        'MAX(product_variants.unit_name) as unit_name'
+                    )
+                )
+                ->join(
+                    'product_variants',
+                    'product_variants.variant_code',
+                    '=',
+                    'stock_details.variant'
+                )
+                ->where(
+                    'stock_details.company',
+                    $arr['company']
+                )
+                ->where(
+                    'stock_details.stock_summary_id',
+                    $arr['summaryId']
+                );
+
+            if (!empty($arr['transactionType'])) {
+
+                $query->where(
+                    'stock_details.trasaction_type',
+                    $arr['transactionType']
+                );
+            }
+
+            return $query
+                ->groupBy('stock_details.variant')
+                ->get();
+
+        } catch (\Throwable $e) {
+
+            Log::error('Get Calculated Stock Detail Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return collect([]);
+        }
     }
 
     public function changeStockStatus($variantArr, $statusData)
@@ -250,7 +316,13 @@ class InventoryRepository
         $variantArr
     ) {
         $stockInsertArr = [];
-
+        // dd(        $stockSummaryArr,
+        // $stockDetailInsertArr,
+        // $stockSummaryId,
+        // $company,
+        // $tempTableInsertArr,
+        // $variantArr,'rrrr');
+        //dd($tempTableInsertArr,'ppp');
         try {
 
             if (!empty($tempTableInsertArr)) {
@@ -271,21 +343,31 @@ class InventoryRepository
 
                 // INSERT TEMP DATA
                 DB::table($stockTempTable)->insert($tempTableInsertArr);
-
+                //dd('jdjdj');
                 // JOIN QUERY
                 $results = DB::table($stockTempTable)
-                    ->selectRaw("
-                        SUM($stockTempTable.debit_quantity_temp) as debit_quantity_temp,
-                        SUM($stockTempTable.credit_quantity_temp) as credit_quantity_temp,
-                        $stockTempTable.variant_temp,
-                        stock.quantity as stock_quantity,
-                        stock.id as stock_auto_id,
-                        stock.status
-                    ")
-                    ->leftJoin('stock', 'stock.variant', '=', "$stockTempTable.variant_temp")
-                    ->groupBy("$stockTempTable.variant_temp")
-                    ->get();
+                ->selectRaw("
+                    SUM({$stockTempTable}.debit_quantity_temp) as debit_quantity_temp,
 
+                    SUM({$stockTempTable}.credit_quantity_temp) as credit_quantity_temp,
+
+                    {$stockTempTable}.variant_temp,
+
+                    MAX(stock.quantity) as stock_quantity,
+
+                    MAX(stock.id) as stock_auto_id,
+
+                    MAX(stock.status) as status
+                ")
+                ->leftJoin(
+                    'stock',
+                    DB::raw('stock.variant COLLATE utf8mb4_unicode_ci'),
+                    '=',
+                    DB::raw($stockTempTable . '.variant_temp COLLATE utf8mb4_unicode_ci')
+                )
+                ->groupBy($stockTempTable . '.variant_temp')
+                ->get();
+                //dd($results);
                 $createUpdateUser = Auth::user()->user_id;
                 $dateTime = now();
 
