@@ -4,10 +4,10 @@
     <div class="block-header">
     <h2>STOCK OUT</h2><br>
     <div class="breadcrumb breadcrumb-bg-blue-grey">
-        <li><a href="/client/Home"> Home</a></li>
+        <li><a href="#"> Home</a></li>
         <li><a href="#"> Inventory</a></li>
-        <li><a href="/client/Inventory/stock"> Stock</a></li>
-        <li><a href="/client/Inventory/stockOut"> Stock Out</a></li>
+        <li><a href="{{ route('client.master-data.stock') }}"> Stock</a></li>
+        <li><a href="{{ route('client.inventory.stock-out.index') }}"> Stock Out</a></li>
     </div>
 </div>
 <div class="row clearfix">
@@ -88,7 +88,7 @@
 
                                                             <ul class="dropdown-menu pull-right">
                                                                 <li>
-                                                                    <a href="{{ url('/client/Inventory/showEditStockOut?summaryId=' . $stock->stock_summary_id) }}">
+                                                                    <a href="{{ route('client.inventory.stock-out.edit', $stock->stock_summary_id) }}">
                                                                         Edit
                                                                     </a>
                                                                 </li>

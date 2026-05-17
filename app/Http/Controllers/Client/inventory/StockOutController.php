@@ -266,4 +266,368 @@ class StockOutController extends Controller
             return response(1);
         }
     }
+
+    public function edit($summaryId, Request $request, InventoryRepository $inventoryRepository, VehicleRepository $vehicleRepository)
+    {
+        try {
+                $arr = [];
+
+                $arr['company'] = Auth::user()->customerEmployee->company;
+                $arr['stockType'] = 'stock_out';
+                $arr['summaryId'] = $summaryId;
+
+                $stockSummary = $inventoryRepository->getStockSummary($arr);
+
+                $editedVehicles = $inventoryRepository->getStockOutVehicle($arr);
+
+                $stockDetails = $inventoryRepository->getCalculatedStockOutDetail($arr);
+
+                $summaryId = $summaryId;
+
+                $arr['isActiveFlag'] = 1;
+
+                $arr['bulkFlag'] = 2;
+
+                $arr['companyCode'] = Auth::user()->customerEmployee->company;
+
+                $vehicles = $vehicleRepository->getVehicleInfo($arr);
+
+                $arr['company'] = Auth::user()->customerEmployee->company;
+                $arr['variantType'] = config('constants.PURCHASE');
+
+                $variants = $inventoryRepository->getStockVaiant($arr);
+
+                return view('client.inventory.stock-out.edit',compact('summaryId','stockSummary','editedVehicles','stockDetails','vehicles','variants'));
+
+        } catch (\Throwable $e) {
+
+            Log::error('Show Edit Stock Out Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+        }
+    }
+
+    public function update($stockSummaryId, Request $request, InventoryRepository $inventoryRepository)
+    {
+        try {
+
+            $stockSummaryId = $request->stockId;
+            $variantDeleteStr = $request->variantDeleteStr;
+
+            $stockSummaryArr = [
+                'title' => null,
+                'stock_date' => trim($request->post('stockOutDate')),
+                'reference_no' => null,
+                'updated_by' => Auth::user()->user_id,
+                'updated_dt_tm' => Carbon::now(),
+                'stock_summary_id' => $stockSummaryId,
+            ];
+
+            $vehicleCount = (int) $request->post('vehicleCount');
+
+            $variantArr = [];
+            $quantityArr = [];
+            $stockDetailInsertArr = [];
+            $deleteStockDetails = [];
+            $tempTableInsertArr = [];
+            $quantityFlag = 1;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Existing Stock Details
+            |--------------------------------------------------------------------------
+            */
+
+            $arr = [
+                'company' => Auth::user()->customerEmployee->company,
+                'stockType' => 'stock_out',
+                'summaryId' => $stockSummaryId,
+            ];
+
+            $stockDetails = $inventoryRepository
+                ->getCalculatedStockDetail($arr);
+
+            if (
+                $stockSummaryArr['stock_date']
+                && $vehicleCount
+                && $stockDetails
+            ) {
+
+                $companyVariantArr = [];
+
+                $arr = [
+                    'company' => Auth::user()->customerEmployee->company,
+                    'variantArr' => $variantArr
+                ];
+
+                $companyStocks = $inventoryRepository
+                    ->getCompanyStock($arr);
+
+                foreach ($companyStocks as $companyStock) {
+
+                    $companyVariantArr[] = $companyStock->variant;
+
+                    if ($companyStock->status == 2) {
+                        return redirect()->route('client.inventory.stock-out.edit',$stockSummaryId)->with('error','Stock variant status is invalid');
+                    }
+                }
+
+                //Deleted Variants Handling
+
+                if ($variantDeleteStr) {
+                    $deleteStockDetails = $inventoryRepository
+                        ->getDeleteStockOutDetails(
+                            $variantDeleteStr,
+                            Auth::user()->customerEmployee->company,
+                            $stockSummaryId
+                        );
+                }
+                //dd($deleteStockDetails);
+                if ($deleteStockDetails) {
+
+                    foreach ($deleteStockDetails as $deleteStockDetail) {
+                        //dd($deleteStockDetail);
+                        $stockDetailArr = [];
+                        $stockDetailArr['stock_detail_id'] = reference_no();
+                        $stockDetailArr['stock_summary_id'] = $stockSummaryId;
+                        $stockDetailArr['company'] = Auth::user()->customerEmployee->company;
+                        $stockDetailArr['variant'] = $deleteStockDetail->variant;
+                        $stockDetailArr['vehicle'] = $deleteStockDetail->vehicle;
+                        $stockDetailArr['remarks'] = null;
+                        $stockDetailArr['credit_quantity'] =
+                            $deleteStockDetail->debit_quantity
+                            - $deleteStockDetail->credit_quantity;
+
+                        $stockDetailArr['debit_quantity'] = 0.00;
+                        $stockDetailArr['trasaction_type'] = config('constants.CREDIT');
+                        $stockDetailArr['status'] = 3;
+
+                        $stockDetailArr['created_by'] = Auth::user()->user_id;
+                        $stockDetailArr['created_dt_tm'] = Carbon::now();
+                        $stockDetailArr['updated_by'] = Auth::user()->user_id;
+                        $stockDetailArr['updated_dt_tm'] = Carbon::now();
+
+                        $stockDetailInsertArr[] = $stockDetailArr;
+
+                        $tempArr = [];
+                        $tempArr['company'] = Auth::user()->customerEmployee->company;
+                        $tempArr['variant_temp'] = $deleteStockDetail->variant;
+                        $tempArr['debit_quantity_temp'] = 0.00;
+                        $tempArr['credit_quantity_temp'] =
+                            $stockDetailArr['credit_quantity'];
+
+                        $tempTableInsertArr[] = $tempArr;
+
+                        $variantArr[] = $deleteStockDetail->variant;
+                    }
+                }
+                // New Insert Variants
+                //dd('ddddd');
+                $variantNewInsertArr = [];
+
+                for ($i = 1; $i <= $vehicleCount; $i++) {
+
+                    $vehicleId = $request->post('vehicleId' . $i);
+
+                    if ($vehicleId) {
+
+                        $takenVariantCount =
+                            $request->post('takenVariantCount' . $i);
+
+                        for ($j = 1; $j <= $takenVariantCount; $j++) {
+
+                            $stockDetailAutoId = (int) $request->post(
+                                'stockDetailAutoId' . $i . $j
+                            );
+
+                            $variantCode = trim(
+                                $request->post('variantCode' . $i . $j)
+                            );
+
+                            if ($variantCode && $stockDetailAutoId == 0) {
+
+                                $quantity = trim(
+                                    $request->post('quantity' . $i . $j)
+                                );
+
+                                $variantArr[] = $variantCode;
+                                $variantNewInsertArr[] = $variantCode;
+                                $quantityArr[] = $quantity;
+
+                                $stockDetailArr = [];
+
+                                $stockDetailArr['stock_detail_id'] = reference_no();
+                                $stockDetailArr['stock_summary_id'] = $stockSummaryId;
+                                $stockDetailArr['company'] = Auth::user()->customerEmployee->company;
+                                $stockDetailArr['variant'] = $variantCode;
+                                $stockDetailArr['vehicle'] = $vehicleId;
+
+                                $stockDetailArr['remarks'] =
+                                    ($request->post('remarks' . $i))
+                                        ? trim($request->post('remarks' . $i . $j))
+                                        : null;
+
+                                $stockDetailArr['credit_quantity'] = 0.00;
+                                $stockDetailArr['debit_quantity'] = $quantity;
+                                $stockDetailArr['trasaction_type'] = config('constants.DEBIT');
+                                $stockDetailArr['status'] = 1;
+
+                                $stockDetailArr['created_by'] = Auth::user()->user_id;
+                                $stockDetailArr['created_dt_tm'] = Carbon::now();
+                                $stockDetailArr['updated_by'] = Auth::user()->user_id;
+                                $stockDetailArr['updated_dt_tm'] = Carbon::now();
+
+                                $stockDetailInsertArr[] = $stockDetailArr;
+                            }
+                        }
+                    }
+                }
+
+                // Final Validation
+
+                if (!array_diff($variantArr, $companyVariantArr)) {
+
+                    if ($variantNewInsertArr) {
+
+                        $variantArrCount = count($variantNewInsertArr);
+
+                        for ($i = 0; $i < $variantArrCount; $i++) {
+
+                            $tempArr = [];
+
+                            $tempArr['company'] = Auth::user()->customerEmployee->company;
+                            $tempArr['variant_temp'] =
+                                $variantNewInsertArr[$i];
+
+                            $tempArr['debit_quantity_temp'] =
+                                $quantityArr[$i];
+
+                            $tempArr['credit_quantity_temp'] = 0.00;
+
+                            $tempTableInsertArr[] = $tempArr;
+                        }
+                    }
+
+                    $inventoryRepository->editStockOut(
+                        $stockSummaryArr,
+                        $stockDetailInsertArr,
+                        $stockSummaryId,
+                        Auth::user()->customerEmployee->company,
+                        $tempTableInsertArr,
+                        $variantArr
+                    );
+
+                    return redirect()->route('client.inventory.stock-out.edit',$stockSummaryId)->with('success','Stock out update successfully');
+
+                } else {
+
+                    return redirect()->route('client.inventory.stock-out.edit',$stockSummaryId)->with('error','Variant array is invalid');
+                    
+                }
+
+            } else {
+
+                return redirect()->route('client.inventory.stock-out.edit', $stockSummaryId)->with('error','Stock details or stock date or vehicle count is invalid');
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::error('Edit Stock Out Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+        }
+    }
+
+
+    public function checkStockQuantityEdit(Request $request, InventoryRepository $inventoryRepository)
+    {
+        try {
+
+            $variantQuantityStr = $request->variantQuantityStr;
+            $variantDeleteStr = $request->variantDeleteStr;
+            $stockSummaryId = $request->summaryId;
+
+            $tempTableInsertArr = [];
+            $deleteStockDetails = [];
+
+            // New Variant Quantity Processing
+
+            $variantQuantityArr = explode(',', $variantQuantityStr);
+
+            if ($variantQuantityStr) {
+
+                for ($i = 0; $i < count($variantQuantityArr); $i++) {
+
+                    $arr = explode(':', $variantQuantityArr[$i]);
+
+                    $tempArr = [];
+
+                    $tempArr['company'] = Auth::user()->customerEmployee->company;
+                    $tempArr['variant_temp'] = $arr[0];
+                    $tempArr['debit_quantity_temp'] = $arr[1];
+                    $tempArr['credit_quantity_temp'] = 0.00;
+
+                    $tempTableInsertArr[] = $tempArr;
+                }
+            }
+
+            // Deleted Variants Processing
+
+            if ($variantDeleteStr) {
+
+                $deleteStockDetails =
+                    $inventoryRepository->getDeleteStockDetails(
+                        $variantDeleteStr,
+                        Auth::user()->customerEmployee->company,
+                        $stockSummaryId
+                    );
+            }
+
+            if (!empty($deleteStockDetails)) {
+
+                foreach ($deleteStockDetails as $deleteStockDetail) {
+
+                    $tempArr = [];
+
+                    $tempArr['company'] = Auth::user()->customerEmployee->company;
+                    $tempArr['variant_temp'] = $deleteStockDetail['variant'];
+                    $tempArr['debit_quantity_temp'] = 0.00;
+                    $tempArr['credit_quantity_temp'] =
+                        $deleteStockDetail['debit_quantity'];
+
+                    $tempTableInsertArr[] = $tempArr;
+                }
+            }
+
+            // Final Check
+            if (!empty($tempTableInsertArr)) {
+
+                $response = $inventoryRepository
+                    ->checkStockQuantityEdit(
+                        $tempTableInsertArr,
+                        //Auth::user()->customerEmployee->company,
+                    );
+
+                return response($response);
+
+            } else {
+
+                return response(1);
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::error('Check Stock Quantity Edit Error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
+            return response(1);
+        }
+    }
 }

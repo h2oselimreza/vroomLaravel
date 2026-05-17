@@ -34,23 +34,31 @@
         text-align: left;
         padding-left: 3px;
     }
+    .form-group .non-editable{
+        border-bottom: 0px;
+    }
+    .form-group .form-line:after{
+        border-bottom: 0px;
+    }
 </style>
+<?php
+    $vehicleCount = count($editedVehicles);
+?>
 
 <div class="block-header">
-    <h2>NEW STOCK OUT</h2><br>
+    <h2>EDIT STOCK OUT</h2><br>
     <div class="breadcrumb breadcrumb-bg-blue-grey">
-        <li><a href="/client/Home"> Home</a></li>
+        <li><a href="#"> Home</a></li>
         <li><a href="#"> Inventory</a></li>
-        <li><a href="/client/Inventory/stock"> Stock</a></li>
-        <li><a href="/client/Inventory/stockOut"> Stock Out</a></li>
-        <li><a href="/client/Inventory/showNewStockOut"> New Stock Out</a></li>
+        <li><a href="{{ route('client.master-data.stock') }}"> Stock</a></li>
+        <li><a href="{{ route('client.inventory.stock-out.index') }}"> Stock Out</a></li>
+        <li><a href="{{ route('client.inventory.stock-out.edit',$summaryId) }}"> Edit Stock Out</a></li>
     </div>
 </div>
 <div class="row clearfix">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="card">
             <div class="body">
-
                 @include('client.inventory.tab')
                 <br>
                 <!-- Success Message -->
@@ -71,14 +79,23 @@
 
                 <div class="panel panel-default"> 
                     <div class="panel-body">
-                        <form action="{{ route('client.inventory.stock-out.store') }}" method="POST" id="stockOutForm">
+                        <form action="{{ route('client.inventory.stock-out.update',$summaryId) }}" method="POST" id="stockOutForm">
                             @csrf
+                            @method('PUT')
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group form-float" >
                                         <div class="form-line">
-                                            <input type="text" class="form-control dateInput" name="stockOutDate" id="stockOutDate" value="<?php echo date("Y-m-d") ?>" >
+                                            <input type="text" class="form-control dateInput" name="stockOutDate" id="stockOutDate" value="{{ $stockSummary[0]->stock_date }}" >
                                             <label class="form-label"> Stock Out Date </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <div class="form-group form-float" >
+                                        <div class="form-line">
+                                            <input type="text" class="form-control" name="stockId" id="stockId" value="{{ $summaryId }}" >
+                                            <label class="form-label"> Stock Id </label>
                                         </div>
                                     </div>
                                 </div>
@@ -88,10 +105,98 @@
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="panel-group" id="vehicleGroupDiv">
 
+                                        <?php
+                                        $vehicleCount = 1;
+                                        foreach ($editedVehicles as $vehicle) {
+                                            ?>
+                                            <div id="vehicleDiv<?php echo $vehicleCount ?>">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <div class="panel-title custom1-panel-title">
+                                                            <div class="row p-l-25 p-t-10 p-b-10">
+                                                                <div class="float-left">
+                                                                    <i class="fa fa-car"></i>{{$vehicle->registration_no}}
+                                                                </div>
+                                                                <div class="float-right">
+                                                                    <i class="fa fa-remove pointer text-danger" onclick="removeVehicle('<?php echo $vehicleCount ?>')"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel-body custom1-panel-body">
+                                                        <div id="vehicleVariantDiv<?php echo $vehicleCount ?>">
+
+                                                            <table class="table table-bordered custom-table" id="variantTable<?php echo $vehicleCount ?>">
+                                                                <tr>
+                                                                    <td width="25%"><b>Product Variant</b></td>
+                                                                    <td width="15%"><b>Quantity</b></td>
+                                                                    <td width="15%"><b>Unit Name</b></td>
+                                                                    <td width="50%"><b>Remarks</b></td>
+                                                                    <td width="10%"><b>Action</b></td>
+                                                                </tr>
+
+                                                                <?php
+                                                                $takenVariantCount = 1;
+                                                                foreach ($stockDetails as $stockDetail) {
+
+                                                                    if ($stockDetail->vehicle == $vehicle->vehicle) {
+                                                                        $quantity = 0;
+                                                                        $quantity = $stockDetail->debit_quantity - $stockDetail->credit_quantity;
+                                                                        if ($quantity) {
+                                                                            ?>
+                                                                            <tr id="variantTakenTr<?php echo $vehicleCount . $takenVariantCount ?>">
+                                                                                <td class="td-left pointer" id="variantTd<?php echo $vehicleCount . $takenVariantCount ?>" >
+                                                                                    <?php echo $stockDetail->variant_name ?>
+                                                                                    <input type="hidden" name="variantCode<?php echo $vehicleCount . $takenVariantCount ?>" id="variantCode<?php echo $vehicleCount . $takenVariantCount ?>" value="<?php echo $stockDetail->variant ?>">
+                                                                                    <input type="hidden" name="stockDetailAutoId<?php echo $vehicleCount . $takenVariantCount ?>" id="stockDetailAutoId<?php echo $vehicleCount . $takenVariantCount ?>" value="<?php echo $stockDetail->stock_details_auto_id ?>">
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <div class="form-group form-float" >
+                                                                                        <div class="form-line non-editable">
+                                                                                            <input type="text" class="form-control custom-form-control" name="quantity<?php echo $vehicleCount . $takenVariantCount ?>" id="quantity<?php echo $vehicleCount . $takenVariantCount ?>" value="<?php echo $quantity ?>" readonly>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td class="td-left" id="variantUnitNameTd<?php echo $vehicleCount . $takenVariantCount ?>">
+                                                                                    <?php echo $stockDetail->unit_name ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="form-group form-float" >
+                                                                                        <div class="form-line non-editable">
+                                                                                            <input type="text" class="form-control custom-form-control1" max="200" name="remarks<?php echo $vehicleCount . $takenVariantCount ?>" id="remarks<?php echo $vehicleCount . $takenVariantCount ?>" value="<?php echo $stockDetail->remarks ?>" readonly>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td><i class="fa fa-remove pointer text-danger" onclick="removeVariant('<?php echo $vehicleCount ?>', '<?php echo $takenVariantCount ?>')"></i></td>
+                                                                            </tr>
+                                                                            <?php
+                                                                            $takenVariantCount++;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                ?>
+
+                                                                <input type="hidden" id="takenVariantCount<?php echo $vehicleCount ?>" name="takenVariantCount<?php echo $vehicleCount ?>" value="<?php echo $takenVariantCount ?>">
+                                                            </table>
+
+
+                                                        </div>
+                                                        <button type="button" class="btn bg-blue btn-xs waves-effect" onclick="showVariantTable('<?php echo $vehicleCount ?>')" >Add Product Variant</button>
+                                                    </div>
+                                                    <input type="hidden" name="vehicleId<?php echo $vehicleCount ?>" id="vehicleId<?php echo $vehicleCount ?>" value="{{ $vehicle->vehicle }}">
+                                                </div>
+                                            </div>
+                                            <?php
+                                            $vehicleCount++;
+                                        }
+                                        ?>
                                     </div>
-                                    <input type="hidden" name="vehicleCount" id="vehicleCount">
+                                    <input type="hidden" name="vehicleCount" id="vehicleCount" value="<?php echo $vehicleCount ?>">
                                     <input type="hidden" id="vehicleSerial">
-                                    <input type="hidden" id="takenStockSerial"> <!-- takenExpenseSerial -->
+                                    <input type="hidden" id="takenStockSerial"> 
+                                    <input type="hidden" name="variantDeleteStr" id="variantDeleteStr">
+
                                     <button type="button" class="btn btn-default btn-sm waves-effect" data-toggle="modal" data-target="#vehicleModal">Add Vehicle</button>
 
                                 </div>
@@ -100,6 +205,20 @@
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-12">
                                 <button type="button"  class="btn bg-blue btn-sm waves-effect" onclick="addNewStockOut()">Save</button>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="created-updated">
+                                    <div class="float-left">
+                                        <b>Created By: </b><?php echo get_create_update_by_name($stockSummary[0]->created_by) ?>
+                                        <br><b>Created Date Time: </b><?php echo get_date_time_format($stockSummary[0]->created_dt_tm) ?>
+
+                                    </div>
+                                    <div class="float-right">
+                                        <b>Updated By: </b><?php echo get_create_update_by_name($stockSummary[0]->updated_by) ?>
+                                        <br><b>Updated Date Time: </b><?php echo get_date_time_format($stockSummary[0]->updated_dt_tm) ?>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -121,7 +240,6 @@
                                                         <th width="15%">Vehicle Type</th>
                                                         <th width="15%">Brand</th>
                                                         <th width="15%">Brand Model</th>
-                                                        <th width="15%">Group</th>
                                                         <th width="10%">Select</th>
                                                     </tr>
                                                 </thead>
@@ -132,60 +250,61 @@
                                                         <th></th>
                                                         <th></th>
                                                         <th></th>
-                                                        <th></th>
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
-                                                @foreach ($vehicles as $vehicle)
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
+                                                    @foreach ($vehicles as $vehicle)
 
-                                                        <td class="td-left">
-                                                            <a target="_blank"
-                                                            href="{{ url('client/Home/vehicleDashboard?vehicleId=' . $vehicle->vehicle_id) }}">
+                                                        <tr>
+
+                                                            <td>
+                                                                {{ $loop->iteration }}
+                                                            </td>
+
+                                                            <td class="td-left">
+                                                                <a target="_blank"
+                                                                href="{{ url('client/Home/vehicleDashboard?vehicleId=' . $vehicle->vehicle_id) }}">
+                                                                    {{ $vehicle->registration_no }}
+                                                                </a>
+                                                            </td>
+
+                                                            {{--
+                                                            <td class="td-left">
                                                                 {{ $vehicle->registration_no }}
-                                                            </a>
-                                                        </td>
+                                                            </td>
+                                                            --}}
 
-                                                        {{-- 
-                                                        <td class="td-left">
-                                                            {{ $vehicle->registration_no }}
-                                                        </td>
-                                                        --}}
+                                                            <td class="td-left">
+                                                                {{ $vehicle->vehicle_type_name }}
+                                                            </td>
 
-                                                        <td class="td-left">
-                                                            {{ $vehicle->vehicle_type_name }}
-                                                        </td>
+                                                            <td class="td-left">
+                                                                {{ $vehicle->brand_name }}
+                                                            </td>
 
-                                                        <td class="td-left">
-                                                            {{ $vehicle->brand_name }}
-                                                        </td>
+                                                            <td class="td-left">
+                                                                {{ $vehicle->brand_model_name }}
+                                                            </td>
 
-                                                        <td class="td-left">
-                                                            {{ $vehicle->brand_model_name }}
-                                                        </td>
+                                                            <td>
+                                                                <i class="material-icons pointer"
+                                                                onclick="addVehicle({{ $loop->iteration }})">
+                                                                    arrow_drop_down_circle
+                                                                </i>
+                                                            </td>
 
-                                                        <td class="td-left">
-                                                            {{ $vehicle->vehicle_group_name }}
-                                                        </td>
+                                                            <input type="hidden"
+                                                                id="vehicleIdModalHidden{{ $loop->iteration }}"
+                                                                value="{{ $vehicle->vehicle_id }}">
 
-                                                        <td>
-                                                            <i class="material-icons pointer"
-                                                            onclick="addVehicle({{ $loop->iteration }})">
-                                                                arrow_drop_down_circle
-                                                            </i>
-                                                        </td>
+                                                            <input type="hidden"
+                                                                id="vehicleRegModalHidden{{ $loop->iteration }}"
+                                                                value="{{ $vehicle->registration_no }}">
 
-                                                        <input type="hidden"
-                                                            id="vehicleIdModalHidden{{ $loop->iteration }}"
-                                                            value="{{ $vehicle->vehicle_id }}">
+                                                        </tr>
 
-                                                        <input type="hidden"
-                                                            id="vehicleRegModalHidden{{ $loop->iteration }}"
-                                                            value="{{ $vehicle->registration_no }}">
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
+                                                    @endforeach
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -232,95 +351,87 @@
                                                 </tfoot>
                                                 <tbody>
 
+                                                @php
+                                                    $productCode = '';
+                                                    $bgColor = '#fcf8e3';
+                                                @endphp
+
+                                                @foreach ($variants as $variant)
+
                                                     @php
-                                                        $productCode = '';
-                                                        $bgColor = '#fcf8e3';
+
+                                                        if ($productCode == '') {
+
+                                                            $bgColor = '#fcf8e3';
+
+                                                        } elseif ($productCode != $variant->product) {
+
+                                                            if ($bgColor == '#e5eaec') {
+                                                                $bgColor = '#fcf8e3';
+                                                            } else {
+                                                                $bgColor = '#e5eaec';
+                                                            }
+                                                        }
+
+                                                        $productCode = $variant->product;
+
                                                     @endphp
 
-                                                    @foreach ($variants as $variant)
+                                                    <tr style="background-color:{{ $bgColor }}">
 
-                                                        @php
+                                                        <td class="td-center">
+                                                            {{ $loop->iteration }}
+                                                        </td>
 
-                                                            if ($productCode == '') {
+                                                        <td>
+                                                            {{ $variant->category_name }}
+                                                        </td>
 
-                                                                $bgColor = '#fcf8e3';
+                                                        <td class="td-left">
+                                                            {{ $variant->product_name }}
+                                                        </td>
 
-                                                            } elseif ($productCode != $variant->product) {
-
-                                                                if ($bgColor == '#e5eaec') {
-
-                                                                    $bgColor = '#fcf8e3';
-
-                                                                } else {
-
-                                                                    $bgColor = '#e5eaec';
-                                                                }
-                                                            }
-
-                                                            $productCode = $variant->product;
-
-                                                        @endphp
-
-                                                        <tr style="background-color:{{ $bgColor }}">
-
-                                                            <td class="td-center">
-                                                                {{ $loop->iteration }}
+                                                        @if ($variant->variant_name == 'Default')
+                                                            <td class="text-muted td-left">
+                                                                <i>{{ $variant->variant_name }}</i>
                                                             </td>
-
-                                                            <td>
-                                                                {{ $variant->category_name }}
-                                                            </td>
-
+                                                        @else
                                                             <td class="td-left">
-                                                                {{ $variant->product_name }}
+                                                                {{ $variant->variant_name }}
                                                             </td>
+                                                        @endif
 
-                                                            @if ($variant->variant_name == 'Default')
+                                                        <td class="td-right">
+                                                            {{ $variant->quantity }}
+                                                        </td>
 
-                                                                <td class="text-muted td-left">
-                                                                    <i>{{ $variant->variant_name }}</i>
-                                                                </td>
+                                                        <td class="td-left">
+                                                            {{ $variant->unit_name }}
+                                                        </td>
 
-                                                            @else
+                                                        <td>
+                                                            <i class="material-icons pointer"
+                                                            onclick="addVariant({{ $loop->iteration }})">
+                                                                arrow_drop_down_circle
+                                                            </i>
+                                                        </td>
 
-                                                                <td class="td-left">
-                                                                    {{ $variant->variant_name }}
-                                                                </td>
+                                                        <input type="hidden"
+                                                            id="variantCodeModalHidden{{ $loop->iteration }}"
+                                                            value="{{ $variant->variant_code }}">
 
-                                                            @endif
+                                                        <input type="hidden"
+                                                            id="variantNameModalHidden{{ $loop->iteration }}"
+                                                            value="{{ $variant->variant_name }}">
 
-                                                            <td class="td-right">
-                                                                {{ $variant->quantity }}
-                                                            </td>
+                                                        <input type="hidden"
+                                                            id="variantUnitModalHidden{{ $loop->iteration }}"
+                                                            value="{{ $variant->unit_name }}">
 
-                                                            <td class="td-left">
-                                                                {{ $variant->unit_name }}
-                                                            </td>
+                                                    </tr>
 
-                                                            <td>
-                                                                <i class="material-icons pointer"
-                                                                onclick="addVariant({{ $loop->iteration }})">
-                                                                    arrow_drop_down_circle
-                                                                </i>
-                                                            </td>
-
-                                                            <input type="hidden"
-                                                                id="variantCodeModalHidden{{ $loop->iteration }}"
-                                                                value="{{ $variant->variant_code }}">
-
-                                                            <input type="hidden"
-                                                                id="variantNameModalHidden{{ $loop->iteration }}"
-                                                                value="{{ $variant->variant_name }}">
-
-                                                            <input type="hidden"
-                                                                id="variantUnitModalHidden{{ $loop->iteration }}"
-                                                                value="{{ $variant->unit_name }}">
-
-                                                        </tr>
-
-                                                    @endforeach
-
-                                                </tbody>
+                                                @endforeach
+                                            </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -343,7 +454,8 @@
 @endsection
 @push('scripts')
 <script>
-    var counter = 1;
+    var counter = '<?php echo $vehicleCount ?>';
+    counter++;
     function addVehicle(vehicleSerial) {
         var vehicleId = $('#vehicleIdModalHidden' + vehicleSerial).val();
         var vehicleRegNo = $('#vehicleRegModalHidden' + vehicleSerial).val();
@@ -360,7 +472,7 @@
         var vehicleDiv = '<div class="panel panel-default">\n\
                             <div class="panel-heading">\n\
                                 <div class="panel-title custom1-panel-title">\n\
-                                    <div class="row p-l-25 p-t-10 p-b-10">\n\
+                                    <div class="row p-l-20 p-r-20">\n\
                                         <div class="float-left">\n\
                                             <i class="fa fa-car"></i> ' + vehicleRegNo + '\n\
                                         </div>\n\
@@ -385,12 +497,27 @@
     }
 
     function removeVehicle(vehicleSerial) {
+        var idArr = new Array();
+        var takenVariantCount = $("#takenVariantCount" + vehicleSerial).val();
+        for (var j = 1; j <= takenVariantCount; j++) {
+            var stockDetailAutoId = $('#stockDetailAutoId' + vehicleSerial + j).val();
+            if (typeof stockDetailAutoId !== 'undefined') {
+                var idArr = new Array();
+                if (typeof (stockDetailAutoId) !== 'undefined') {
+                    idArr.push(stockDetailAutoId);
+                }
+            }
+        }
+        if ($('#variantDeleteStr').val() !== "") {
+            idArr.push($('#variantDeleteStr').val());
+        }
+        $('#variantDeleteStr').val(idArr.join());
+
         $('#vehicleDiv' + vehicleSerial).remove();
     }
 
     function showVariantTable(vehicleSerial) {
         var takenVariantCount = $("#takenVariantCount" + vehicleSerial).val();
-
         if (typeof takenVariantCount === "undefined") {
             var vaiantTableStr = '<tr id="variantTakenTr' + vehicleSerial + '1">\n\
                                             <td class="td-left pointer" id="variantTd' + vehicleSerial + '1" onclick="showVatiantModal(' + vehicleSerial + ',1)">\n\
@@ -413,7 +540,6 @@
                                             </td>\n\
                                             <td><i class="fa fa-remove pointer text-danger" onclick="removeVariant(' + vehicleSerial + ',1)"></i></td>\n\
                                         </tr>';
-
             var newRow = $(document.createElement('div')).attr("id", 'variantTableDiv' + vehicleSerial);
             var variantTableDiv = '<table class="table table-bordered custom-table" id="variantTable' + vehicleSerial + '">\n\
                                     <tr>\n\
@@ -457,6 +583,16 @@
     }
 
     function removeVariant(vehicleSerial, takenVariantCount) {
+
+        var idArr = new Array();
+        if (typeof ($('#stockDetailAutoId' + vehicleSerial + takenVariantCount).val()) !== 'undefined') {
+            idArr.push($('#stockDetailAutoId' + vehicleSerial + takenVariantCount).val());
+        }
+        if ($('#variantDeleteStr').val() !== "") {
+            idArr.push($('#variantDeleteStr').val());
+        }
+        $('#variantDeleteStr').val(idArr.join());
+
         $('#variantTakenTr' + vehicleSerial + takenVariantCount).remove();
         var tableRowCount = $("#variantTable" + vehicleSerial + " tr").length;
         if (tableRowCount === 1) {
@@ -476,12 +612,10 @@
         var variantCode = $('#variantCodeModalHidden' + variantCount).val();
         var variantName = $('#variantNameModalHidden' + variantCount).val();
         var variantUnitName = $('#variantUnitModalHidden' + variantCount).val();
-
-
         var takenVariantCount = $("#takenVariantCount" + vehicleSerial).val();
-
         for (var i = 1; i < takenVariantCount; i++) {
             if (typeof ($('#variantCode' + vehicleSerial + i).val()) !== 'undefined') {
+
                 if ($('#variantCode' + vehicleSerial + i).val() === variantCode) {
                     sweetAlert("You have already select this product variant for this vehicle...!");
                     return false;
@@ -505,6 +639,7 @@
                 var variantFlag = 0;
                 for (var j = 1; j <= takenVariantCount; j++) {
                     var quantity = $('#quantity' + i + j).val();
+                    var stockAutoId = $('#stockDetailAutoId' + i + j).val();
                     if (typeof quantity !== 'undefined') {
                         variantFlag = 1;
                         var variantCode = $('#variantCode' + i + j).val();
@@ -525,7 +660,9 @@
                             sweetAlert('Quantity must be greater than zero...!');
                             return false;
                         }
-                        variantQuantityArr.push(variantCode + ":" + quantity);
+                        if (typeof stockAutoId === 'undefined') {
+                            variantQuantityArr.push(variantCode + ":" + quantity);
+                        }
                     }
                 }
             }
@@ -549,29 +686,27 @@
         showLoader();
         $.ajax({
             type: 'POST',
-            url: '{{ route("client.master-data.checkStockQuantity") }}',
+
+            url: '{{ route("client.master-data.checkStockQuantityEdit") }}',
 
             data: {
                 _token: '{{ csrf_token() }}',
-                variantQuantityStr: variantQuantityStr
+                variantQuantityStr: variantQuantityStr,
+                variantDeleteStr: $('#variantDeleteStr').val(),
+                summaryId: $('#stockId').val()
             },
 
             success: function (result) {
 
                 hideLoader();
 
-                if (result == '1') {
-
+                if (result == '1' || result == 1) {
                     $('#stockOutForm').submit();
-
-                } else if (result == '2') {
-
+                } else if (result === '2' || result == 2) {
                     sweetAlert('Quantity is not availabe...!');
                 }
             }
         });
-
-        //
     }
 </script>
 @endpush
