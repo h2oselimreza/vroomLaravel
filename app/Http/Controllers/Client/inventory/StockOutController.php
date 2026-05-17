@@ -630,4 +630,159 @@ class StockOutController extends Controller
             return response(1);
         }
     }
+
+    public function removeStockOutSummary(Request $request, InventoryRepository $inventoryRepository)
+    {
+        try {
+            $stockSummaryId = $request->stockSummaryId;
+
+            $arr = [];
+
+            $arr['stockSummaryId'] = $stockSummaryId;
+            $arr['company'] = Auth::user()->customerEmployee->company;
+            $arr['transactionType'] = config('constants.DEBIT');
+
+            $stockDetailInsertArr = [];
+
+            $stockDetails = $inventoryRepository->getStockDetails($arr);
+
+            if (!empty($stockDetails)) {
+
+                $stockDetailvariantArr = [];
+                $stockDetailQuantityArr = [];
+                $stockIdArr = [];
+
+                $quantityStrArr = [];
+                $updatedByStrArr = [];
+                $updatedDtTmStrArr = [];
+
+                $stockUpdateQuery = "";
+
+                foreach ($stockDetails as $stockDetail) {
+
+                    $stockDetailArr = [];
+
+                    $stockDetailvariantArr[] = $stockDetail->variant;
+
+                    $stockDetailQuantityArr[] = $stockDetail->debit_quantity;
+
+                    $stockDetailArr['stock_detail_id'] = reference_no();
+
+                    $stockDetailArr['stock_summary_id'] = $stockSummaryId;
+
+                    $stockDetailArr['company'] = Auth::user()->customerEmployee->company;
+                    $stockDetailArr['variant'] = $stockDetail->variant;
+                    $stockDetailArr['vehicle'] = $stockDetail->vehicle;
+                    $stockDetailArr['remarks'] = null;
+                    $stockDetailArr['credit_quantity'] = $stockDetail->debit_quantity;
+                    $stockDetailArr['debit_quantity'] = 0.00;
+                    $stockDetailArr['trasaction_type'] = config('constants.CREDIT');
+                    // delete from list
+                    $stockDetailArr['status'] = 2;
+
+                    $stockDetailArr['created_by'] = Auth::user()->user_id;
+                    $stockDetailArr['created_dt_tm'] = Carbon::now();
+                    $stockDetailArr['updated_by'] = Auth::user()->user_id;
+                    $stockDetailArr['updated_dt_tm'] = Carbon::now();
+                    $stockDetailInsertArr[] = $stockDetailArr;
+                }
+
+                $arr['variantArr'] = $stockDetailvariantArr;
+
+                $stocks = $inventoryRepository->getCompanyStock($arr);
+
+                $stockDetailvarArrCount = count(
+                    $stockDetailvariantArr
+                );
+
+                for ($i = 0; $i < $stockDetailvarArrCount; $i++) {
+
+                    foreach ($stocks as $stock) {
+
+                        if (
+                            $stockDetailvariantArr[$i]
+                            == $stock->variant
+                        ) {
+
+                            $stockIdArr[] = $stock->id;
+
+                            $userId   = Auth::user()->user_id;
+                            $dateTime = Carbon::now()->format('Y-m-d H:i:s');
+
+                            $quantityStrArr[] =
+                                "WHEN `id` = {$stock->id}
+                                THEN `quantity` + {$stockDetailQuantityArr[$i]}";
+
+                            $updatedByStrArr[] =
+                                "WHEN `id` = {$stock->id}
+                                THEN '{$userId}'";
+
+                            $updatedDtTmStrArr[] =
+                                "WHEN `id` = {$stock->id}
+                                THEN '{$dateTime}'";
+                        }
+                    }
+                }
+
+                if (!empty($stockIdArr)) {
+
+                    $stockUpdateQuery = "
+                        UPDATE `stock`
+                        SET
+                            `quantity` = CASE
+                                " . implode(' ', $quantityStrArr) . "
+                                ELSE `quantity`
+                            END,
+
+                            `updated_by` = CASE
+                                " . implode(' ', $updatedByStrArr) . "
+                                ELSE `updated_by`
+                            END,
+
+                            `updated_dt_tm` = CASE
+                                " . implode(' ', $updatedDtTmStrArr) . "
+                                ELSE `updated_dt_tm`
+                            END
+
+                        WHERE `id` IN (" . implode(',', $stockIdArr) . ")
+                    ";
+
+                    $stockSummaryArr = [];
+
+                    $stockSummaryArr['is_active'] = 0;
+                    $stockSummaryArr['updated_by'] = Auth::user()->user_id;
+                    $stockSummaryArr['updated_dt_tm'] = Carbon::now();
+
+                    $response = $inventoryRepository
+                        ->removeStockSummary(
+                            $stockSummaryId,
+                            Auth::user()->customerEmployee->company,
+                            $stockSummaryArr,
+                            $stockDetailInsertArr,
+                            $stockUpdateQuery
+                        );
+
+                    return response($response);
+
+                } else {
+
+                    return response(2);
+                }
+
+            } else {
+
+                return response(2);
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::error('Remove Stock Out Summary Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return response(2);
+        }
+    }
 }

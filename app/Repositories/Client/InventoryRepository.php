@@ -1122,4 +1122,37 @@ class InventoryRepository
 
         return 1;
     }
+
+    public function getStockDetails(array $arr)
+    {
+        try {
+
+            $query = DB::table('stock_details')
+                ->where('company', $arr['company'])
+                ->where(
+                    'stock_summary_id',
+                    $arr['stockSummaryId']
+                );
+
+            if (!empty($arr['transactionType'])) {
+
+                $query->where(
+                    'trasaction_type',
+                    $arr['transactionType']
+                );
+            }
+
+            return $query->get();
+
+        } catch (\Throwable $e) {
+
+            Log::error('Get Stock Details Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return collect();
+        }
+    }
 }

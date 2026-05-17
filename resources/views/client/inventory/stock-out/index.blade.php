@@ -125,7 +125,8 @@
 //        showLoader();
 //        $('#statusForm').submit();
 //    }
-    function removeStockSummary(stockSummaryId) {
+     function removeStockSummary(stockSummaryId)
+    {
         swal({
             title: "Are you sure?",
             text: "If you remove this main stock will increase...!",
@@ -135,32 +136,57 @@
             confirmButtonText: "Yes, remove it...!",
             confirmButtonColor: "#ec6c62"
         }, function () {
-            showLoader();
-            $.ajax({
-                url: "/client/Inventory/removeStockOutSummary?stockSummaryId=" + stockSummaryId,
-                type: "DELETE"
-            })
-                    .done(function (data) {
-                        hideLoader();
-                        if (data === '1') {
-                            swal({
-                                title: "Remove Successfully",
-                                text: "This stock Out is removed now",
-                                type: "success",
-                                closeOnConfirm: false,
-                                confirmButtonText: "Ok",
-                                confirmButtonColor: "#A5DC86"
-                            }, function () {
-                                window.location.href = "/client/Inventory/stockOut";
-                            });
-                        } else if (data === '2') {
-                            sweetAlert('Remove cannot possible...!');
-                        } 
 
-                    })
-                    .error(function (data) {
-                        swal("Oops", "We couldn't connect to the server!", "error");
+            showLoader();
+
+            $.ajax({
+
+                url: "{{ route('client.master-data.removeStockOutSummary') }}",
+
+                type: "POST",
+
+                data: {
+                    stockSummaryId: stockSummaryId,
+                    _token: "{{ csrf_token() }}"
+                },
+
+            })
+            .done(function (data) {
+
+                hideLoader();
+
+                if (data === '1' || data == 1) {
+
+                    swal({
+                        title: "Remove Successfully",
+                        text: "This stock Out is removed now",
+                        type: "success",
+                        closeOnConfirm: false,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#A5DC86"
+
+                    }, function () {
+
+                        window.location.href =
+                            "{{ route('client.inventory.stock-out.index') }}";
                     });
+
+                } else if (data == '2' || data == 2) {
+
+                    sweetAlert('Remove cannot possible...!');
+                }
+
+            })
+            .fail(function () {
+
+                hideLoader();
+
+                swal(
+                    "Oops",
+                    "We couldn't connect to the server!",
+                    "error"
+                );
+            });
         });
     }
 

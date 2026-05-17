@@ -455,7 +455,7 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::resource('inventory/stock-out', StockOutController::class)->names('client.inventory.stock-out');
     Route::post('inventory/checkStockQuantity', [StockOutController::class, 'checkStockQuantity'])->name('client.master-data.checkStockQuantity');
     Route::post('inventory/checkStockQuantityEdit', [StockOutController::class, 'checkStockQuantityEdit'])->name('client.master-data.checkStockQuantityEdit');
-
+    Route::post('inventory/removeStockOutSummary', [StockOutController::class, 'removeStockOutSummary'])->name('client.master-data.removeStockOutSummary');
 });
 
 require __DIR__.'/auth.php';
