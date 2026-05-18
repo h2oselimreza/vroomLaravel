@@ -173,7 +173,7 @@
 
                 hideLoader();
 
-                if (data === '1') {
+                if (data == '1') {
 
                     swal({
                         title: "Remove Successfully",
@@ -183,16 +183,16 @@
                         confirmButtonText: "Ok",
                         confirmButtonColor: "#A5DC86"
                     }, function () {
-                        window.location.href = "{{ url('client/Inventory/stockIn') }}";
+                        window.location.href = "{{ route('client.inventory.stock-in.index') }}";
                     });
 
-                } else if (data === '2') {
+                } else if (data == '2') {
                     sweetAlert('Remove cannot possible...!');
 
-                } else if (data === '3') {
+                } else if (data == '3') {
                     sweetAlert('Due to have not sufficient product, you can not remove this...!');
 
-                } else if (data === '4') {
+                } else if (data == '4') {
                     sweetAlert('One user updated this value...!');
                 }
 
