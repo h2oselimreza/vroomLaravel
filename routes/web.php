@@ -99,6 +99,7 @@ use App\Http\Controllers\Client\MasterData\InventoryProductController;
 use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
+use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -456,6 +457,11 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('inventory/checkStockQuantity', [StockOutController::class, 'checkStockQuantity'])->name('client.master-data.checkStockQuantity');
     Route::post('inventory/checkStockQuantityEdit', [StockOutController::class, 'checkStockQuantityEdit'])->name('client.master-data.checkStockQuantityEdit');
     Route::post('inventory/removeStockOutSummary', [StockOutController::class, 'removeStockOutSummary'])->name('client.master-data.removeStockOutSummary');
+
+    /*===================Inventory Route==============*/
+    Route::get('report/corporate-expense-report', [CorporateExpenseReportController::class, 'index'])->name('client.report.corporate-expense-report');
+    Route::post('report/expense-report-details', [CorporateExpenseReportController::class, 'expenseReportDetails'])->name('client.report.expenseReportDetails');
+
 });
 
 require __DIR__.'/auth.php';

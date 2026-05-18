@@ -491,3 +491,98 @@ if (!function_exists('getCalculatedDateStr')) {
         }
     }
 }
+
+
+if (!function_exists('get_company_info')) {
+
+    function get_company_info($companyCode): array
+    {
+        $companies = DB::table('corporate_companies')
+            ->where('company_code', $companyCode)
+            ->get()
+            ->toArray();
+
+        return $companies ?: [];
+    }
+}
+
+if (!function_exists('numberConvertToWords')) {
+
+    function numberConvertToWords($num = null)
+    {
+        if (is_numeric($num)) {
+
+            $num = str_replace([' ', ','], '', trim($num));
+
+            if (!$num) {
+                return false;
+            }
+
+            $num = (int) $num;
+
+            $words = [];
+
+            $list1 = [
+                '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+                'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen',
+                'Eighteen', 'Nineteen'
+            ];
+
+            $list2 = [
+                '', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty',
+                'Sixty', 'Seventy', 'Eighty', 'Ninety', 'Hundred'
+            ];
+
+            $list3 = [
+                '', 'Thousand', 'million', 'billion', 'trillion', 'quadrillion',
+                'quintillion', 'sextillion', 'septillion', 'Octillion', 'Nonillion',
+                'Decillion', 'Undecillion', 'Duodecillion', 'Tredecillion',
+                'Quattuordecillion', 'Quindecillion', 'Sexdecillion',
+                'Septendecillion', 'octodecillion', 'Novemdecillion', 'Vigintillion'
+            ];
+
+            $num_length = strlen($num);
+            $levels = (int)(($num_length + 2) / 3);
+            $max_length = $levels * 3;
+
+            $num = substr('00' . $num, -$max_length);
+            $num_levels = str_split($num, 3);
+
+            for ($i = 0; $i < count($num_levels); $i++) {
+
+                $levels--;
+
+                $hundreds = (int)($num_levels[$i] / 100);
+                $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' Hundred ' : '');
+
+                $tens = (int)($num_levels[$i] % 100);
+                $singles = '';
+
+                if ($tens < 20) {
+                    $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '');
+                } else {
+                    $tens = (int)($tens / 10);
+                    $tens = ' ' . $list2[$tens] . ' ';
+                    $singles = (int)($num_levels[$i] % 10);
+                    $singles = ' ' . $list1[$singles] . ' ';
+                }
+
+                $words[] =
+                    $hundreds .
+                    $tens .
+                    $singles .
+                    (($levels && (int)($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
+            }
+
+            $commas = count($words);
+
+            if ($commas > 1) {
+                $commas = $commas - 1;
+            }
+
+            return implode(' ', $words);
+        }
+
+        return "";
+    }
+}
