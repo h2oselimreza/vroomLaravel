@@ -100,6 +100,7 @@ use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
+use App\Http\Controllers\Client\Report\InventoryReportController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -461,6 +462,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     /*===================Inventory Route==============*/
     Route::get('report/corporate-expense-report', [CorporateExpenseReportController::class, 'index'])->name('client.report.corporate-expense-report');
     Route::post('report/expense-report-details', [CorporateExpenseReportController::class, 'expenseReportDetails'])->name('client.report.expenseReportDetails');
+
+    Route::get('report/inventory-report', [InventoryReportController::class, 'index'])->name('client.report.inventory-report');
+    Route::get('report/get-vehicle-last-product', [InventoryReportController::class, 'getVehicleLastProduct'])->name('client.report.inventory-report.getVehicleLastProduct');
 
 });
 

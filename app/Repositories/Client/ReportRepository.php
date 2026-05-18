@@ -1154,4 +1154,106 @@ class ReportRepository
 
         return $query->get();
     }
+
+    public function getVehicleLastProduct(array $arr)
+    {
+        $tempInsertResults = DB::table('stock_summary')
+            ->selectRaw("
+                stock_summary.stock_date,
+                stock_details.variant,
+                (
+                    SUM(stock_details.debit_quantity)
+                    -
+                    SUM(stock_details.credit_quantity)
+                ) as quantity
+            ")
+            ->join(
+                'stock_details',
+                'stock_details.stock_summary_id',
+                '=',
+                'stock_summary.stock_summary_id'
+            )
+            ->where('stock_summary.company', $arr['company'])
+            ->where('stock_details.vehicle', $arr['vehicle'])
+            ->where('stock_summary.stock_type', 'stock_out')
+            ->where('stock_summary.is_active', 1)
+            ->groupBy([
+                'stock_summary.stock_date',
+                'stock_details.variant'
+            ])
+            ->orderBy('stock_summary.stock_date', 'DESC')
+            ->get()
+            ->toArray();
+
+        if ($tempInsertResults) {
+
+            $stockTempTable = 'product_temp' . reference_no();
+
+            // FIXED: Added explicit CHARACTER SET and COLLATE to match your product_variants table
+            DB::statement("
+                CREATE TEMPORARY TABLE IF NOT EXISTS `$stockTempTable` (
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `variant` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+                    `quantity` decimal(10,2) NOT NULL DEFAULT '0.00',
+                    `stock_date` date NOT NULL,
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+
+            $insertData = [];
+
+            foreach ($tempInsertResults as $row) {
+                $insertData[] = [
+                    'variant'    => $row->variant,
+                    'quantity'   => $row->quantity,
+                    'stock_date' => $row->stock_date,
+                ];
+            }
+
+            DB::table($stockTempTable)->insert($insertData);
+
+            return DB::table($stockTempTable)
+                ->selectRaw("
+                    MAX($stockTempTable.stock_date) as stock_date,
+                    $stockTempTable.variant,
+                    $stockTempTable.quantity,
+
+                    product_variants.unit_name,
+                    product_variants.variant_name,
+
+                    products.product_name,
+
+                    product_categories.category_name
+                ")
+                ->join(
+                    'product_variants',
+                    'product_variants.variant_code',
+                    '=',
+                    DB::raw("$stockTempTable.variant")
+                )
+                ->join(
+                    'products',
+                    'products.product_code',
+                    '=',
+                    'product_variants.product'
+                )
+                ->join(
+                    'product_categories',
+                    'product_categories.category_code',
+                    '=',
+                    'products.category'
+                )
+                ->groupBy([
+                    "$stockTempTable.variant",
+                    "$stockTempTable.quantity",
+                    'product_variants.unit_name',
+                    'product_variants.variant_name',
+                    'products.product_name',
+                    'product_categories.category_name'
+                ])
+                ->get();
+        }
+
+        return collect([]);
+    }
 }
