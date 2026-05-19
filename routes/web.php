@@ -100,6 +100,7 @@ use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
+use App\Http\Controllers\Client\Report\ExpenseHistoryReportController;
 use App\Http\Controllers\Client\Report\InventoryReportController;
 use App\Http\Controllers\Client\Report\InventoryStockInController;
 use App\Http\Controllers\Client\Report\InventoryStockInReportController;
@@ -479,6 +480,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
 
     Route::get('report/inventory-stock-list', [InventoryStockReportController::class, 'index'])->name('client.report.inventory-stock-list.index');
     Route::get('report/inventory-stock-report', [InventoryStockReportController::class, 'currentStockPrint'])->name('client.report.inventory-stock-report');
+
+    Route::get('report/expense-history', [ExpenseHistoryReportController::class, 'index'])->name('client.report.expense-history');
+    Route::post('report/expense-history', [ExpenseHistoryReportController::class, 'index'])->name('client.report.expense-history');
+    Route::post('report/expense-history-data', [ExpenseHistoryReportController::class, 'getExpenseHistoryData'])->name('client.report.getExpenseHistoryData');
 
 });
 

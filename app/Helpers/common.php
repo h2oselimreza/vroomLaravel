@@ -586,3 +586,27 @@ if (!function_exists('numberConvertToWords')) {
         return "";
     }
 }
+
+if (!function_exists('validateDate')) {
+
+    function validateDate($date = null): int
+    {
+        if ($date === null) {
+            return 1;
+        }
+        try {
+            $format = 'Y-m-d';
+
+            $parsed = Carbon::createFromFormat($format, $date);
+
+            if ($parsed && $parsed->format($format) === $date) {
+                return 1;
+            }
+
+        } catch (\Exception $e) {
+            // invalid date will fall here
+        }
+
+        exit();
+    }
+}
