@@ -20,8 +20,8 @@
         </a>
     </div>
     <div class="btn-group" role="group">
-        <a href="{{ route('client.inventory.stock-out.index') }}">
-            <button type="button" class="btn btn-{{ (($thirdLastSegment == 'stock-out')) ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa a fa-bars"></i><b>  Stock</b></button>
+        <a href="{{ route('client.report.inventory-stock-list.index') }}">
+            <button type="button" class="btn btn-{{ (($thirdLastSegment == 'inventory-stock-list')) ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa a fa-bars"></i><b>  Stock</b></button>
         </a>
     </div>
 </div>
