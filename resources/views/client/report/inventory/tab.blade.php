@@ -10,8 +10,8 @@
 
 <div class="btn-group btn-group-lg hidden-xs btn-group-justified" role="group" aria-label="...">
     <div class="btn-group" role="group">
-        <a href="{{ route('client.inventory.stock-in.index') }}">
-            <button type="button" class="btn btn-{{ ($secondLastSegment == 'stock-in' && $thirdLastSegment == 'create') ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa fa-plus-square-o"></i><b>  Stock In</b></button>
+        <a href="{{ route('client.report.inventory-stock-in-list.index') }}">
+            <button type="button" class="btn btn-{{ ($secondLastSegment == 'inventory-stock-in-list') ? 'info' : 'default' }} waves-effect btn-lg"> <i class="fa fa-plus-square-o"></i><b>  Stock In</b></button>
         </a>
     </div>
     <div class="btn-group" role="group">

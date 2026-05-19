@@ -1256,4 +1256,71 @@ class ReportRepository
 
         return collect([]);
     }
+
+    public function getStockInProductDetails(array $arr): array
+    {
+        return DB::table('stock_summary')
+            ->select(
+                DB::raw('ANY_VALUE(stock_summary.stock_summary_id) as stock_summary_id'),
+                DB::raw('ANY_VALUE(stock_summary.stock_date) as stock_date'),
+                
+                DB::raw('SUM(stock_details.credit_quantity) as credit_quantity'),
+                DB::raw('SUM(stock_details.debit_quantity) as debit_quantity'),
+                
+                'stock_details.variant',
+                
+                DB::raw('ANY_VALUE(product_variants.variant_name) as variant_name'),
+                DB::raw('ANY_VALUE(product_variants.unit_name) as unit_name'),
+                DB::raw('ANY_VALUE(products.product_name) as product_name'),
+                DB::raw('ANY_VALUE(product_categories.category_name) as category_name')
+            )
+            ->join(
+                'stock_details',
+                'stock_details.stock_summary_id',
+                '=',
+                'stock_summary.stock_summary_id'
+            )
+            ->join(
+                'product_variants',
+                'product_variants.variant_code',
+                '=',
+                'stock_details.variant'
+            )
+            ->join(
+                'products',
+                'products.product_code',
+                '=',
+                'product_variants.product'
+            )
+            ->join(
+                'product_categories',
+                'product_categories.category_code',
+                '=',
+                'products.category'
+            )
+            ->where('stock_summary.is_active', 1)
+            ->where('stock_summary.stock_type', 'stock_in')
+            ->whereDate(
+                'stock_summary.stock_date',
+                '>=',
+                $arr['fromDate']
+            )
+            ->whereDate(
+                'stock_summary.stock_date',
+                '<=',
+                $arr['toDate']
+            )
+            ->where(
+                'stock_summary.company',
+                $arr['company']
+            )
+            ->whereIn(
+                'stock_details.variant',
+                explode(',', $arr['variantStr'])
+            )
+            ->groupBy('stock_details.variant')
+            ->orderBy('stock_details.variant')
+            ->get()
+            ->toArray();
+    }
 }

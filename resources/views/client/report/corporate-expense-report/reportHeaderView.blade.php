@@ -15,7 +15,7 @@
         float: left;
     }
 </style>
-<?php $compamyInfo = get_company_info($data['company']); ?>
+<?php $compamyInfo = get_company_info($data['company'] ?? $company); ?>
 <div class="" style="width:726px">
     <div class="float-left" style="float:left;width: 40%;text-align: left">
         <div class="company-logo-outer-div">

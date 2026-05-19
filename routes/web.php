@@ -101,6 +101,8 @@ use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
 use App\Http\Controllers\Client\Report\InventoryReportController;
+use App\Http\Controllers\Client\Report\InventoryStockInController;
+use App\Http\Controllers\Client\Report\InventoryStockInReportController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -465,6 +467,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
 
     Route::get('report/inventory-report', [InventoryReportController::class, 'index'])->name('client.report.inventory-report');
     Route::get('report/get-vehicle-last-product', [InventoryReportController::class, 'getVehicleLastProduct'])->name('client.report.inventory-report.getVehicleLastProduct');
+
+    Route::get('report/inventory-stock-in-list', [InventoryStockInReportController::class, 'index'])->name('client.report.inventory-stock-in-list.index');
+    Route::post('report/inventory-stock-in-report', [InventoryStockInReportController::class, 'stockInReportDetails'])->name('client.report.inventory-stock-in-report');
 
 });
 
