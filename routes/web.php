@@ -103,6 +103,8 @@ use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
 use App\Http\Controllers\Client\Report\InventoryReportController;
 use App\Http\Controllers\Client\Report\InventoryStockInController;
 use App\Http\Controllers\Client\Report\InventoryStockInReportController;
+use App\Http\Controllers\Client\Report\InventoryStockOutController;
+use App\Http\Controllers\Client\Report\InventoryStockOutReportController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientHomeServiceController;
 use App\Http\Controllers\Client\VehicleMaintenance\ClientWorkshopAppointmentController;
 use App\Http\Controllers\Client\VehicleMaintenance\SetClientHomeServiceController;
@@ -470,6 +472,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
 
     Route::get('report/inventory-stock-in-list', [InventoryStockInReportController::class, 'index'])->name('client.report.inventory-stock-in-list.index');
     Route::post('report/inventory-stock-in-report', [InventoryStockInReportController::class, 'stockInReportDetails'])->name('client.report.inventory-stock-in-report');
+
+    Route::get('report/inventory-stock-out-list', [InventoryStockOutReportController::class, 'index'])->name('client.report.inventory-stock-out-list.index');
+    Route::post('report/inventory-stock-out-report', [InventoryStockOutReportController::class, 'stockOutReportDetails'])->name('client.report.inventory-stock-out-report');
 
 });
 

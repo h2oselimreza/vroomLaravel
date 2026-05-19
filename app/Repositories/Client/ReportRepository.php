@@ -1323,4 +1323,187 @@ class ReportRepository
             ->get()
             ->toArray();
     }
+
+    public function stockOutReportDetails(array $arr): array
+    {
+        $query = DB::table('stock_summary')
+            ->select(
+                DB::raw('ANY_VALUE(stock_summary.stock_summary_id) as stock_summary_id'),
+                DB::raw('ANY_VALUE(stock_summary.stock_date) as stock_date'),
+
+                DB::raw('SUM(stock_details.credit_quantity) as credit_quantity'),
+                DB::raw('SUM(stock_details.debit_quantity) as debit_quantity'),
+
+                DB::raw('ANY_VALUE(vehicles.registration_no) as registration_no'),
+                DB::raw('ANY_VALUE(brand_tb.element) as brand_name'),
+                DB::raw('ANY_VALUE(brand_model_tb.element) as brand_model_name'),
+
+                'stock_details.vehicle',
+                'stock_details.variant',
+                DB::raw('ANY_VALUE(stock_details.id) as id'),
+
+                DB::raw('ANY_VALUE(product_variants.variant_name) as variant_name'),
+                DB::raw('ANY_VALUE(product_variants.unit_name) as unit_name'),
+
+                DB::raw('ANY_VALUE(products.product_name) as product_name'),
+
+                DB::raw('ANY_VALUE(product_categories.category_name) as category_name')
+            )
+            ->join(
+                'stock_details',
+                'stock_details.stock_summary_id',
+                '=',
+                'stock_summary.stock_summary_id'
+            )
+            ->join(
+                'vehicles',
+                'vehicles.vehicle_id',
+                '=',
+                'stock_details.vehicle'
+            )
+            ->leftJoin(
+                'common_table as brand_tb',
+                'brand_tb.element_code',
+                '=',
+                'vehicles.brand'
+            )
+            ->leftJoin(
+                'common_table as brand_model_tb',
+                'brand_model_tb.element_code',
+                '=',
+                'vehicles.brand_model'
+            )
+            ->join(
+                'product_variants',
+                'product_variants.variant_code',
+                '=',
+                'stock_details.variant'
+            )
+            ->join(
+                'products',
+                'products.product_code',
+                '=',
+                'product_variants.product'
+            )
+            ->join(
+                'product_categories',
+                'product_categories.category_code',
+                '=',
+                'products.category'
+            )
+            ->where('stock_summary.is_active', 1)
+            ->where(
+                'stock_summary.company',
+                $arr['company']
+            )
+            ->where(
+                'stock_summary.stock_type',
+                'stock_out'
+            )
+            ->whereDate(
+                'stock_summary.stock_date',
+                '>=',
+                $arr['fromDate']
+            )
+            ->whereDate(
+                'stock_summary.stock_date',
+                '<=',
+                $arr['toDate']
+            )
+            ->whereIn(
+                'stock_details.variant',
+                explode(',', $arr['variantStr'])
+            );
+
+        /*
+        | Vehicle Wise Report
+        */
+        if (
+            $arr['vehicleIdStr'] &&
+            $arr['reportGroup'] == 'vehicleWise'
+        ) {
+
+            if ($arr['dateFlag']) {
+
+                $query->whereIn(
+                    'stock_details.vehicle',
+                    explode(',', $arr['vehicleIdStr'])
+                );
+
+                $query->groupBy('stock_summary.stock_date');
+                $query->groupBy('stock_details.vehicle');
+                $query->groupBy('stock_details.variant');
+
+                $query->orderBy('stock_summary.stock_date', 'ASC');
+                $query->orderBy('stock_details.vehicle', 'ASC');
+                $query->orderBy('stock_details.variant', 'ASC');
+
+            } else {
+
+                $query->whereIn(
+                    'stock_details.vehicle',
+                    explode(',', $arr['vehicleIdStr'])
+                );
+
+                $query->groupBy('stock_details.vehicle');
+                $query->groupBy('stock_details.variant');
+
+                $query->orderBy('stock_details.vehicle', 'ASC');
+                $query->orderBy('stock_details.variant', 'ASC');
+            }
+
+        }
+
+        /*
+        | Product Wise Report
+        */
+        else if (
+            $arr['vehicleIdStr'] &&
+            $arr['reportGroup'] == 'productWise'
+        ) {
+
+            if ($arr['dateFlag']) {
+
+                $query->whereIn(
+                    'stock_details.vehicle',
+                    explode(',', $arr['vehicleIdStr'])
+                );
+
+                $query->groupBy('stock_summary.stock_date');
+                $query->groupBy('stock_details.variant');
+                $query->groupBy('stock_details.vehicle');
+
+                $query->orderBy('stock_summary.stock_date', 'ASC');
+                $query->orderBy('stock_details.variant', 'ASC');
+                $query->orderBy('stock_details.vehicle', 'ASC');
+
+            } else {
+
+                $query->whereIn(
+                    'stock_details.vehicle',
+                    explode(',', $arr['vehicleIdStr'])
+                );
+
+                $query->groupBy('stock_details.variant');
+                $query->groupBy('stock_details.vehicle');
+
+                $query->orderBy('stock_details.variant', 'ASC');
+                $query->orderBy('stock_details.vehicle', 'ASC');
+            }
+
+        }
+
+        /*
+        | Summary Report
+        */
+        else if (!$arr['vehicleIdStr']) {
+
+            $query->groupBy('stock_details.variant');
+            $query->orderBy('stock_details.variant', 'ASC');
+        }
+
+        return $query
+            ->get()
+            ->toArray();
+    }
 }
