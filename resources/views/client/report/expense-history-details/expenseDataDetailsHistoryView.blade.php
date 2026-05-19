@@ -150,7 +150,7 @@
 <script>
     var iterationNumber = 0;
     var SHOW_MORE_DATA_COUNT = '{{ config("constants.WEB_SHOW_MORE_DATA_COUNT") }}';
-    var expenseDetailsUrl = "/client/Expense/showExpense?expenseNo=";
+    var expenseDetailsUrl = "/client/expense/expense-with-vehicle/";
     var generalExpenseDetailsUrl = "/client/Expense/showGeneralExpense?expenseNo=";
 
     function getReportData() {
@@ -253,6 +253,7 @@
         if (resultObj.expenses[i].vendor_title) {
             vendorTitle = resultObj.expenses[i].vendor_title;
         }
+        console.log(resultObj.expenses[i]);
         var html = "<td class='right-border-gray bottom-border-gray'>" + resultObj.expenses[i].expense_date + "</td>\n\
                     <td class='right-border-gray bottom-border-gray'><span class='pointer'><a target='_blank' href='" + expenseUrl + resultObj.expenses[i].expense_no + "'>" + resultObj.expenses[i].expense_no + "</a></span></td>\n\
                     <td class='right-border-gray bottom-border-gray'>" + vehicle + "</td>\n\

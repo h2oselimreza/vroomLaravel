@@ -169,7 +169,7 @@
 <script>
     var iterationNumber = 0;
     var SHOW_MORE_DATA_COUNT = '{{ config("constants.WEB_SHOW_MORE_DATA_COUNT") }}';
-    var expenseDetailsUrl = "/client/Expense/showExpense?expenseNo=";
+    var expenseDetailsUrl = "/client/expense/expense-with-vehicle/";
     var generalExpenseDetailsUrl = "/client/Expense/showGeneralExpense?expenseNo=";
     function getReportData() {
         serial = 0;
@@ -256,13 +256,14 @@
         if (resultObj.expenses[i].remarks) {
             remarks = resultObj.expenses[i].remarks;
         }
-        vendorTitle = resultObj.expenses[i].guest_vendor_title;
-        if (resultObj.expenses[i].vendor_title) {
-            vendorTitle = resultObj.expenses[i].vendor_title;
+        vendorTitle = resultObj.expenses[i].guest_name;
+        if (resultObj.expenses[i].title) {
+            vendorTitle = resultObj.expenses[i].title;
         }
+
         var html = "<td class='right-border-gray bottom-border-gray'>" + resultObj.expenses[i].expense_date + "</td>\n\
                     <td class='right-border-gray bottom-border-gray'><span class='pointer'><a target='_blank' href='" + expenseUrl + resultObj.expenses[i].expense_no + "'>" + resultObj.expenses[i].expense_no + "</a></span></td>\n\
-                    <td class='right-border-gray bottom-border-gray'>" + vehicle + "</td>\n\
+                    <td class='right-border-gray bottom-border-gray'>" + vehicle + "1</td>\n\
                     <td class='right-border-gray bottom-border-gray'>" + vendorTitle + "</td>\n\
                     <td class='right-border-gray bottom-border-gray'>" + resultObj.expenses[i].expense_title + "</td>\n\
                     <td class='right-border-gray bottom-border-gray' align='center'>" + resultObj.expenses[i].quantity + "</td>\n\
