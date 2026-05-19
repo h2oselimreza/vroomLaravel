@@ -82,8 +82,8 @@
 
                                             <a
                                                 target="_blank"
-                                                href="{{ url('client/Home/vehicleDashboard') }}?vehicleId={{ $vehicle->vehicle_id }}"
-                                            >
+                                                href="{{ route('client.report.vehicle-dashboard') }}?vehicleId={{ $vehicle->vehicle_id }}"
+                                            >   
                                                 {{ $vehicle->registration_no }}
                                             </a>
 

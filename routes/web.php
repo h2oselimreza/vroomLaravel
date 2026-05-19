@@ -88,6 +88,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\Workshop\ServiceController;
 use App\Http\Controllers\Client\Expense\ExpenseWithoutVehicleController;
 use App\Http\Controllers\Client\Expense\ExpenseWithVehicleController;
+use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\inventory\ClientInventoryController;
 use App\Http\Controllers\Client\inventory\StockInController;
 use App\Http\Controllers\Client\inventory\StockOutController;
@@ -489,6 +490,10 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::get('report/expense-details-history', [ExpenseDetailsHistoryReportController::class, 'index'])->name('client.report.expense-details-history');
     Route::post('report/expense-history-data-details', [ExpenseDetailsHistoryReportController::class, 'getExpenseDetailsHistoryData'])->name('client.report.getExpenseDetailsHistoryData');
     Route::post('report/show-expense-details-history', [ExpenseDetailsHistoryReportController::class, 'showExpenseDetailsHistory'])->name('client.report.show-expense-details-history');
+    
+    /*===================vehicle dashboard Route==============*/
+    Route::get('home/vehicle-dashboard', [HomeController::class, 'index'])->name('client.report.vehicle-dashboard');
+
 });
 
 require __DIR__.'/auth.php';

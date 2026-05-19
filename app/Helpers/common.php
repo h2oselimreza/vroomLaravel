@@ -610,3 +610,28 @@ if (!function_exists('validateDate')) {
         exit();
     }
 }
+
+if (!function_exists('get_vehicle_assign_type_name')) {
+
+    function get_vehicle_assign_type_name($assignType): string
+    {
+        // new pool
+
+        $assignTypeName = '';
+
+        if ($assignType == config('constants.ASSIGN_VACANT')) {
+
+            $assignTypeName = 'Vacant';
+
+        } elseif ($assignType == config('constants.ASSIGN_ENROUTE')) {
+
+            $assignTypeName = 'En Route';
+
+        } elseif ($assignType == config('constants.ASSIGN_PERSON')) {
+
+            $assignTypeName = 'Assigned';
+        }
+
+        return $assignTypeName;
+    }
+}
