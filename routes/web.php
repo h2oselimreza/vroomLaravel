@@ -100,6 +100,7 @@ use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
+use App\Http\Controllers\Client\Report\ExpenseDetailsHistoryReportController;
 use App\Http\Controllers\Client\Report\ExpenseHistoryReportController;
 use App\Http\Controllers\Client\Report\InventoryReportController;
 use App\Http\Controllers\Client\Report\InventoryStockInController;
@@ -485,6 +486,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     Route::post('report/expense-history', [ExpenseHistoryReportController::class, 'index'])->name('client.report.expense-history');
     Route::post('report/expense-history-data', [ExpenseHistoryReportController::class, 'getExpenseHistoryData'])->name('client.report.getExpenseHistoryData');
 
+    Route::get('report/expense-details-history', [ExpenseDetailsHistoryReportController::class, 'index'])->name('client.report.expense-details-history');
+    Route::post('report/expense-history-data-details', [ExpenseDetailsHistoryReportController::class, 'getExpenseDetailsHistoryData'])->name('client.report.getExpenseDetailsHistoryData');
+    Route::post('report/show-expense-details-history', [ExpenseDetailsHistoryReportController::class, 'showExpenseDetailsHistory'])->name('client.report.show-expense-details-history');
 });
 
 require __DIR__.'/auth.php';

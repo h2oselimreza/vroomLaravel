@@ -1556,4 +1556,95 @@ class ReportRepository
             ->get()
             ->toArray();
     }
+
+    public function getExpenseDetailsHistoryData(
+        $fromDate,
+        $toDate,
+        $start,
+        $end,
+        $company,
+        array $arr
+    ): array {
+
+        return DB::table('expense_detail')
+
+            ->select(
+                'expense_detail.*',
+                'expense_summary.expense_title',
+                'expense_summary.expense_date',
+                DB::raw('expense_summary.guest_name as guest_vendor_title'),
+                'vehicles.registration_no',
+                DB::raw('cost_heads.cost_head as expense_title'),
+                DB::raw('corporate_vendor.title as vendor_title')
+            )
+
+            ->join(
+                'expense_summary',
+                'expense_summary.expense_no',
+                '=',
+                'expense_detail.expense_no'
+            )
+            ->leftJoin(
+                'vehicles',
+                'vehicles.vehicle_id',
+                '=',
+                'expense_detail.vehicle'
+            )
+            ->join(
+                'cost_heads',
+                'cost_heads.cost_head_code',
+                '=',
+                'expense_detail.expense_head'
+            )
+            ->leftJoin(
+                'corporate_vendor',
+                'corporate_vendor.vendor_code',
+                '=',
+                'expense_summary.vendor'
+            )
+            ->where(
+                'expense_summary.company',
+                $company
+            )
+            ->whereDate(
+                'expense_summary.expense_date',
+                '>=',
+                $fromDate
+            )
+            ->whereDate(
+                'expense_summary.expense_date',
+                '<=',
+                $toDate
+            )
+            ->when($arr['vehicleStr'], function ($query) use ($arr) {
+
+                $query->whereIn(
+                    'expense_detail.vehicle',
+                    explode(',', $arr['vehicleStr'])
+                );
+
+            })
+            ->when($arr['expenseHeadCode'], function ($query) use ($arr) {
+
+                $query->whereIn(
+                    'expense_detail.expense_head',
+                    explode(',', $arr['expenseHeadCode'])
+                );
+
+            })
+            ->when($arr['vendorCode'], function ($query) use ($arr) {
+
+                $query->whereIn(
+                    'expense_summary.vendor',
+                    explode(',', $arr['vendorCode'])
+                );
+
+            })
+            ->orderBy('expense_detail.expense_no', 'ASC')
+            ->orderBy('expense_summary.expense_date', 'ASC')
+            ->offset($start)
+            ->limit($end)
+            ->get()
+            ->toArray();
+    }
 }
