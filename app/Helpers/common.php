@@ -635,3 +635,63 @@ if (!function_exists('get_vehicle_assign_type_name')) {
         return $assignTypeName;
     }
 }
+
+if (!function_exists('get_quotation_req_status')) {
+
+    function get_quotation_req_status($status = 0, $flag = 'admin')
+    {
+        if ($status == config('constants.REQ_DRAFT_STATUS')) {
+
+            return "<span style='color:#9c9b98'><b>Draft</b></span>";
+
+        } elseif ($status == config('constants.REQ_PENDING_STATUS')) {
+
+            return "<span style='color:#FFC300'><b>Pending</b></span>";
+
+        } elseif ($status == config('constants.REQ_PROCCESSING_STATUS')) {
+
+            return "<span style='color:#ff8302'><b>Processing</b></span>";
+
+        } elseif ($status == config('constants.REQ_REJECT_STATUS')) {
+
+            return "<span style='color:red'><b>Rejected</b></span>";
+
+        } elseif ($status == config('constants.REQ_QUOT_SUB_STATUS')) {
+
+            return "<span style='color:#b9752e'><b>Submited Quotation</b></span>";
+
+        } elseif ($status == config('constants.REQ_QUOT_APPV_CUS_STATUS')) {
+
+
+            return "<span style='color:green'><b>Approved Quotation</b></span>";
+
+        } elseif ($status == config('constants.REQ_QUOT_APPR_VRM_STATUS')) {
+
+            return "Start Service By Vroom";
+
+        } elseif ($status == config('constants.REQ_FULL_DONE_STATUS')) {
+
+            return "Service Complete";
+
+        } elseif ($status == config('constants.REQ_QUOT_ALL_STATUS')) {
+
+            return "All";
+
+        } elseif ($status == config('constants.QUO_DRAFT_STATUS')) {
+
+            return "<span style='color:#9c9b98'><b>Draft</b></span>";
+
+        } elseif ($status == config('constants.QUO_SEND_STATUS')) {
+
+            return "<span style='color:#ff8302'><b>Sent</b></span>";
+
+        } elseif ($status == config('constants.QUO_APPROV_STATUS')) {
+
+            return "<span style='color:green'><b>Approved</b></span>";
+
+        } else {
+
+            return "";
+        }
+    }
+}

@@ -99,6 +99,7 @@ use App\Http\Controllers\Client\MasterData\InventoryController;
 use App\Http\Controllers\Client\MasterData\InventoryProductController;
 use App\Http\Controllers\Client\MasterData\InventoryVariantController;
 use App\Http\Controllers\Client\MasterData\MasterDataController;
+use App\Http\Controllers\Client\Quotation\QuotationController;
 use App\Http\Controllers\Client\Reminder\SetReminderController;
 use App\Http\Controllers\Client\Report\CorporateExpenseReportController;
 use App\Http\Controllers\Client\Report\ExpenseDetailsHistoryReportController;
@@ -493,6 +494,9 @@ Route::middleware(['auth', 'panel:client'])->prefix('client')->group(function ()
     
     /*===================vehicle dashboard Route==============*/
     Route::get('home/vehicle-dashboard', [HomeController::class, 'index'])->name('client.report.vehicle-dashboard');
+
+    /*===================Quatation Route==============*/
+    Route::resource('quotation/quotation-list', QuotationController::class)->names('client.quotation.quotation-list');
 
 });
 

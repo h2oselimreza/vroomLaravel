@@ -48,7 +48,7 @@ class ClientEmployeeRequest extends FormRequest
             'driving_license_expiry_date' => 'nullable|date',
 
             'secendary_mobile' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255|unique:customer_employees,email,' . $id . ',employee_id',
+            'email' => 'nullable|email|max:255|unique:customer_employee,email,' . $id . ',employee_id',
 
             'present_address' => 'nullable|string|max:500',
             'employee_permanent_address' => 'nullable|string|max:500',
